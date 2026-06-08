@@ -306,38 +306,33 @@
 
             if (!studentId) return;
 
-            // UI Loading State
             btnText.innerText = "Verifying...";
             spinner.style.display = "block";
             errorMsg.style.display = "none";
             document.getElementById('login-btn').disabled = true;
 
-            // Call Google Apps Script
             fetch(WEB_APP_URL, {
                 method: 'POST',
                 redirect: 'follow', 
-                headers: {
-                    "Content-Type": "text/plain" // Strictly text/plain to bypass CORS
-                },
+                headers: { "Content-Type": "text/plain" },
                 body: JSON.stringify({ action: 'exam_login', id: studentId })
             })
             .then(res => res.json())
             .then(data => {
-                // Reset UI State
                 btnText.innerText = "Access Portal";
                 spinner.style.display = "none";
                 document.getElementById('login-btn').disabled = false;
 
                 if (data.success) {
-                    // Save student data locally so exam.html can access the photo and details
+                    // FIX: Save student to localStorage so exam.html doesn't throw Unauthorized error
                     localStorage.setItem('examStudent', JSON.stringify(data.student));
                     currentStudentId = data.student.id;
 
-                    // Populate Waiting Room Data
+                    // Update UI text
                     document.getElementById('display-name').innerText = data.student.name;
                     document.getElementById('display-course').innerText = "Course: " + data.student.course;
                     
-                    // Translate Text URL to Image
+                    // FIX: Translate text URL to an actual Image
                     const avatarDiv = document.getElementById('avatar-initial');
                     if (data.student.image && data.student.image.trim() !== "") {
                         avatarDiv.innerHTML = `<img src="${data.student.image}" alt="Profile" style="width:100%; height:100%; border-radius:50%; object-fit:cover;">`;
@@ -345,24 +340,21 @@
                         avatarDiv.innerHTML = data.student.name.charAt(0).toUpperCase();
                     }
 
-                    // Switch Screens
                     document.getElementById('login-section').classList.remove('active');
                     document.getElementById('waiting-section').classList.add('active');
 
-                    // Start checking for admin approval
                     startPolling();
-                }
                 } else {
                     errorMsg.innerText = data.error || "Student not found.";
                     errorMsg.style.display = "block";
                 }
             })
             .catch(err => {
-                console.error("Login Error:", err); // Added for debugging in console
+                console.error("Login Error:", err);
                 btnText.innerText = "Access Portal";
                 spinner.style.display = "none";
                 document.getElementById('login-btn').disabled = false;
-                errorMsg.innerText = "Network Error. Check Google Apps Script deployment.";
+                errorMsg.innerText = "Network Error. Please try again.";
                 errorMsg.style.display = "block";
             });
         }
@@ -371,14 +363,11 @@
         // 2. WAITING ROOM POLLING LOGIC
         // ==========================================
         function startPolling() {
-            // Check status every 3 seconds
             pollingInterval = setInterval(() => {
                 fetch(WEB_APP_URL, {
                     method: 'POST',
                     redirect: 'follow',
-                    headers: {
-                        "Content-Type": "text/plain" // Fix: Added missing headers here!
-                    },
+                    headers: { "Content-Type": "text/plain" },
                     body: JSON.stringify({ action: 'check_approval', id: currentStudentId })
                 })
                 .then(res => res.json())
@@ -396,34 +385,34 @@
         // 3. LAUNCH EXAM LOGIC
         // ==========================================
         function launchExam() {
-            // Stop polling
-            if(pollingInterval) clearInterval(pollingInterval);
+            if (pollingInterval) clearInterval(pollingInterval);
             
-            document.documentElement.requestFullscreen().then(() => {
-                // This redirect requires exam.html to exist in the same folder!
-                window.location.href = `exam.html?id=${currentStudentId}`;
-            }).catch(err => {
-                // Fallback if browser blocks automatic fullscreen
-                document.querySelector('.status-badge').innerHTML = "<i class='fa-solid fa-check'></i> Approved! Click below to start.";
-                document.querySelector('.status-badge').style.background = "#d1fae5";
-                document.querySelector('.status-badge').style.color = "#059669";
-                
+            const badge = document.querySelector('.status-badge');
+            badge.innerHTML = "<i class='fa-solid fa-check'></i> Approved! Click below to start.";
+            badge.style.background = "#d1fae5";
+            badge.style.color = "#059669";
+            
+            // FIX: Prevent duplicate buttons from spawning
+            if (!document.getElementById('start-exam-btn')) {
                 const startBtn = document.createElement('button');
-                startBtn.innerText = "Start Exam Now";
+                startBtn.id = 'start-exam-btn';
+                startBtn.innerHTML = "Start Exam Now <i class='fa-solid fa-arrow-right'></i>";
                 startBtn.style.background = "#059669";
                 startBtn.style.color = "white";
-                startBtn.style.padding = "10px 20px";
-                startBtn.style.border = "none";
-                startBtn.style.borderRadius = "8px";
                 startBtn.style.marginTop = "20px";
-                startBtn.style.cursor = "pointer";
                 
                 startBtn.onclick = () => {
-                    document.documentElement.requestFullscreen();
-                    window.location.href = `exam.html?id=${currentStudentId}`;
+                    // Browser allows Full-Screen here because it is a direct user click
+                    document.documentElement.requestFullscreen().catch(e => console.log("Fullscreen ignored:", e));
+                    
+                    // Small delay ensures full screen triggers before changing the page
+                    setTimeout(() => {
+                        window.location.href = `exam.html?id=${currentStudentId}`;
+                    }, 300);
                 };
+                
                 document.querySelector('.rules-box').after(startBtn);
-            });
+            }
         }
     </script>
 </body>
