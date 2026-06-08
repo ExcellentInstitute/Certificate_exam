@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Exam - Excellent Institute</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
+        
+        /* Anti-Cheat Lock Screen */
+        #lock-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(220, 53, 69, 0.95); color: white;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 9999; text-align: center; padding: 20px;
+        }
+        #lock-screen input { padding: 10px; margin: 15px 0; border-radius: 5px; border: none; width: 250px; text-align: center; }
+        #lock-screen button { padding: 10px 20px; background: #343a40; color: white; border: none; border-radius: 5px; cursor: pointer; }
+
+        /* Main Exam UI */
+        .header { background: #0056b3; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
+        .student-info { display: flex; align-items: center; gap: 15px; }
+        .student-info img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid white; object-fit: cover; background: #ccc; }
+        
+        .container { max-width: 900px; margin: 30px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .question-card { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+        .question-card h4 { margin-bottom: 10px; color: #333; }
+        .options label { display: block; margin-bottom: 8px; cursor: pointer; background: #f8fafc; padding: 10px; border-radius: 5px; border: 1px solid #e2e8f0; }
+        .options input { margin-right: 10px; }
+        
+        .typing-section { background: #eef2f5; padding: 20px; border-radius: 8px; margin-top: 30px; }
+        #typing-area { width: 100%; height: 150px; padding: 10px; margin-top: 10px; border: 1px solid #ccc; border-radius: 5px; font-family: monospace; font-size: 16px; resize: none; }
+        
+        .submit-btn { width: 100%; background: #28a745; color: white; border: none; padding: 15px; font-size: 18px; border-radius: 8px; margin-top: 30px; cursor: pointer; }
+        .submit-btn:hover { background: #218838; }
+    </style>
+</head>
+<body onload="initExam()">
+
+    <div id="lock-screen">
+        <h1><i class="fa-solid fa-triangle-exclamation"></i> EXAM PAUSED</h1>
+        <p>Suspicious activity detected.</p>
+        <h3 id="lock-reason" style="color: #ffcccc;"></h3>
+        <p>Please call the Admin to unlock your session.</p>
+        <input type="password" id="admin-unlock-pass" placeholder="Admin Password">
+        <button onclick="unlockExam()">Resume Exam</button>
+    </div>
+
+    <div id="exam-content">
+        <div class="header">
+            <div>
+                <h2>Excellent Institute</h2>
+                <p style="margin:0; font-size: 14px;">Professional Examination</p>
+            </div>
+            <div class="student-info">
+                <div style="text-align: right;">
+                    <strong id="header-name">Student Name</strong><br>
+                    <span id="header-course" style="font-size: 12px;">Course</span>
+                </div>
+                <img id="header-photo" src="" alt="Profile">
+            </div>
+        </div>
+
+        <div class="container">
+            <h3>Multiple Choice Questions (2 Marks Each)</h3>
+            <div id="mcq-container">
+                </div>
+
+            <div class="typing-section">
+                <h3>Paragraph Writing Test (50 Marks)</h3>
+                <p><strong>Instructions:</strong> Type the paragraph below exactly as it appears. Accuracy is prioritized over speed.</p>
+                <div style="background: white; padding: 15px; border: 1px solid #ccc; border-radius: 5px; font-family: serif; margin-bottom: 15px;" id="typing-source">
+                    </div>
+                <textarea id="typing-area" placeholder="Start typing here..."></textarea>
+            </div>
+
+            <button class="submit-btn" onclick="submitExam()">Submit Final Exam</button>
+        </div>
+    </div>
+
+    <script src="js/questions.js"></script>
+    <script src="js/exam.js"></script>
+    <script>
+        let studentData = null;
+
+        function initExam() {
+            // 1. Load Student Data from localStorage
+            const savedData = localStorage.getItem('examStudent');
+            if (!savedData) {
+                alert("Unauthorized access. Please log in first.");
+                window.location.href = "index.html";
+                return;
+            }
+            
+            studentData = JSON.parse(savedData);
+            document.getElementById('header-name').innerText = studentData.name;
+            document.getElementById('header-course').innerText = studentData.course;
+            
+            // Set Image or fallback
+            if(studentData.image && studentData.image.trim() !== "") {
+                document.getElementById('header-photo').src = studentData.image;
+            } else {
+                document.getElementById('header-photo').style.display = "none";
+            }
+
+            // 2. Load Questions (Assuming course dictates the bank, defaulting to CCA for now)
+            const examData = questionBank["CCA"]; 
+            const mcqContainer = document.getElementById('mcq-container');
+            
+            examData.mcqs.forEach((q, index) => {
+                let html = `
+                <div class="question-card">
+                    <h4>${index + 1}. ${q.question} <span style="color:#666; font-size:12px; float:right;">[${q.subject}]</span></h4>
+                    <div class="options">`;
+                
+                q.options.forEach((opt, optIdx) => {
+                    html += `<label><input type="radio" name="q${index}" value="${optIdx}"> ${opt}</label>`;
+                });
+                
+                html += `</div></div>`;
+                mcqContainer.innerHTML += html;
+            });
+
+            // 3. Load Typing Test
+            document.getElementById('typing-source').innerText = examData.typingTest.text;
+        }
+
+        // Placeholder for submitting data back to Google Apps Script
+        function submitExam() {
+            if(confirm("Are you sure you want to submit? You cannot undo this action.")) {
+                alert("Exam submitted successfully! (Logic to send marks to Google Sheet goes here).");
+                // window.location.href = "index.html";
+            }
+        }
+    </script>
+</body>
+</html>
