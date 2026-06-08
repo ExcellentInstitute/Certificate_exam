@@ -315,9 +315,9 @@
             // Call Google Apps Script
             fetch(WEB_APP_URL, {
                 method: 'POST',
-                redirect: 'follow', // Added this
+                redirect: 'follow', 
                 headers: {
-                    "Content-Type": "text/plain;charset=utf-8" // Added this to bypass CORS preflight
+                    "Content-Type": "text/plain" // Strictly text/plain to bypass CORS
                 },
                 body: JSON.stringify({ action: 'exam_login', id: studentId })
             })
@@ -347,10 +347,11 @@
                 }
             })
             .catch(err => {
+                console.error("Login Error:", err); // Added for debugging in console
                 btnText.innerText = "Access Portal";
                 spinner.style.display = "none";
                 document.getElementById('login-btn').disabled = false;
-                errorMsg.innerText = "Network Error. Please check your connection.";
+                errorMsg.innerText = "Network Error. Check Google Apps Script deployment.";
                 errorMsg.style.display = "block";
             });
         }
@@ -363,6 +364,10 @@
             pollingInterval = setInterval(() => {
                 fetch(WEB_APP_URL, {
                     method: 'POST',
+                    redirect: 'follow',
+                    headers: {
+                        "Content-Type": "text/plain" // Fix: Added missing headers here!
+                    },
                     body: JSON.stringify({ action: 'check_approval', id: currentStudentId })
                 })
                 .then(res => res.json())
@@ -383,14 +388,8 @@
             // Stop polling
             if(pollingInterval) clearInterval(pollingInterval);
             
-            // Force Full Screen API before navigating to the actual exam file
-            // Note: Browsers require user interaction to trigger fullscreen. 
-            // Since they clicked "Access Portal" earlier, this usually works, 
-            // but we might need a "Start Exam" button to pop up if the browser blocks it.
-            
             document.documentElement.requestFullscreen().then(() => {
-                // Once in full screen, transition to the exam page passing the student ID
-                // For a GitHub pages setup, it's best to redirect to exam.html with query params
+                // This redirect requires exam.html to exist in the same folder!
                 window.location.href = `exam.html?id=${currentStudentId}`;
             }).catch(err => {
                 // Fallback if browser blocks automatic fullscreen
@@ -400,7 +399,14 @@
                 
                 const startBtn = document.createElement('button');
                 startBtn.innerText = "Start Exam Now";
+                startBtn.style.background = "#059669";
+                startBtn.style.color = "white";
+                startBtn.style.padding = "10px 20px";
+                startBtn.style.border = "none";
+                startBtn.style.borderRadius = "8px";
                 startBtn.style.marginTop = "20px";
+                startBtn.style.cursor = "pointer";
+                
                 startBtn.onclick = () => {
                     document.documentElement.requestFullscreen();
                     window.location.href = `exam.html?id=${currentStudentId}`;
