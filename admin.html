@@ -3,68 +3,228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Exam Control Panel</title>
+    <title>Excellent Institute - Admin Control Panel</title>
     <style>
         body { font-family: Arial, sans-serif; background-color: #e9ecef; margin: 0; padding: 20px; }
         .header { background: #343a40; color: white; padding: 15px; border-radius: 5px; text-align: center; margin-bottom: 20px; }
+        .container { max-width: 1200px; margin: auto; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .card { background: white; padding: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        h3 { margin-top: 0; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        h3 { margin-top: 0; border-bottom: 2px solid #0056b3; padding-bottom: 10px; color: #0056b3; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
         th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
-        .btn-approve { background: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; }
-        .btn-approve-all { background: #007bff; color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 3px; float: right; }
-        .alert { color: #dc3545; font-weight: bold; }
+        th { background-color: #f8fafc; }
+        .btn-approve { background: #28a745; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 3px; font-weight: bold; }
+        .btn-approve:hover { background: #218838; }
+        .btn-approve-all { background: #0056b3; color: white; border: none; padding: 8px 15px; cursor: pointer; border-radius: 3px; float: right; font-weight: bold; }
+        .btn-approve-all:hover { background: #004494; }
+        .status-waiting { color: #d9534f; font-weight: bold; }
+        .status-active { color: #28a745; font-weight: bold; }
+        .status-paused { color: #dc3545; font-weight: bold; background: #ffeeba; padding: 3px 6px; border-radius: 3px; }
+        .status-finished { color: #17a2b8; font-weight: bold; }
+        
+        /* Login Overlay */
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; }
+        .login-box { background: white; padding: 30px; border-radius: 8px; text-align: center; width: 300px; }
+        .login-box input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
+        .login-box button { background: #0056b3; color: white; border: none; padding: 10px 20px; width: 100%; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        .hidden { display: none !important; }
+        #loading-indicator { text-align: center; font-style: italic; color: #666; margin-top: 10px; display: none; }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>Excellent Institute Exam Control Panel</h1>
-    </div>
-
-    <div class="grid">
-        <div class="card">
-            <h3>Waiting Room 
-                <button class="btn-approve-all">Approve All</button>
-            </h3>
-            <table>
-                <tr>
-                    <th>Student ID</th>
-                    <th>Name</th>
-                    <th>Course</th>
-                    <th>Action</th>
-                </tr>
-                <tr>
-                    <td>9876543210</td>
-                    <td>Rahul Sharma</td>
-                    <td>CCA</td>
-                    <td><button class="btn-approve">Approve</button></td>
-                </tr>
-            </table>
-        </div>
-
-        <div class="card">
-            <h3>Live Exam Status</h3>
-            <table>
-                <tr>
-                    <th>Name</th>
-                    <th>Progress</th>
-                    <th>Status</th>
-                </tr>
-                <tr>
-                    <td>Priya Das</td>
-                    <td>25 / 175 Qs</td>
-                    <td style="color: green;">Active</td>
-                </tr>
-                <tr>
-                    <td>Amit Kumar</td>
-                    <td>10 / 175 Qs</td>
-                    <td class="alert">Paused (Tab Switched)</td>
-                </tr>
-            </table>
+    <!-- Admin Login Overlay -->
+    <div id="login-overlay">
+        <div class="login-box">
+            <h2>Admin Login</h2>
+            <p>Excellent Institute Exam Control</p>
+            <input type="password" id="admin-pass" placeholder="Enter Master Password">
+            <button onclick="loginAdmin()">Access Dashboard</button>
+            <p id="login-error" style="color: red; font-size: 13px;"></p>
         </div>
     </div>
 
+    <!-- Main Dashboard -->
+    <div class="container hidden" id="main-dashboard">
+        <div class="header">
+            <h1>Excellent Institute Exam Control Panel</h1>
+            <p style="margin: 0; font-size: 14px;">Live Lab Monitoring (Auto-refreshes every 5 seconds)</p>
+        </div>
+
+        <div id="loading-indicator">Syncing with server...</div>
+
+        <div class="grid">
+            <!-- Waiting Room Section -->
+            <div class="card">
+                <h3>Waiting Room 
+                    <button class="btn-approve-all" onclick="approveAll()">Approve All</button>
+                </h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Course</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="waiting-list">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Active Exam Section -->
+            <div class="card">
+                <h3>Live Exam Status</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student ID</th>
+                            <th>Name</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="active-list">
+                        <!-- Populated by JS -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // CONFIGURATION
+        // ==========================================
+        const WEB_APP_URL = "YOUR_WEB_APP_URL_HERE"; // PASTE YOUR URL HERE
+        let masterPass = "";
+        let pollingInterval;
+
+        // ==========================================
+        // AUTHENTICATION & INITIALIZATION
+        // ==========================================
+        function loginAdmin() {
+            const passInput = document.getElementById('admin-pass').value.trim();
+            if (!passInput) return;
+            
+            masterPass = passInput;
+            document.getElementById('login-error').innerText = "Verifying...";
+            
+            // Do a quick test fetch to verify password
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'admin_get_live_exams', pass: masterPass })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    document.getElementById('login-error').innerText = "Incorrect Password!";
+                } else {
+                    document.getElementById('login-overlay').classList.add('hidden');
+                    document.getElementById('main-dashboard').classList.remove('hidden');
+                    refreshDashboard(); // Fetch immediately
+                    pollingInterval = setInterval(refreshDashboard, 5000); // Poll every 5 seconds
+                }
+            })
+            .catch(err => {
+                document.getElementById('login-error').innerText = "Network Error. Check console.";
+                console.error(err);
+            });
+        }
+
+        // ==========================================
+        // DASHBOARD DATA FETCHING
+        // ==========================================
+        function refreshDashboard() {
+            document.getElementById('loading-indicator').style.display = 'block';
+            
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'admin_get_live_exams', pass: masterPass })
+            })
+            .then(res => res.json())
+            .then(response => {
+                document.getElementById('loading-indicator').style.display = 'none';
+                if (response.data) {
+                    renderTables(response.data);
+                }
+            })
+            .catch(err => console.error("Polling error:", err));
+        }
+
+        function renderTables(students) {
+            const waitingList = document.getElementById('waiting-list');
+            const activeList = document.getElementById('active-list');
+            
+            waitingList.innerHTML = "";
+            activeList.innerHTML = "";
+
+            let waitingCount = 0;
+            let activeCount = 0;
+
+            students.forEach(st => {
+                const tr = document.createElement('tr');
+                
+                if (st.status === "Waiting") {
+                    waitingCount++;
+                    tr.innerHTML = `
+                        <td>${st.id}</td>
+                        <td>${st.name}</td>
+                        <td>${st.course}</td>
+                        <td><button class="btn-approve" onclick="approveSingle('${st.id}')">Approve</button></td>
+                    `;
+                    waitingList.appendChild(tr);
+                } else {
+                    activeCount++;
+                    let statusClass = "status-active";
+                    if (st.status.includes("Paused")) statusClass = "status-paused";
+                    if (st.status === "Finished") statusClass = "status-finished";
+
+                    tr.innerHTML = `
+                        <td>${st.id}</td>
+                        <td>${st.name}</td>
+                        <td class="${statusClass}">${st.status}</td>
+                    `;
+                    activeList.appendChild(tr);
+                }
+            });
+
+            if (waitingCount === 0) {
+                waitingList.innerHTML = "<tr><td colspan='4' style='text-align:center; color:#888;'>No students in waiting room.</td></tr>";
+            }
+            if (activeCount === 0) {
+                activeList.innerHTML = "<tr><td colspan='3' style='text-align:center; color:#888;'>No active exams.</td></tr>";
+            }
+        }
+
+        // ==========================================
+        // CONTROL ACTIONS
+        // ==========================================
+        function approveSingle(studentId) {
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'admin_approve_exam', pass: masterPass, id: studentId })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) refreshDashboard();
+            });
+        }
+
+        function approveAll() {
+            if (!confirm("Approve all waiting students to start their exams?")) return;
+            
+            fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify({ action: 'admin_approve_all', pass: masterPass })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) refreshDashboard();
+            });
+        }
+    </script>
 </body>
 </html>
