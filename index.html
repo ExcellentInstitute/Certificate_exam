@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excellent Institute - Student Exam Portal</title>
+    <style>
+        /* Basic styling - you can expand this later */
+        body { font-family: Arial, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; height: 100vh; }
+        .container { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); max-width: 600px; width: 100%; text-align: center; }
+        .hidden { display: none; }
+        input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
+        button { background-color: #0056b3; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background-color: #004494; }
+        .rules-box { text-align: left; background: #eef2f5; padding: 15px; border-left: 4px solid #0056b3; margin-top: 20px; font-size: 14px; }
+    </style>
+</head>
+<body>
+
+    <div id="login-section" class="container">
+        <h2>Excellent Institute Exam Portal</h2>
+        <p>Enter your Student ID to access the waiting room.</p>
+        <input type="text" id="student-id" placeholder="Enter Student ID (e.g., Phone Number)">
+        <input type="password" id="student-pass" placeholder="Enter Password">
+        <br>
+        <button onclick="studentLogin()">Enter Portal</button>
+        <p id="login-msg" style="color: red;"></p>
+    </div>
+
+    <div id="waiting-section" class="container hidden">
+        <h2>Waiting Room</h2>
+        <p>Welcome, <span id="student-name-display" style="font-weight:bold;">Student</span>!</p>
+        <p style="color: #d9534f; font-weight: bold;">Status: Waiting for Admin Approval...</p>
+        
+        <div class="rules-box">
+            <h3>Exam Rules / ପରୀକ୍ଷା ନିୟମ</h3>
+            <ul>
+                <li><strong>1.</strong> Do not exit the full-screen mode during the exam.<br>
+                <em>ପରୀକ୍ଷା ସମୟରେ ଫୁଲ୍ ସ୍କ୍ରିନ୍ ରୁ ବାହାରନ୍ତୁ ନାହିଁ।</em></li>
+                
+                <li><strong>2.</strong> Do not open other tabs, minimize the window, or use `Alt + Tab`.<br>
+                <em>ଅନ୍ୟ ଟ୍ୟାବ୍ ଖୋଲନ୍ତୁ ନାହିଁ କିମ୍ବା `Alt + Tab` ବ୍ୟବହାର କରନ୍ତୁ ନାହିଁ।</em></li>
+                
+                <li><strong>3.</strong> If you break rules, the exam will pause and be marked as a cheating attempt.<br>
+                <em>ଯଦି ଆପଣ ନିୟମ ଭାଙ୍ଗନ୍ତି, ପରୀକ୍ଷା ବନ୍ଦ ହେବ ଏବଂ ଚୋରି ବୋଲି ଧରାଯିବ।</em></li>
+                
+                <li><strong>4.</strong> Typing test marks (out of 50) depend on speed and accuracy.<br>
+                <em>ଆପଣଙ୍କର ସ୍ପିଡ୍ ଏବଂ ସଠିକତା ଉପରେ ଟାଇପିଂ ମାର୍କ ଦିଆଯିବ।</em></li>
+            </ul>
+        </div>
+        <p style="font-size: 12px; margin-top: 20px;">The exam will automatically start in full-screen once approved.</p>
+    </div>
+
+    <script>
+        // Logic for login and polling the Apps Script will go here
+        function studentLogin() {
+            // Placeholder: Switch to waiting room visually for testing
+            document.getElementById('login-section').classList.add('hidden');
+            document.getElementById('waiting-section').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
