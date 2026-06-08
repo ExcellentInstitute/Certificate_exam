@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Exam Control Panel</title>
+    <style>
+        body { font-family: Arial, sans-serif; background-color: #e9ecef; margin: 0; padding: 20px; }
+        .header { background: #343a40; color: white; padding: 15px; border-radius: 5px; text-align: center; margin-bottom: 20px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .card { background: white; padding: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h3 { margin-top: 0; border-bottom: 2px solid #007bff; padding-bottom: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
+        .btn-approve { background: #28a745; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 3px; }
+        .btn-approve-all { background: #007bff; color: white; border: none; padding: 10px 15px; cursor: pointer; border-radius: 3px; float: right; }
+        .alert { color: #dc3545; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Excellent Institute Exam Control Panel</h1>
+    </div>
+
+    <div class="grid">
+        <div class="card">
+            <h3>Waiting Room 
+                <button class="btn-approve-all">Approve All</button>
+            </h3>
+            <table>
+                <tr>
+                    <th>Student ID</th>
+                    <th>Name</th>
+                    <th>Course</th>
+                    <th>Action</th>
+                </tr>
+                <tr>
+                    <td>9876543210</td>
+                    <td>Rahul Sharma</td>
+                    <td>CCA</td>
+                    <td><button class="btn-approve">Approve</button></td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="card">
+            <h3>Live Exam Status</h3>
+            <table>
+                <tr>
+                    <th>Name</th>
+                    <th>Progress</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td>Priya Das</td>
+                    <td>25 / 175 Qs</td>
+                    <td style="color: green;">Active</td>
+                </tr>
+                <tr>
+                    <td>Amit Kumar</td>
+                    <td>10 / 175 Qs</td>
+                    <td class="alert">Paused (Tab Switched)</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>
