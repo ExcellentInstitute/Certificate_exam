@@ -5,60 +5,100 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Excellent Institute - Admin Control Panel</title>
     
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
     <style>
-        body { font-family: Arial, sans-serif; background-color: #e9ecef; margin: 0; padding: 20px; }
-        .header { background: #343a40; color: white; padding: 15px; border-radius: 5px; text-align: center; margin-bottom: 20px; }
-        .container { max-width: 1200px; margin: auto; }
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .full-width { grid-column: 1 / -1; }
-        .card { background: white; padding: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        h3 { margin-top: 0; border-bottom: 2px solid #0056b3; padding-bottom: 10px; color: #0056b3; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
-        th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background-color: #f8fafc; }
-        .btn-approve { background: #28a745; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 3px; font-weight: bold; }
-        .btn-download { background: #17a2b8; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 3px; font-weight: bold; }
-        .btn-approve-all { background: #0056b3; color: white; border: none; padding: 8px 15px; cursor: pointer; border-radius: 3px; float: right; font-weight: bold; }
-        .status-waiting { color: #d9534f; font-weight: bold; }
-        .status-active { color: #28a745; font-weight: bold; }
-        .status-paused { color: #dc3545; font-weight: bold; background: #ffeeba; padding: 3px 6px; border-radius: 3px; }
+        :root {
+            --primary: #0056b3;
+            --primary-hover: #004494;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #0ea5e9;
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-main: #334155;
+        }
+
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-color); margin: 0; padding: 20px; color: var(--text-main); }
         
-        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; }
-        .login-box { background: white; padding: 30px; border-radius: 8px; text-align: center; width: 300px; }
-        .login-box input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
-        .login-box button { background: #0056b3; color: white; border: none; padding: 10px 20px; width: 100%; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        .header { background: linear-gradient(135deg, var(--primary), #2563eb); color: white; padding: 25px; border-radius: 12px; text-align: center; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .header h1 { margin: 0 0 5px 0; font-size: 28px; font-weight: 600; }
+        .header p { margin: 0; font-size: 14px; opacity: 0.9; }
+
+        .container { max-width: 1300px; margin: auto; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+        .full-width { grid-column: 1 / -1; }
+        
+        .card { background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 15px; }
+        .card-header h3 { margin: 0; color: var(--primary); font-size: 18px; display: flex; align-items: center; gap: 8px; }
+
+        /* Modern Tables */
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #f1f5f9; }
+        th { background-color: #f8fafc; font-weight: 600; color: #64748b; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
+        tbody tr:hover { background-color: #f8fafc; }
+
+        /* Buttons */
+        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; font-size: 13px; transition: all 0.2s; font-family: 'Poppins', sans-serif; display: inline-flex; align-items: center; gap: 6px; }
+        .btn-approve { background: var(--success); color: white; }
+        .btn-approve:hover { background: #059669; transform: translateY(-1px); }
+        .btn-download { background: var(--info); color: white; }
+        .btn-download:hover { background: #0284c7; transform: translateY(-1px); }
+        .btn-primary { background: var(--primary); color: white; padding: 10px 20px; font-size: 14px; }
+        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,86,179,0.2); }
+
+        /* Badges */
+        .badge { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block; }
+        .badge-waiting { background: #fef3c7; color: #b45309; }
+        .badge-active { background: #d1fae5; color: #047857; }
+        .badge-paused { background: #fee2e2; color: #b91c1c; }
+
+        /* Login Overlay */
+        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(5px); }
+        .login-box { background: white; padding: 40px; border-radius: 12px; text-align: center; width: 350px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .login-box i { font-size: 40px; color: var(--primary); margin-bottom: 15px; }
+        .login-box h2 { margin: 0 0 5px 0; font-size: 22px; color: var(--text-main); }
+        .login-box p { color: #64748b; font-size: 13px; margin-bottom: 25px; }
+        .login-box input { width: 100%; padding: 12px 15px; margin-bottom: 20px; border: 2px solid #e2e8f0; border-radius: 8px; outline: none; font-size: 14px; font-family: 'Poppins', sans-serif; box-sizing: border-box; }
+        .login-box input:focus { border-color: var(--primary); }
+        
         .hidden { display: none !important; }
-        #loading-indicator { text-align: center; font-style: italic; color: #666; margin-top: 10px; display: none; }
+        #loading-indicator { text-align: center; font-style: italic; color: #64748b; margin-bottom: 15px; display: none; font-size: 13px; }
     </style>
 </head>
 <body>
 
     <div id="login-overlay">
         <div class="login-box">
+            <i class="fa-solid fa-shield-halved"></i>
             <h2>Admin Login</h2>
-            <p>Excellent Institute Exam Control</p>
-            <input type="password" id="admin-pass" placeholder="admin">
-            <button onclick="loginAdmin()">Access Dashboard</button>
-            <p id="login-error" style="color: red; font-size: 13px;"></p>
+            <p>Secure Exam Control Panel</p>
+            <input type="password" id="admin-pass" placeholder="Enter Master Password">
+            <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="loginAdmin()">Access Dashboard</button>
+            <p id="login-error" style="color: var(--danger); font-size: 13px; margin-top: 15px; margin-bottom: 0; display: none;"></p>
         </div>
     </div>
 
     <div class="container hidden" id="main-dashboard">
         <div class="header">
-            <h1>Excellent Institute Exam Control Panel</h1>
-            <p style="margin: 0; font-size: 14px;">Live Lab Monitoring (Auto-refreshes every 5 seconds)</p>
+            <h1><i class="fa-solid fa-server"></i> Excellent Institute Exam Control</h1>
+            <p>Live Lab Monitoring • Auto-refreshes every 5 seconds</p>
         </div>
 
-        <div id="loading-indicator">Syncing with server...</div>
+        <div id="loading-indicator"><i class="fa-solid fa-rotate fa-spin"></i> Syncing with server...</div>
 
         <div class="grid">
             <div class="card">
-                <h3>Waiting Room 
-                    <button class="btn-approve-all" onclick="approveAll()">Approve All</button>
-                </h3>
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-users"></i> Waiting Room</h3>
+                    <button class="btn btn-primary" onclick="approveAll()"><i class="fa-solid fa-check-double"></i> Approve All</button>
+                </div>
                 <table>
                     <thead><tr><th>ID</th><th>Name</th><th>Course</th><th>Action</th></tr></thead>
                     <tbody id="waiting-list"></tbody>
@@ -66,7 +106,9 @@
             </div>
 
             <div class="card">
-                <h3>Live Exam Status</h3>
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-desktop"></i> Live Exam Status</h3>
+                </div>
                 <table>
                     <thead><tr><th>ID</th><th>Name</th><th>Status</th></tr></thead>
                     <tbody id="active-list"></tbody>
@@ -74,9 +116,11 @@
             </div>
 
             <div class="card full-width">
-                <h3>Completed Exams & Results</h3>
+                <div class="card-header">
+                    <h3><i class="fa-solid fa-file-contract"></i> Completed Exams & Results</h3>
+                </div>
                 <table>
-                    <thead><tr><th>Date</th><th>ID</th><th>Name</th><th>Course</th><th>Total Marks</th><th>WPM</th><th>PDF Certificate</th></tr></thead>
+                    <thead><tr><th>Date</th><th>ID</th><th>Name</th><th>Course</th><th>Total Marks</th><th>WPM</th><th>Certificate</th></tr></thead>
                     <tbody id="results-list"></tbody>
                 </table>
             </div>
@@ -90,9 +134,13 @@
 
         function loginAdmin() {
             const passInput = document.getElementById('admin-pass').value.trim();
+            const errorMsg = document.getElementById('login-error');
             if (!passInput) return;
+            
             masterPass = passInput;
-            document.getElementById('login-error').innerText = "Verifying...";
+            errorMsg.innerText = "Verifying...";
+            errorMsg.style.display = "block";
+            errorMsg.style.color = "var(--primary)";
             
             fetch(WEB_APP_URL, {
                 method: 'POST',
@@ -101,20 +149,23 @@
             .then(res => res.json())
             .then(data => {
                 if (data.error) {
-                    document.getElementById('login-error').innerText = "Incorrect Password!";
+                    errorMsg.innerText = "Incorrect Password!";
+                    errorMsg.style.color = "var(--danger)";
                 } else {
                     document.getElementById('login-overlay').classList.add('hidden');
                     document.getElementById('main-dashboard').classList.remove('hidden');
                     refreshDashboard();
                     pollingInterval = setInterval(refreshDashboard, 5000);
                 }
-            }).catch(err => { document.getElementById('login-error').innerText = "Network Error."; });
+            }).catch(err => { 
+                errorMsg.innerText = "Network Error."; 
+                errorMsg.style.color = "var(--danger)";
+            });
         }
 
         function refreshDashboard() {
             document.getElementById('loading-indicator').style.display = 'block';
             
-            // Fetch both live lab data AND completed results
             Promise.all([
                 fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'admin_get_live_exams', pass: masterPass }) }).then(res => res.json()),
                 fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'admin_get_results', pass: masterPass }) }).then(res => res.json())
@@ -136,18 +187,36 @@
                 const tr = document.createElement('tr');
                 if (st.status === "Waiting") {
                     waitingCount++;
-                    tr.innerHTML = `<td>${st.id}</td><td>${st.name}</td><td>${st.course}</td><td><button class="btn-approve" onclick="approveSingle('${st.id}')">Approve</button></td>`;
+                    tr.innerHTML = `
+                        <td><strong>${st.id}</strong></td>
+                        <td>${st.name}</td>
+                        <td><span style="color:var(--info); font-weight:600;">${st.course}</span></td>
+                        <td><button class="btn btn-approve" onclick="approveSingle('${st.id}')"><i class="fa-solid fa-check"></i> Approve</button></td>
+                    `;
                     waitingList.appendChild(tr);
-                } else if (st.status !== "Finished") { // Finished students are flushed by Apps Script, but just in case
+                } else if (st.status !== "Finished") { 
                     activeCount++;
-                    let statusClass = st.status.includes("Paused") ? "status-paused" : "status-active";
-                    tr.innerHTML = `<td>${st.id}</td><td>${st.name}</td><td class="${statusClass}">${st.status}</td>`;
+                    let badgeClass = "badge-active";
+                    let statusText = st.status;
+                    
+                    if (st.status.includes("Paused")) {
+                        badgeClass = "badge-paused";
+                        statusText = `<i class="fa-solid fa-triangle-exclamation"></i> ${st.status}`;
+                    } else {
+                        statusText = `<i class="fa-solid fa-spinner fa-spin"></i> Active`;
+                    }
+
+                    tr.innerHTML = `
+                        <td><strong>${st.id}</strong></td>
+                        <td>${st.name}</td>
+                        <td><span class="badge ${badgeClass}">${statusText}</span></td>
+                    `;
                     activeList.appendChild(tr);
                 }
             });
 
-            if (waitingCount === 0) waitingList.innerHTML = "<tr><td colspan='4' style='text-align:center; color:#888;'>No students waiting.</td></tr>";
-            if (activeCount === 0) activeList.innerHTML = "<tr><td colspan='3' style='text-align:center; color:#888;'>No active exams.</td></tr>";
+            if (waitingCount === 0) waitingList.innerHTML = "<tr><td colspan='4' style='text-align:center; color:#94a3b8; padding:20px;'>No students in waiting room.</td></tr>";
+            if (activeCount === 0) activeList.innerHTML = "<tr><td colspan='3' style='text-align:center; color:#94a3b8; padding:20px;'>No active exams.</td></tr>";
         }
 
         function renderResultsTable(results) {
@@ -155,23 +224,22 @@
             resultsList.innerHTML = "";
 
             if (results.length === 0) {
-                resultsList.innerHTML = "<tr><td colspan='7' style='text-align:center; color:#888;'>No results recorded yet.</td></tr>";
+                resultsList.innerHTML = "<tr><td colspan='7' style='text-align:center; color:#94a3b8; padding:20px;'>No results recorded yet.</td></tr>";
                 return;
             }
 
-            // Reverse to show latest first
             results.reverse().forEach(res => {
                 const tr = document.createElement('tr');
                 const encodedData = encodeURIComponent(JSON.stringify(res));
                 
                 tr.innerHTML = `
-                    <td>${res.date.split(' ')[0]}</td>
+                    <td><span style="color:#64748b; font-size:12px;">${res.date.split(' ')[0]}</span></td>
                     <td>${res.id}</td>
                     <td><strong>${res.name}</strong></td>
                     <td>${res.course}</td>
-                    <td style="color: #0056b3; font-weight: bold;">${res.marks} / 400</td>
-                    <td>${res.wpm}</td>
-                    <td><button class="btn-download" onclick="downloadResultPDF('${encodedData}')">Download PDF</button></td>
+                    <td><span class="badge badge-active" style="font-size:13px;">${res.marks} / 400</span></td>
+                    <td>${res.wpm} WPM</td>
+                    <td><button class="btn btn-download" onclick="downloadResultPDF('${encodedData}')"><i class="fa-solid fa-download"></i> PDF Report</button></td>
                 `;
                 resultsList.appendChild(tr);
             });
@@ -182,7 +250,6 @@
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
-            // Branding
             doc.setFont("helvetica", "bold");
             doc.setFontSize(22);
             doc.setTextColor(0, 86, 179);
@@ -192,11 +259,9 @@
             doc.setTextColor(50, 50, 50);
             doc.text("Official Examination Result", 105, 30, null, null, "center");
             
-            // Line break
             doc.setDrawColor(200, 200, 200);
             doc.line(20, 35, 190, 35);
             
-            // Student Information
             doc.setFontSize(12);
             doc.setFont("helvetica", "normal");
             doc.text(`Student Name: ${student.name}`, 20, 50);
@@ -209,7 +274,6 @@
             doc.text(`Typing Speed: ${student.wpm} WPM`, 120, 60);
             doc.text(`Typing Accuracy: ${student.accuracy}%`, 120, 70);
             
-            // Parse Subject Details for Table
             let subjectRows = [];
             if(student.subjectDetails && student.subjectDetails !== "N/A") {
                 try {
@@ -220,7 +284,6 @@
                 } catch(e) { console.error("Error parsing subjects"); }
             }
             
-            // Draw Table
             doc.autoTable({
                 startY: 95,
                 head: [['Subject / Skill Assessment', 'Marks Obtained']],
@@ -230,17 +293,14 @@
                 styles: { fontSize: 11, cellPadding: 6 }
             });
             
-            // Footer
             const finalY = doc.lastAutoTable.finalY || 150;
             doc.setFontSize(10);
             doc.setFont("helvetica", "italic");
             doc.text("This is an automatically generated electronic report.", 105, finalY + 20, null, null, "center");
             
-            // Save the file
             doc.save(`${student.id}_Exam_Result.pdf`);
         }
 
-        // CONTROL ACTIONS
         function approveSingle(studentId) {
             fetch(WEB_APP_URL, {
                 method: 'POST',
