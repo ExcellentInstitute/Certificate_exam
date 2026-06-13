@@ -101,10 +101,37 @@
                 document.getElementById('header-photo').style.display = "none";
             }
 
+            // ==========================================
+            // SMART EXAM DISTRIBUTER (Exactly 400 Marks)
+            // ==========================================
             const examData = questionBank["CCA"]; 
             const mcqContainer = document.getElementById('mcq-container');
             
-            examData.mcqs.forEach((q, index) => {
+            // The 7 required subjects for MCQs
+            const requiredSubjects = [
+                "MS Word", "MS Excel", "MS PowerPoint", 
+                "Computer Fundamentals", "Computer Components", 
+                "Cyber Security", "Operating System Basics"
+            ];
+            
+            let finalExamQuestions = [];
+            
+            requiredSubjects.forEach(sub => {
+                // 1. Get all available questions for this specific subject
+                let subQuestions = examData.mcqs.filter(q => q.subject === sub);
+                
+                // 2. Shuffle them so it's a random test every time
+                subQuestions.sort(() => Math.random() - 0.5);
+                
+                // 3. Pluck EXACTLY 25 questions from this subject (25 * 2 = 50 Marks)
+                finalExamQuestions.push(...subQuestions.slice(0, 25));
+            });
+            
+            // 4. Shuffle the final 175 questions so subjects are completely mixed up
+            finalExamQuestions.sort(() => Math.random() - 0.5);
+            
+            // 5. Load them into the HTML
+            finalExamQuestions.forEach((q, index) => {
                 let html = `
                 <div class="question-card">
                     <h4>${index + 1}. ${q.question} <span style="color:#666; font-size:12px; float:right;">[${q.subject}]</span></h4>
@@ -118,8 +145,12 @@
                 mcqContainer.innerHTML += html;
             });
 
+            // Randomly picks the 50-Mark paragraph typing test
             const randomTest = examData.typingTests[Math.floor(Math.random() * examData.typingTests.length)];
             document.getElementById('typing-source').innerText = randomTest.text;
+            
+            // IMPORTANT: Store the final customized list globally so calculateMCQ() evaluates the right questions
+            window.activeExamPaper = finalExamQuestions;
         }
 
         // SAFE STARTUP LOGIC: This ensures everything loads perfectly in order
