@@ -112,7 +112,7 @@
     <div class="container hidden" id="main-dashboard">
         <div class="header">
             <h1><i class="fa-solid fa-desktop"></i> Excellent Institute Exam Control</h1>
-            <p>Live Lab Monitoring & Eligibility Tracking</p>
+            <p>Live Lab Monitoring & Pipeline Tracking</p>
         </div>
 
         <div id="loading-indicator"><i class="fa-solid fa-circle-notch fa-spin"></i> Syncing with server...</div>
@@ -137,12 +137,21 @@
                 </table>
             </div>
 
-            <div class="card full-width" style="border-left: 4px solid var(--warning);">
-                <h3><span><i class="fa-solid fa-list-check" style="color: var(--warning);"></i> Eligible for Exam (Top 10 Seats Available)</span></h3>
-                <p style="font-size: 12px; color: var(--text-muted); margin-top: -10px;">Students who have completed their course duration and have not yet taken the exam.</p>
+            <div class="card full-width" style="border-left: 4px solid var(--success);">
+                <h3><span><i class="fa-solid fa-list-check" style="color: var(--success);"></i> Next 10 Candidates (Lab Capacity)</span></h3>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: -10px;">Top 10 students who are ready or completing their course soonest.</p>
                 <table>
-                    <thead><tr><th>Student ID</th><th>Name</th><th>Course Details</th><th>Eligibility Status</th></tr></thead>
+                    <thead><tr><th>Student ID</th><th>Name</th><th>Course Details</th><th>Target Date & Status</th></tr></thead>
                     <tbody id="eligible-list"></tbody>
+                </table>
+            </div>
+
+            <div class="card full-width" style="border-left: 4px solid var(--warning);">
+                <h3><span><i class="fa-solid fa-users-line" style="color: var(--warning);"></i> Upcoming Waitlist</span></h3>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: -10px;">All other pending students sorted by completion date.</p>
+                <table>
+                    <thead><tr><th>Student ID</th><th>Name</th><th>Course</th><th>Target Date</th></tr></thead>
+                    <tbody id="upcoming-list"></tbody>
                 </table>
             </div>
 
@@ -202,21 +211,23 @@
                 
                 // Process Eligibility
                 if (dbResponse.students && resultResponse.data) {
-                    renderEligibleTable(dbResponse.students, resultResponse.data);
+                    renderPipelineTables(dbResponse.students, resultResponse.data);
                 }
             }).catch(err => console.error("Polling error:", err));
         }
 
         // ==========================================
-        // RENDER ELIGIBILITY LIST
+        // RENDER PIPELINE LISTS (TOP 10 & WAITLIST)
         // ==========================================
-        function renderEligibleTable(allStudents, completedResults) {
+        function renderPipelineTables(allStudents, completedResults) {
             const eligibleList = document.getElementById('eligible-list');
+            const upcomingList = document.getElementById('upcoming-list');
             eligibleList.innerHTML = "";
+            upcomingList.innerHTML = "";
 
             // Create a set of IDs for students who already took the exam
             const completedIds = new Set(completedResults.map(r => String(r.id).trim()));
-            let eligibleStudents = [];
+            let pendingStudents = [];
             const now = new Date();
 
             allStudents.forEach(st => {
@@ -226,39 +237,62 @@
                 let admissionDate = new Date(st.date);
                 let durationMonths = parseInt(st.duration);
 
-                // If valid dates exist, calculate their course completion date
+                // Calculate their course completion date regardless of if it passed
                 if (!isNaN(durationMonths) && admissionDate instanceof Date && !isNaN(admissionDate)) {
                     let completionDate = new Date(admissionDate);
                     completionDate.setMonth(completionDate.getMonth() + durationMonths);
 
-                    // If today's date is past their completion date, they are eligible
-                    if (now >= completionDate) {
-                        eligibleStudents.push({ ...st, completionDate: completionDate });
-                    }
+                    pendingStudents.push({ ...st, completionDate: completionDate });
                 }
             });
 
-            // Sort by oldest completion date first (priority to those waiting the longest)
-            eligibleStudents.sort((a, b) => a.completionDate - b.completionDate);
+            // Sort by oldest/soonest completion date first
+            pendingStudents.sort((a, b) => a.completionDate - b.completionDate);
 
-            // Cut the list to strictly the Top 10 available computer systems
-            const top10 = eligibleStudents.slice(0, 10);
+            // Split into Top 10 and Waitlist
+            const top10 = pendingStudents.slice(0, 10);
+            const theRest = pendingStudents.slice(10);
 
+            // 1. Render Top 10 List
             if (top10.length === 0) {
-                eligibleList.innerHTML = "<tr><td colspan='4' style='text-align:center; color:#94a3b8; font-style:italic;'>No eligible students pending examination.</td></tr>";
-                return;
+                eligibleList.innerHTML = "<tr><td colspan='4' style='text-align:center; color:#94a3b8; font-style:italic;'>No pending students found.</td></tr>";
+            } else {
+                top10.forEach(st => {
+                    const tr = document.createElement('tr');
+                    let isReady = now >= st.completionDate;
+                    let statusText = isReady ? "Ready for Exam" : "Completes Soon";
+                    let statusColor = isReady ? "var(--success)" : "var(--warning)";
+                    let icon = isReady ? "fa-check-circle" : "fa-clock";
+                    
+                    tr.innerHTML = `
+                        <td><strong>${st.id}</strong></td>
+                        <td>${st.name}</td>
+                        <td>${st.course} (${st.duration} Months)</td>
+                        <td><span style="color: ${statusColor}; font-weight: 600;"><i class="fa-solid ${icon}"></i> ${statusText}: ${st.completionDate.toLocaleDateString('en-IN')}</span></td>
+                    `;
+                    eligibleList.appendChild(tr);
+                });
             }
 
-            top10.forEach(st => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td><strong>${st.id}</strong></td>
-                    <td>${st.name}</td>
-                    <td>${st.course} (${st.duration} Months)</td>
-                    <td><span style="color: var(--warning); font-weight: 600;"><i class="fa-solid fa-unlock-keyhole"></i> Eligible Since: ${st.completionDate.toLocaleDateString()}</span></td>
-                `;
-                eligibleList.appendChild(tr);
-            });
+            // 2. Render Waitlist (The Rest)
+            if (theRest.length === 0) {
+                upcomingList.innerHTML = "<tr><td colspan='4' style='text-align:center; color:#94a3b8; font-style:italic;'>No further students in queue.</td></tr>";
+            } else {
+                theRest.forEach(st => {
+                    const tr = document.createElement('tr');
+                    let isReady = now >= st.completionDate;
+                    let statusText = isReady ? "Ready for Exam" : "Upcoming";
+                    let statusColor = isReady ? "var(--success)" : "var(--text-muted)";
+                    
+                    tr.innerHTML = `
+                        <td><strong>${st.id}</strong></td>
+                        <td>${st.name}</td>
+                        <td>${st.course}</td>
+                        <td><span style="color: ${statusColor};"><i class="fa-solid fa-calendar-days"></i> ${statusText}: ${st.completionDate.toLocaleDateString('en-IN')}</span></td>
+                    `;
+                    upcomingList.appendChild(tr);
+                });
+            }
         }
 
         // ==========================================
