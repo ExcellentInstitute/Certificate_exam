@@ -380,6 +380,268 @@ const questionBank = {
                 ],
                 correctAnswer: 1
             }
+            // ==========================================
+            // BATCH 2: TYPING & SHORTCUTS
+            // ==========================================
+            {
+                subject: "Typing Theory",
+                question: "In touch typing, the invisible vertical line that divides the keyboard for your left and right hand passes directly between which keys?",
+                options: ["A/S, D/F, G/H", "T/Y, G/H, B/N", "Q/W, E/R, T/Y", "Z/X, C/V, B/N"],
+                correctAnswer: 1
+            },
+            {
+                subject: "Typing Theory",
+                question: "Which keyboard shortcut is used to quickly switch between open windows or programs?",
+                options: ["Ctrl + Tab", "Alt + Tab", "Windows Key + D", "Shift + Arrow Keys"],
+                correctAnswer: 1
+            },
+            {
+                subject: "Typing Theory",
+                question: "What does the shortcut 'Windows Key + D' do?",
+                options: ["Deletes the selected file.", "Opens the Downloads folder.", "Minimizes all open windows to show the Desktop instantly.", "Disconnects from Wi-Fi."],
+                correctAnswer: 2
+            },
+            {
+                subject: "Typing Theory",
+                question: "Which keyboard shortcut is used as an 'Undo' to erase the last mistake you just made?",
+                options: ["Ctrl + Y", "Ctrl + U", "Ctrl + Z", "Ctrl + X"],
+                correctAnswer: 2
+            },
+            {
+                subject: "Typing Theory",
+                question: "To type the symbol on top of a number key (like @, #, $), which key must you hold down?",
+                options: ["Alt", "Ctrl", "Shift", "Caps Lock"],
+                correctAnswer: 2
+            },
+
+            // ==========================================
+            // BATCH 2: MS WORD
+            // ==========================================
+            {
+                subject: "MS Word",
+                question: "What happens when you select 'Justify' alignment for your text in MS Word?",
+                options: [
+                    "It moves all text to the right side of the page.",
+                    "It makes both the left and right sides of the paragraph perfectly straight.",
+                    "It centers the text for a main title.",
+                    "It makes the text bold and underlined."
+                ],
+                correctAnswer: 1
+            },
+            {
+                subject: "MS Word",
+                question: "When writing a formal letter, how should you indent your paragraphs instead of pressing the Spacebar 20 times?",
+                options: ["Press the 'Tab' key.", "Use the 'Format Painter'.", "Press 'Enter'.", "Change the Page Margins."],
+                correctAnswer: 0
+            },
+            {
+                subject: "MS Word",
+                question: "If you want your text to read side-by-side exactly like a magazine, which feature should you use?",
+                options: ["Tables", "Page Borders", "Columns", "SmartArt"],
+                correctAnswer: 2
+            },
+            {
+                subject: "MS Word",
+                question: "What is 'SmartArt' used for in MS Word?",
+                options: [
+                    "To draw simple straight lines.",
+                    "To insert a photograph from your computer.",
+                    "To create beautiful, ready-made flowcharts and diagrams easily.",
+                    "To copy the color of your text."
+                ],
+                correctAnswer: 2
+            },
+
+            // ==========================================
+            // BATCH 2: MS EXCEL
+            // ==========================================
+            {
+                subject: "MS Excel",
+                question: "What does the tiny green dot (Autofill) at the bottom right corner of a selected cell do?",
+                options: [
+                    "It deletes the cell.",
+                    "It magically guesses patterns and fills in data like days of the week.",
+                    "It changes the text color to green.",
+                    "It opens the formula menu."
+                ],
+                correctAnswer: 1
+            },
+            {
+                subject: "MS Excel",
+                question: "How do you properly add the values of Box A1 and Box B1 together in Excel?",
+                options: ["Type: A1+B1", "Type: =A1+B1", "Type: Add A1 and B1", "Type: =SUM(A1+B1)"],
+                correctAnswer: 1
+            },
+            {
+                subject: "MS Excel",
+                question: "Which Excel shortcut instantly creates a Bar Chart on your page?",
+                options: ["Ctrl + C", "Alt + F1", "Shift + F3", "Ctrl + E"],
+                correctAnswer: 1
+            },
+            {
+                subject: "MS Excel",
+                question: "If you have a huge list of mixed-up student names, how do you arrange them in alphabetical order?",
+                options: [
+                    "Use the 'Find and Replace' tool.",
+                    "Go to the 'Data' tab and click 'Sort' from A to Z.",
+                    "Use 'Conditional Formatting'.",
+                    "Use 'Remove Duplicates'."
+                ],
+                correctAnswer: 1
+            },
+            {
+                subject: "MS Excel",
+                question: "How do you automatically stretch a column to perfectly fit a long name that is hiding behind the next box?",
+                options: [
+                    "Delete the text and type a shorter name.",
+                    "Merge and center the cells.",
+                    "Double-click the line exactly between the column letters (like A and B).",
+                    "Change the font size to 8."
+                ],
+                correctAnswer: 2
+            },
+
+            // ==========================================
+            // BATCH 2: MS POWERPOINT
+            // ==========================================
+            {
+                subject: "MS PowerPoint",
+                question: "Unlike MS Word, how do you type freely anywhere on a blank PowerPoint slide?",
+                options: [
+                    "You cannot type freely in PowerPoint.",
+                    "You must insert a 'Text Box' first.",
+                    "You press Enter until you reach the spot.",
+                    "You use the 'Format Background' tool."
+                ],
+                correctAnswer: 1
+            },
+            {
+                subject: "MS PowerPoint",
+                question: "What does the 'Group' function do when you highlight multiple shapes or pictures?",
+                options: [
+                    "It deletes all the items at once.",
+                    "It glues them together so they act like one single sticker.",
+                    "It changes them all to the same color.",
+                    "It moves them to a new slide."
+                ],
+                correctAnswer: 1
+            },
+            {
+                subject: "MS PowerPoint",
+                question: "Which shortcut key instantly starts your slideshow presentation from Slide 1?",
+                options: ["F5", "Ctrl + P", "Alt + Tab", "Windows Key + S"],
+                correctAnswer: 0
+            },
+            {
+                subject: "MS PowerPoint",
+                question: "What is the purpose of the 'Animation Pane'?",
+                options: [
+                    "To draw custom shapes.",
+                    "To paint the background of the slide.",
+                    "To show a list of every animation so you can drag them to change their order.",
+                    "To check the spelling of your text."
+                ],
+                correctAnswer: 2
+            },
+            {
+                subject: "MS PowerPoint",
+                question: "In PowerPoint animations, what are Yellow stars ('Emphasis') used for?",
+                options: [
+                    "To make a picture fly onto the screen.",
+                    "To make a picture fly away or disappear.",
+                    "To make a picture pulse or spin to grab attention while it is already on screen.",
+                    "To switch to the next slide."
+                ],
+                correctAnswer: 2
+            },
+
+            // ==========================================
+            // BATCH 2: COMPUTER FUNDAMENTALS & COMPONENTS
+            // ==========================================
+            {
+                subject: "Computer Fundamentals",
+                question: "What does ALU stand for in the Central Processing Unit?",
+                options: [
+                    "Automated Logic Utility",
+                    "Arithmetic Logic Unit",
+                    "Advanced Learning Unit",
+                    "Analog Local Unit"
+                ],
+                correctAnswer: 1
+            },
+            {
+                subject: "Computer Fundamentals",
+                question: "What is a 'Nibble' in computer memory?",
+                options: ["1 Bit", "4 Bits grouped together", "8 Bits", "1,024 Bytes"],
+                correctAnswer: 1
+            },
+            {
+                subject: "Computer Fundamentals",
+                question: "Which ancient invention from 3000 BC is considered the very first manual calculating toy with beads?",
+                options: ["Pascaline", "Difference Engine", "Abacus", "ENIAC"],
+                correctAnswer: 2
+            },
+            {
+                subject: "Computer Fundamentals",
+                question: "What was the name of India's first supercomputer?",
+                options: ["EDVAC", "MARK 1", "PARAM", "IBM 650"],
+                correctAnswer: 2
+            },
+            {
+                subject: "Computer Components",
+                question: "What type of connection does a modern M.2 NVMe SSD use?",
+                options: [
+                    "It plugs into a standard USB port.",
+                    "It uses thick SATA cables.",
+                    "It is a tiny stick-shaped drive that screws flat directly onto the motherboard.",
+                    "It requires a floppy disk drive."
+                ],
+                correctAnswer: 2
+            },
+            {
+                subject: "Computer Components",
+                question: "Which of the following ports is preferred for high refresh rate monitors and multi-display setups?",
+                options: ["VGA", "DisplayPort (DP)", "USB Type-B", "Ethernet (RJ-45)"],
+                correctAnswer: 1
+            },
+
+            // ==========================================
+            // BATCH 2: OPERATING SYSTEMS & NETWORKING
+            // ==========================================
+            {
+                subject: "Operating System Basics",
+                question: "Which key allows you to quickly 'Rename' a selected file or folder?",
+                options: ["F2", "F5", "Ctrl + R", "Alt + N"],
+                correctAnswer: 0
+            },
+            {
+                subject: "Operating System Basics",
+                question: "What does 'Device Management' do in an Operating System?",
+                options: [
+                    "It uses 'Drivers' to communicate with hardware like keyboards and printers.",
+                    "It allocates CPU time to active programs.",
+                    "It tracks the primary memory (RAM).",
+                    "It creates user passwords."
+                ],
+                correctAnswer: 0
+            },
+            {
+                subject: "Operating System Basics",
+                question: "What is the primary function of the 'Startup Tab' in the Task Manager?",
+                options: [
+                    "To start a new Word document.",
+                    "To show and disable programs that launch automatically when you turn on the computer.",
+                    "To check Wi-Fi speed.",
+                    "To install new software."
+                ],
+                correctAnswer: 1
+            },
+            {
+                subject: "Computer Networking Basics",
+                question: "What type of network connects computers inside one single room, school, or house?",
+                options: ["WAN (Wide Area Network)", "MAN (Metropolitan Area Network)", "LAN (Local Area Network)", "VPN (Virtual Private Network)"],
+                correctAnswer: 2
+            }
         ],
 
         // ==========================================
@@ -402,4 +664,5 @@ const questionBank = {
             }
         ]
     }
+    
 };
