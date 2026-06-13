@@ -2199,6 +2199,48 @@ const questionBatches = [
             ],
             correctAnswer: 1
         }
+    ],
+    [
+        // ==========================================
+        // BATCH 11: THE BALANCER BATCH
+        // ==========================================
+        // --- OS BASICS ---
+        { subject: "Operating System Basics", question: "What is the primary job of 'Memory Management' in an OS?", options: ["It manages Bluetooth headsets.", "It tracks the primary memory (RAM), deciding which process gets memory and how much.", "It defragments the hard drive.", "It updates Windows Defender."], correctAnswer: 1 },
+        { subject: "Operating System Basics", question: "What are 'Drivers' used for in Device Management?", options: ["To drive the CPU faster.", "To communicate with hardware components like keyboards, mice, and printers.", "To store files safely.", "To connect to the internet."], correctAnswer: 1 },
+        { subject: "Operating System Basics", question: "What does the 'ext4' file system belong to?", options: ["Windows", "macOS", "Linux", "Android"], correctAnswer: 2 },
+        { subject: "Operating System Basics", question: "What does the 'NTFS' file system belong to?", options: ["Linux", "Android", "macOS", "Microsoft Windows"], correctAnswer: 3 },
+        { subject: "Operating System Basics", question: "Which OS interface relies on typed commands rather than windows and icons?", options: ["GUI (Graphical User Interface)", "CLI (Command Line Interface)", "API", "USB"], correctAnswer: 1 },
+        { subject: "Operating System Basics", question: "How do you select a continuous list of files all at once?", options: ["Ctrl + Click", "Alt + Click", "Shift + Click", "Double Click"], correctAnswer: 2 },
+        { subject: "Operating System Basics", question: "Which shortcut prepares a file to be moved (removing it from the original spot once pasted)?", options: ["Ctrl + C", "Ctrl + X", "Ctrl + V", "Ctrl + Z"], correctAnswer: 1 },
+        { subject: "Operating System Basics", question: "Where do you go to set up Wi-Fi connections and check internet speed in Windows?", options: ["User Accounts", "Hardware and Sound", "Network and Internet", "Personalization"], correctAnswer: 2 },
+        { subject: "Operating System Basics", question: "What file extension usually indicates a Windows installer file?", options: [".jpg or .png", ".mp3 or .mp4", ".exe or .msi", ".docx or .pdf"], correctAnswer: 2 },
+        { subject: "Operating System Basics", question: "What happens if you manually delete a program's folder instead of uninstalling it properly?", options: ["It uninstalls perfectly.", "It speeds up the PC.", "It leaves behind fragmented registry keys and hidden data that slows down the PC.", "It upgrades the software."], correctAnswer: 2 },
+        { subject: "Operating System Basics", question: "Which shortcut opens the Task Manager?", options: ["Ctrl + Shift + Esc", "Alt + F4", "Windows Key + D", "Ctrl + S"], correctAnswer: 0 },
+        { subject: "Operating System Basics", question: "If a program freezes, where can you go to click 'End Task' and force it to close?", options: ["Control Panel", "Task Manager > Processes Tab", "Recycle Bin", "Device Manager"], correctAnswer: 1 },
+        { subject: "Operating System Basics", question: "Which utility reorganizes scattered files on a mechanical Hard Disk Drive to speed up read speeds?", options: ["Disk Cleanup", "Windows Update", "Disk Defragmentation", "Task Manager"], correctAnswer: 2 },
+        { subject: "Operating System Basics", question: "Why should you never defragment a modern Solid State Drive (SSD)?", options: ["Because SSDs do not hold data.", "Because it deletes all your files.", "Because it degrades the SSD's lifespan unnecessarily.", "Because it changes the file system to Linux."], correctAnswer: 2 },
+        { subject: "Operating System Basics", question: "What is the most important maintenance task to protect against hardware failure or ransomware?", options: ["Changing desktop backgrounds.", "Creating regular Backups to an external drive or cloud.", "Emptying the Recycle Bin.", "Uninstalling old games."], correctAnswer: 1 },
+
+        // --- COMPONENTS ---
+        { subject: "Computer Components", question: "What do the ratings '450W' or '750W' refer to on a Power Supply Unit?", options: ["Storage capacity.", "Processing speed.", "Wattage (Power output).", "Cooling fan speed."], correctAnswer: 2 },
+        { subject: "Computer Components", question: "What does VRAM stand for in a Graphics Processing Unit (GPU)?", options: ["Virtual Random Access Memory", "Video Random Access Memory", "Visual Read Only Memory", "Volatile Random Access Memory"], correctAnswer: 1 },
+        { subject: "Computer Components", question: "Which motherboard slot is used to install expansion cards like GPUs and Wi-Fi cards?", options: ["RAM DIMM", "CPU Socket", "PCIe Slot", "SATA Port"], correctAnswer: 2 },
+        { subject: "Computer Components", question: "What is Thermal Paste used for?", options: ["To glue the motherboard to the case.", "To transfer heat efficiently between the CPU and the Heatsink.", "To fix broken wires.", "To clean the monitor."], correctAnswer: 1 },
+        { subject: "Computer Components", question: "What does the Chipset (PCH) act as on a motherboard?", options: ["The power generator.", "The cooling unit.", "The 'traffic controller' managing data flow between the CPU, RAM, storage, and ports.", "The main display output."], correctAnswer: 2 },
+        { subject: "Computer Components", question: "What are SATA ports primarily used for?", options: ["Plugging in headphones.", "Connecting traditional HDDs and 2.5-inch SSDs.", "Connecting the monitor.", "Powering the CPU."], correctAnswer: 1 },
+        { subject: "Computer Components", question: "What is the 24-Pin ATX connector used for?", options: ["To connect the mouse.", "To provide main power to the motherboard.", "To connect to the internet.", "To transfer video to the GPU."], correctAnswer: 1 },
+        { subject: "Computer Components", question: "Which storage interface uses tiny slots for ultra-fast stick-shaped SSDs that screw flat directly onto the motherboard?", options: ["SATA", "PCIe x16", "M.2 NVMe", "USB Type-A"], correctAnswer: 2 },
+        { subject: "Computer Components", question: "What does the Southbridge traditionally manage?", options: ["Fast connections like RAM and GPU.", "The CPU power.", "Slower connections like USB and Audio.", "The system clock."], correctAnswer: 2 },
+        { subject: "Computer Components", question: "Which connection uses fiber optic light for zero interference digital audio?", options: ["HDMI", "Optical Audio (TOSLINK)", "3.5mm Pink Jack", "DisplayPort"], correctAnswer: 1 },
+        { subject: "Computer Components", question: "What is an AIO in computer components?", options: ["All-In-One Liquid Cooling system.", "Artificial Intelligence Operator.", "Analog Input Output.", "Audio Interface Optimizer."], correctAnswer: 0 },
+        { subject: "Computer Components", question: "Which port shares the Type-C shape but offers massive data speeds for external GPUs and high-end docks?", options: ["VGA", "Thunderbolt", "HDMI", "Ethernet"], correctAnswer: 1 },
+
+        // --- MS WORD & CYBER ---
+        { subject: "MS Word", question: "If you want to duplicate text without retyping it, which shortcuts do you use?", options: ["Ctrl + X then Ctrl + V", "Ctrl + C then Ctrl + V", "Ctrl + Z then Ctrl + Y", "Ctrl + S then Ctrl + P"], correctAnswer: 1 },
+        { subject: "MS Word", question: "What is the primary function of the 'Home' tab in MS Word?", options: ["It holds your everyday tools for typing and formatting.", "It inserts pictures and shapes.", "It changes page margins.", "It adds watermarks."], correctAnswer: 0 },
+        { subject: "MS Word", question: "How do you apply 'Underline' to an important word?", options: ["Click 'I'", "Click 'B'", "Click 'U'", "Click 'A'"], correctAnswer: 2 },
+        { subject: "Cyber Security", question: "Why should you never use Free Public Wi-Fi for banking?", options: ["It uses up your data allowance.", "A hacker can read the invisible Wi-Fi waves to steal your login.", "The bank website will block you.", "It makes your phone hot."], correctAnswer: 1 },
+        { subject: "Cyber Security", question: "What is the ultimate security trick to add a double-lock to your accounts?", options: ["Firewall", "Antivirus", "Two-Factor Authentication (2FA)", "Incognito Mode"], correctAnswer: 2 }
     ]
 ];
 
