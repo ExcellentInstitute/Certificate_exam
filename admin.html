@@ -198,7 +198,6 @@
         function refreshDashboard() {
             document.getElementById('loading-indicator').style.display = 'block';
             
-            // We fetch Live Exams, Results, AND the Main Database to cross-check eligibility
             Promise.all([
                 fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'admin_get_live_exams', pass: masterPass }) }).then(res => res.json()),
                 fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'admin_get_results', pass: masterPass }) }).then(res => res.json()),
@@ -206,38 +205,47 @@
             ]).then(([liveResponse, resultResponse, dbResponse]) => {
                 document.getElementById('loading-indicator').style.display = 'none';
                 
-                if (liveResponse.data) renderLiveTables(liveResponse.data);
-                if (resultResponse.data) renderResultsTable(resultResponse.data);
+                let liveData = liveResponse.data || [];
+                let resultsData = resultResponse.data || [];
+
+                if (liveResponse.data) renderLiveTables(liveData);
+                if (resultResponse.data) renderResultsTable(resultsData);
                 
-                // Process Eligibility
-                if (dbResponse.students && resultResponse.data) {
-                    renderPipelineTables(dbResponse.students, resultResponse.data);
+                if (dbResponse.students) {
+                    renderPipelineTables(dbResponse.students, resultsData, liveData);
                 }
             }).catch(err => console.error("Polling error:", err));
         }
 
         // ==========================================
-        // RENDER PIPELINE LISTS (TOP 10 & WAITLIST)
+        // STRICT PIPELINE FILTERING (TOP 10 & WAITLIST)
         // ==========================================
-        function renderPipelineTables(allStudents, completedResults) {
+        function renderPipelineTables(allStudents, completedResults, liveExams) {
             const eligibleList = document.getElementById('eligible-list');
             const upcomingList = document.getElementById('upcoming-list');
             eligibleList.innerHTML = "";
             upcomingList.innerHTML = "";
 
-            // Create a set of IDs for students who already took the exam
-            const completedIds = new Set(completedResults.map(r => String(r.id).trim()));
+            // Create strictly normalized sets for cross-checking (forces Uppercase and trims spaces)
+            const completedIds = new Set(completedResults.map(r => String(r.id || "").trim().toUpperCase()));
+            const liveIds = new Set(liveExams.map(r => String(r.id || "").trim().toUpperCase()));
+            
             let pendingStudents = [];
             const now = new Date();
 
             allStudents.forEach(st => {
-                // Skip if they already completed the exam
-                if (completedIds.has(String(st.id).trim()) || completedIds.has(String(st.phone).trim())) return;
+                let sId = String(st.id || "").trim().toUpperCase();
+                let sPhone = String(st.phone || "").trim().toUpperCase();
+
+                // STRICT FILTER: If they are in the Results list OR currently taking the exam (Live/Waiting), SKIP THEM.
+                if (completedIds.has(sId) || completedIds.has(sPhone) || liveIds.has(sId) || liveIds.has(sPhone)) {
+                    return; 
+                }
 
                 let admissionDate = new Date(st.date);
                 let durationMonths = parseInt(st.duration);
 
-                // Calculate their course completion date regardless of if it passed
+                // Calculate their course completion date
                 if (!isNaN(durationMonths) && admissionDate instanceof Date && !isNaN(admissionDate)) {
                     let completionDate = new Date(admissionDate);
                     completionDate.setMonth(completionDate.getMonth() + durationMonths);
