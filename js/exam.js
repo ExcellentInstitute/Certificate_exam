@@ -97,10 +97,11 @@ function evaluateTyping() {
 function calculateMCQ() {
     let mcqMarks = 0;
     let subjectMarks = {};
-    const examData = questionBank["CCA"]; 
     
-    examData.mcqs.forEach((q, index) => {
-        // Initialize the subject in our tracker if it doesn't exist yet
+    // Check against the randomized 175-question paper we built in exam.html
+    const activeQuestions = window.activeExamPaper; 
+    
+    activeQuestions.forEach((q, index) => {
         if (!subjectMarks[q.subject]) {
             subjectMarks[q.subject] = { scored: 0, total: 2 };
         } else {
