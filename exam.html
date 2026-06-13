@@ -34,7 +34,7 @@
         .submit-btn:hover { background: #218838; }
     </style>
 </head>
-<body onload="initExam()">
+<body>
 
     <div id="lock-screen">
         <h1><i class="fa-solid fa-triangle-exclamation"></i> EXAM PAUSED</h1>
@@ -118,10 +118,17 @@
                 mcqContainer.innerHTML += html;
             });
 
-            // Randomly picks a paragraph from the array
             const randomTest = examData.typingTests[Math.floor(Math.random() * examData.typingTests.length)];
             document.getElementById('typing-source').innerText = randomTest.text;
         }
+
+        // SAFE STARTUP LOGIC: This ensures everything loads perfectly in order
+        document.addEventListener('DOMContentLoaded', () => {
+            initExam();
+            if (typeof examStartTime !== 'undefined') {
+                examStartTime = new Date().getTime(); // Starts the timer safely
+            }
+        });
     </script>
 </body>
 </html>
