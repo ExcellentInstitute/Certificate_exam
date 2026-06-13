@@ -1316,6 +1316,630 @@ const questionBatches = [
             ],
             correctAnswer: 2
         }
+    ],
+    [
+        // ==========================================
+        // BATCH 8: MS WORD
+        // ==========================================
+        {
+            subject: "MS Word",
+            question: "Which alignment option is best used for main titles on a page?",
+            options: ["Left Align", "Center Align", "Right Align", "Justify Align"],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS Word",
+            question: "When writing a formal letter, what is the best way to jump perfectly and indent your text instead of using the Spacebar?",
+            options: ["Press the Enter key", "Use the Page Break tool", "Press the Tab key", "Change the Page Margins"],
+            correctAnswer: 2
+        },
+        {
+            subject: "MS Word",
+            question: "What are 'Margins' in MS Word?",
+            options: ["The colorful borders around pictures.", "The blank white borders around the edges of your paper.", "The spaces between lines of text.", "The columns that split text side-by-side."],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS Word",
+            question: "If you want to fit more words onto a single page, what should you change your Margins to?",
+            options: ["Wide", "Normal", "Narrow", "Landscape"],
+            correctAnswer: 2
+        },
+        {
+            subject: "MS Word",
+            question: "What tool allows you to draw perfect arrows or stars in your document?",
+            options: ["Format Painter", "Insert > Shapes", "SmartArt", "Page Borders"],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS Word",
+            question: "If you want to show a company's profit or student attendance using a Pie Chart or Bar Graph, which tab should you use?",
+            options: ["Home tab", "Design tab", "Layout tab", "Insert tab"],
+            correctAnswer: 3
+        },
+        {
+            subject: "MS Word",
+            question: "What is the function of the 'Table' tool in MS Word?",
+            options: ["To format the background color.", "To create boxes that keep information organized, like a class routine.", "To add watermarks.", "To check spelling."],
+            correctAnswer: 1
+        },
+
+        // ==========================================
+        // BATCH 8: MS EXCEL
+        // ==========================================
+        {
+            subject: "MS Excel",
+            question: "What is an Excel 'Workbook'?",
+            options: ["A single cell.", "A fresh, empty digital notebook ready for your math and lists.", "A printed copy of your data.", "A tool to draw shapes."],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS Excel",
+            question: "Which keyboard shortcut opens a completely new, empty notebook in Excel?",
+            options: ["Ctrl + N", "Ctrl + O", "Ctrl + S", "Ctrl + P"],
+            correctAnswer: 0
+        },
+        {
+            subject: "MS Excel",
+            question: "If you accidentally delete your whole homework in Excel, which 'Time Machine' button brings it back exactly how it was?",
+            options: ["Redo (Ctrl + Y)", "Undo (Ctrl + Z)", "Copy (Ctrl + C)", "Find (Ctrl + F)"],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS Excel",
+            question: "When you want to melt 5 or 6 small boxes into one giant title box, which tool do you use?",
+            options: ["Wrap Text", "Conditional Formatting", "Merge & Center", "Data Validation"],
+            correctAnswer: 2
+        },
+        {
+            subject: "MS Excel",
+            question: "If you type '500' in a cell, how do you tell Excel that it is money (₹500) and not just a regular number?",
+            options: ["Type the ₹ symbol manually.", "Change the drop-down menu in the Home tab from 'General' to 'Currency'.", "Use the Format Painter.", "Make the text bold."],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS Excel",
+            question: "What is the main advantage of typing '=A1+B1' instead of just adding the numbers in your head?",
+            options: ["It looks more professional.", "It changes the color of the box.", "If you change the numbers in A1 later, the answer magically updates all by itself.", "It locks the cell from being deleted."],
+            correctAnswer: 2
+        },
+        {
+            subject: "MS Excel",
+            question: "Which tool acts as a 'Lightning Calculator' to instantly add up a shopping list of 20 items?",
+            options: ["Flash Fill", "AutoSum", "Sort A to Z", "Remove Duplicates"],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS Excel",
+            question: "How do you add a new, blank row in the middle of an alphabetical list without erasing anything?",
+            options: ["Press the Enter key 5 times.", "Right-click the row number on the left side and click 'Insert'.", "Use the AutoSum tool.", "Double-click the line between columns."],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS Excel",
+            question: "What are 'Sheets' in an MS Excel file?",
+            options: ["Different colored fonts.", "The grey grid lines.", "Multiple pages inside one single Excel file.", "The printed copies of your work."],
+            correctAnswer: 2
+        },
+        {
+            subject: "MS Excel",
+            question: "If you spelled a city name wrong 50 times in a huge list, which tool fixes the entire workbook in one second?",
+            options: ["Find and Replace", "Sort", "Filter", "Data Validation"],
+            correctAnswer: 0
+        },
+
+        // ==========================================
+        // BATCH 8: MS POWERPOINT
+        // ==========================================
+        {
+            subject: "MS PowerPoint",
+            question: "What is a 'Slide' in PowerPoint?",
+            options: ["A transition animation.", "A single screen or page of your presentation.", "A tool to draw shapes.", "The main Ribbon menu."],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS PowerPoint",
+            question: "How do you make text stand out on a big projector screen?",
+            options: ["Make it italic.", "Change it to a tiny font size.", "Make the font bigger and use the 'B' button to make it Bold.", "Change the slide theme to white."],
+            correctAnswer: 2
+        },
+        {
+            subject: "MS PowerPoint",
+            question: "Where should main titles always sit on a presentation slide?",
+            options: ["In the bottom left corner.", "Directly in the middle of the slide (Center Align).", "On the far right side.", "Outside the text box."],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS PowerPoint",
+            question: "What can you choose as a background using the 'Format Background' tool?",
+            options: ["Only solid black or white.", "A solid color, a fading gradient, or even a photograph.", "Only video files.", "Only Excel charts."],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS PowerPoint",
+            question: "How do you change the size of an inserted picture?",
+            options: ["Use the 'Crop' tool.", "Grab the tiny circles on the corners and drag them.", "Use the 'Group' function.", "Press Ctrl + >."],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS PowerPoint",
+            question: "If you have three pictures and want them to line up perfectly straight without guessing, what tool should you use?",
+            options: ["SmartArt", "Picture Format > Align > Align Middle", "Transitions", "Bring to Front"],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS PowerPoint",
+            question: "What do Green Star ('Entrance') animations do?",
+            options: ["Make a picture pulse or spin.", "Make a picture fly away when you are done.", "Make a picture wait hidden and fly onto the screen when you click.", "Change the slide to the next page."],
+            correctAnswer: 2
+        },
+        {
+            subject: "MS PowerPoint",
+            question: "How do you instantly create a neat grid to show a class routine or comparison data on a slide?",
+            options: ["Insert > Table", "Insert > Chart", "Insert > SmartArt", "Design > Themes"],
+            correctAnswer: 0
+        },
+
+        // ==========================================
+        // BATCH 8: CYBER SECURITY
+        // ==========================================
+        {
+            subject: "Cyber Security",
+            question: "What is the main goal of Cyber Security?",
+            options: ["To make your internet connection faster.", "To practice protecting your phones, computers, and personal information from bad people.", "To build new computer hardware.", "To design presentation slides."],
+            correctAnswer: 1
+        },
+        {
+            subject: "Cyber Security",
+            question: "Why is '123456' a terrible password?",
+            options: ["It is too long to remember.", "A hacker can guess it in exactly two seconds using a robot program.", "It uses too many symbols.", "Computers do not allow numbers in passwords."],
+            correctAnswer: 1
+        },
+        {
+            subject: "Cyber Security",
+            question: "What makes a 'Super Password' strong?",
+            options: ["Using your birthdate.", "Making it exactly 6 characters long.", "Using a mix of Capital letters, small letters, numbers, and symbols.", "Using your best friend's name."],
+            correctAnswer: 2
+        },
+        {
+            subject: "Cyber Security",
+            question: "When should you share your password with your best friend?",
+            options: ["Only if they ask nicely.", "If they need to check your email.", "NEVER. Your password belongs to YOU alone.", "If they share theirs with you first."],
+            correctAnswer: 2
+        },
+        {
+            subject: "Cyber Security",
+            question: "How can you spot a fake 'Phishing' message?",
+            options: ["It will always have a red background.", "Check the sender's actual email address for weird spellings, not just their name.", "It will ask you to download an antivirus.", "It will come from a known friend."],
+            correctAnswer: 1
+        },
+        {
+            subject: "Cyber Security",
+            question: "What is 'Malware'?",
+            options: ["Hardware that is broken.", "Invisible, bad programs that can delete your files or spy on you.", "A strong security firewall.", "A program used to type documents."],
+            correctAnswer: 1
+        },
+
+        // ==========================================
+        // BATCH 8: FUNDAMENTALS, OS & COMPONENTS
+        // ==========================================
+        {
+            subject: "Computer Fundamentals",
+            question: "Where do we use computers today?",
+            options: ["Only in schools.", "Only in hospitals.", "Only for playing games.", "Everywhere! In banking, hospitals, business, railways, and education."],
+            correctAnswer: 3
+        },
+        {
+            subject: "Computer Fundamentals",
+            question: "What did John Presper Eckert and John Mauchly invent in 1945?",
+            options: ["The Abacus", "ENIAC", "The Microprocessor", "Windows OS"],
+            correctAnswer: 1
+        },
+        {
+            subject: "Computer Fundamentals",
+            question: "Which type of computer is a mix of both Digital and Analog, often used in hospital ICU rooms?",
+            options: ["Supercomputer", "Hybrid Computer", "Minicomputer", "Mainframe Computer"],
+            correctAnswer: 1
+        },
+        {
+            subject: "Computer Fundamentals",
+            question: "What is the 'Desktop' in an Operating System?",
+            options: ["The physical table the computer sits on.", "The primary workspace on your screen when you log into an OS.", "The hard drive storage space.", "The main power cable."],
+            correctAnswer: 1
+        },
+        {
+            subject: "Operating System Basics",
+            question: "What is a 'File' in a computer system?",
+            options: ["A physical folder.", "A container used to organize other folders.", "A container for data (like text, images, music) identified by its extension.", "A type of virus."],
+            correctAnswer: 2
+        },
+        {
+            subject: "Operating System Basics",
+            question: "Which shortcut key 'Cuts' a file to prepare it to be moved to a new location?",
+            options: ["Ctrl + C", "Ctrl + V", "Ctrl + Z", "Ctrl + X"],
+            correctAnswer: 3
+        },
+        {
+            subject: "Operating System Basics",
+            question: "In the modern Windows Settings app, where do you go to change your desktop background and system colors?",
+            options: ["Network and Internet", "Personalization", "User Accounts", "Hardware and Sound"],
+            correctAnswer: 1
+        },
+        {
+            subject: "Computer Components",
+            question: "Which traditional, rectangular USB port is the standard for most older peripherals?",
+            options: ["USB Type-C", "USB Type-B", "USB Type-A", "Thunderbolt"],
+            correctAnswer: 2
+        },
+        {
+            subject: "Computer Components",
+            question: "Which Display port is the standard for consumer electronics like modern TVs?",
+            options: ["VGA", "DVI", "DisplayPort (DP)", "HDMI"],
+            correctAnswer: 3
+        },
+        {
+            subject: "Computer Components",
+            question: "Where does the central processor (CPU) sit on the motherboard?",
+            options: ["In the PCIe Slot", "In the RAM Slot", "In the CPU Socket", "In the SATA Port"],
+            correctAnswer: 2
+        },
+        {
+            subject: "Computer Components",
+            question: "What are PCIe Slots used for on a motherboard?",
+            options: ["To install the CPU.", "To install RAM sticks.", "To install expansion cards like GPUs and Wi-Fi cards.", "To connect the power supply."],
+            correctAnswer: 2
+        }
+    ],
+    [
+        // ==========================================
+        // BATCH 9: TYPING THEORY
+        // ==========================================
+        {
+            subject: "Typing Theory",
+            question: "When measuring typing speed, what is considered a good WPM (Words Per Minute) goal for beginners?",
+            options: [
+                "10 WPM",
+                "30 WPM",
+                "60 WPM",
+                "100 WPM"
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "Typing Theory",
+            question: "When your hands are in the proper typing position, which finger should you use to press the Spacebar?",
+            options: [
+                "The left or right Index finger.",
+                "The left or right Pinky finger.",
+                "Whichever Thumb feels most comfortable.",
+                "The right Middle finger."
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "Typing Theory",
+            question: "What does the keyboard shortcut 'Shift + Arrow Keys' do?",
+            options: [
+                "Moves the cursor one full word at a time.",
+                "Highlights text letter-by-letter using the keyboard.",
+                "Deletes the selected text.",
+                "Switches to a different open app."
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "Typing Theory",
+            question: "When using the Numpad (Numeric Keypad), which fingers should rest on the 4, 5, and 6 keys?",
+            options: [
+                "Index, Middle, and Ring fingers of the right hand.",
+                "Index, Middle, and Ring fingers of the left hand.",
+                "Thumb, Index, and Middle fingers of the right hand.",
+                "Middle, Ring, and Pinky fingers of the right hand."
+            ],
+            correctAnswer: 0
+        },
+
+        // ==========================================
+        // BATCH 9: MS WORD & EXCEL
+        // ==========================================
+        {
+            subject: "MS Word",
+            question: "What does the Microsoft Word logo look like on your computer screen?",
+            options: [
+                "A bright orange icon with the letter 'P'.",
+                "A dark green icon with a white letter 'X'.",
+                "A dark blue icon with a white letter 'W'.",
+                "A red icon with a white 'A'."
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "MS Word",
+            question: "When you first open MS Word, what should you click to get a clean, fresh page?",
+            options: [
+                "Blank Document",
+                "Insert Page Break",
+                "Format Painter",
+                "Newspaper Columns"
+            ],
+            correctAnswer: 0
+        },
+        {
+            subject: "MS Word",
+            question: "Which keyboard shortcut opens the print menu instantly?",
+            options: [
+                "Ctrl + C",
+                "Ctrl + Z",
+                "Ctrl + P",
+                "Alt + F4"
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "MS Word",
+            question: "After inserting a picture into MS Word, how do you make it bigger or smaller?",
+            options: [
+                "Change the Page Margins.",
+                "Drag the tiny circles on the corners of the picture.",
+                "Use the 'Crop' tool.",
+                "Change the Font Size."
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS Excel",
+            question: "Which keyboard shortcut is used to open a completely new, empty notebook in Excel anytime?",
+            options: [
+                "Ctrl + N",
+                "Ctrl + S",
+                "Ctrl + Z",
+                "Ctrl + E"
+            ],
+            correctAnswer: 0
+        },
+        {
+            subject: "MS Excel",
+            question: "If you want to move your selector between boxes (cells) without using a mouse, what should you use?",
+            options: [
+                "The Spacebar",
+                "The Arrow Keys",
+                "The Enter Key",
+                "The Shift Key"
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS Excel",
+            question: "What happens if you click a cell with a spelling mistake and just start typing your correction immediately?",
+            options: [
+                "It will insert the new letter perfectly.",
+                "It will erase the whole box and overwrite everything.",
+                "It will open the Data Validation menu.",
+                "It will change the cell color to red."
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS Excel",
+            question: "What does the 'Paint Bucket' icon do in the Home tab?",
+            options: [
+                "It changes the color of the text.",
+                "It draws thick dark borders around the box.",
+                "It colors the background of the selected box.",
+                "It removes duplicate entries."
+            ],
+            correctAnswer: 2
+        },
+
+        // ==========================================
+        // BATCH 9: MS POWERPOINT
+        // ==========================================
+        {
+            subject: "MS PowerPoint",
+            question: "What does the Microsoft PowerPoint logo look like?",
+            options: [
+                "A dark blue icon with a white letter 'W'.",
+                "A dark green icon with a white letter 'X'.",
+                "A bright orange icon with the letter 'P'.",
+                "A yellow icon with a white 'Y'."
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "MS PowerPoint",
+            question: "Which shortcut instantly creates a new blank slide in PowerPoint?",
+            options: [
+                "Ctrl + N",
+                "Ctrl + M",
+                "Ctrl + S",
+                "Ctrl + P"
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS PowerPoint",
+            question: "When using Slide Transitions, what does the 'Push' effect do?",
+            options: [
+                "It makes the slide dissolve into black.",
+                "It beautifully melts one slide into the next.",
+                "It makes the slide slide up like a piece of paper.",
+                "It makes the picture spin in a circle."
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "MS PowerPoint",
+            question: "In the Animations tab, what do Green Stars represent?",
+            options: [
+                "Exit animations (flying away).",
+                "Entrance animations (flying onto the screen).",
+                "Emphasis animations (pulsing or spinning).",
+                "Slide Transitions."
+            ],
+            correctAnswer: 1
+        },
+
+        // ==========================================
+        // BATCH 9: CYBER SECURITY
+        // ==========================================
+        {
+            subject: "Cyber Security",
+            question: "If you receive an SMS saying 'You won a free iPhone! Click here to claim it!', what is this most likely an example of?",
+            options: [
+                "Ransomware",
+                "A Trojan Horse",
+                "Phishing",
+                "A real prize from Apple"
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "Cyber Security",
+            question: "What is the safest way to download new apps or games to your phone?",
+            options: [
+                "Download them from links in random emails.",
+                "Download free games from weird websites.",
+                "Only download apps from the official Google Play Store or Apple App Store.",
+                "Download them using Public Wi-Fi."
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "Cyber Security",
+            question: "Why should you NEVER click on a flashing website pop-up that says 'YOUR COMPUTER HAS A VIRUS!'?",
+            options: [
+                "Because it will turn off your computer.",
+                "Because it is a fake trick to scare you into giving them money.",
+                "Because clicking it will format your hard drive.",
+                "Because your Antivirus already fixed it."
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "Cyber Security",
+            question: "What is a major danger of having your social media account set to 'Public'?",
+            options: [
+                "You cannot post photos anymore.",
+                "Your account will automatically be deleted after 30 days.",
+                "Every stranger in the entire world can watch what you do.",
+                "Your phone battery will drain faster."
+            ],
+            correctAnswer: 2
+        },
+
+        // ==========================================
+        // BATCH 9: FUNDAMENTALS & COMPONENTS
+        // ==========================================
+        {
+            subject: "Computer Fundamentals",
+            question: "Which type of computer plays with numbers (0 and 1) and alphabets, and is mostly used for normal office work?",
+            options: [
+                "Analog Computer",
+                "Digital Computer",
+                "Hybrid Computer",
+                "Supercomputer"
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "Computer Fundamentals",
+            question: "What is a 'Minicomputer'?",
+            options: [
+                "A small, everyday computer built for one person (PC).",
+                "The biggest and fastest computer used for space research.",
+                "A medium-sized machine that allows several people to work on it at the exact same time.",
+                "A computer used exclusively to predict the weather."
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "Computer Fundamentals",
+            question: "Why is 'Internal Memory' (Main Memory) so fast?",
+            options: [
+                "Because it uses massive hard drives.",
+                "Because it lives right next to the CPU Brain.",
+                "Because it is connected to the internet.",
+                "Because it uses shiny laser discs."
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "Computer Fundamentals",
+            question: "How much data could a traditional, flexible Floppy Disk hold?",
+            options: [
+                "Terabytes of data.",
+                "Hundreds of Gigabytes.",
+                "Very little data (only 1MB to 1GB).",
+                "No data at all."
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "Computer Fundamentals",
+            question: "What is the function of a 'Sound Card' inside a computer?",
+            options: [
+                "It prints photos in high quality.",
+                "It processes audio so you can record your voice or play songs.",
+                "It stores large video games permanently.",
+                "It blocks hackers from the internet."
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "Computer Components",
+            question: "On a computer's audio panel, what is the Pink 3.5mm jack used for?",
+            options: [
+                "Speakers Out",
+                "Line In",
+                "Microphone In (Mic In)",
+                "Network Connection"
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "Operating System Basics",
+            question: "What does the 'Process Management' function of an Operating System do?",
+            options: [
+                "It tracks the primary memory (RAM).",
+                "It allocates CPU time to active programs, ensuring multiple applications can run simultaneously without crashing.",
+                "It creates new user accounts and passwords.",
+                "It manages Bluetooth headsets."
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "Operating System Basics",
+            question: "Which file system does Microsoft Windows primarily use?",
+            options: [
+                "ext4",
+                "NTFS (New Technology File System)",
+                "FAT32",
+                "macOS Extended"
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "Operating System Basics",
+            question: "In the Windows taskbar, what is the area on the far right that displays the clock, volume, and network status called?",
+            options: [
+                "The Start Menu",
+                "The Desktop",
+                "The System Tray (Notification Area)",
+                "The Control Panel"
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "Computer Networking Basics",
+            question: "What does 'WAN' stand for?",
+            options: [
+                "Wired Area Network",
+                "Wireless Access Node",
+                "Wide Area Network",
+                "Web Application Network"
+            ],
+            correctAnswer: 2
+        }
     ]
 ];
 
