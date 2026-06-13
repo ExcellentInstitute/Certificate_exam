@@ -815,6 +815,507 @@ const questionBatches = [
             ],
             correctAnswer: 2
         }
+    ],
+    [
+        // ==========================================
+        // BATCH 6: TYPING & NAVIGATION
+        // ==========================================
+        {
+            subject: "Typing Theory",
+            question: "When measuring typing speed, what does WPM stand for?",
+            options: [
+                "Words Per Minute",
+                "Words Per Metric",
+                "Working Processing Memory",
+                "Windows Per Minute"
+            ],
+            correctAnswer: 0
+        },
+        {
+            subject: "Typing Theory",
+            question: "When your hands are placed on the Home Row, which finger is strictly used to press the Spacebar?",
+            options: [
+                "The Index finger",
+                "The Pinky finger",
+                "The Middle finger",
+                "The Thumb"
+            ],
+            correctAnswer: 3
+        },
+        {
+            subject: "Typing Theory",
+            question: "What do the 'Home' and 'End' keys do on the keyboard?",
+            options: [
+                "They turn the computer on and off.",
+                "They move the cursor to the exact beginning or end of the line you are typing on.",
+                "They close the current web browser tab.",
+                "They switch between open applications."
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "Typing Theory",
+            question: "When should you use the Caps Lock key?",
+            options: [
+                "To capitalize just the first letter of a sentence.",
+                "When you want EVERY letter you type to be CAPITALIZED.",
+                "To type the symbols on top of the number keys.",
+                "To lock the computer screen."
+            ],
+            correctAnswer: 1
+        },
+
+        // ==========================================
+        // BATCH 6: MS WORD
+        // ==========================================
+        {
+            subject: "MS Word",
+            question: "Which keyboard shortcut is used to quickly Save your document to prevent losing your hard work?",
+            options: [
+                "Ctrl + C",
+                "Ctrl + S",
+                "Ctrl + P",
+                "Ctrl + X"
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS Word",
+            question: "If you need to write a neat list of items without typing numbers manually, which tool in the Home tab should you use?",
+            options: [
+                "Format Painter",
+                "Line Spacing",
+                "Bullets or Numbering",
+                "SmartArt"
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "MS Word",
+            question: "Before typing a document, where should you click to ensure your page size is set to 'A4'?",
+            options: [
+                "Home tab > Font Size",
+                "Insert tab > Pictures",
+                "Design tab > Page Borders",
+                "Layout tab > Size"
+            ],
+            correctAnswer: 3
+        },
+
+        // ==========================================
+        // BATCH 6: MS EXCEL
+        // ==========================================
+        {
+            subject: "MS Excel",
+            question: "How do you create a giant title box across the top of an Excel sheet (like 'Excellent Institute Routine')?",
+            options: [
+                "Change the Font Size to 72.",
+                "Highlight several small boxes and click 'Merge & Center'.",
+                "Use the 'Wrap Text' button.",
+                "Draw a Text Box over the cells."
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS Excel",
+            question: "Which tool allows you to force users to choose from a clickable drop-down menu (like 'Pass' or 'Fail') instead of typing?",
+            options: [
+                "Remove Duplicates",
+                "Data Validation",
+                "Flash Fill",
+                "AutoSum"
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS Excel",
+            question: "If someone typed 'Rahul Sharma' in one box, which tool perfectly slices the first and last name into two separate boxes?",
+            options: [
+                "Find and Replace",
+                "Merge & Center",
+                "Text to Columns",
+                "Conditional Formatting"
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "MS Excel",
+            question: "Which type of chart is perfect for showing fractions, sliced up like a pizza?",
+            options: [
+                "Bar Graph",
+                "Pie Chart",
+                "Line Graph",
+                "Column Chart"
+            ],
+            correctAnswer: 1
+        },
+
+        // ==========================================
+        // BATCH 6: MS POWERPOINT
+        // ==========================================
+        {
+            subject: "MS PowerPoint",
+            question: "Where do you go to find a gallery of beautiful, ready-made background styles for your slides?",
+            options: [
+                "Home tab > Font Color",
+                "Insert tab > SmartArt",
+                "Design tab > Themes",
+                "Animations tab > Emphasis"
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "MS PowerPoint",
+            question: "If you want to draw a perfect arrow or star on your slide, what should you click?",
+            options: [
+                "Insert > Shapes",
+                "Design > Format Background",
+                "Home > Center Align",
+                "Transitions > Morph"
+            ],
+            correctAnswer: 0
+        },
+        {
+            subject: "MS PowerPoint",
+            question: "In custom animations, what does a Red Star ('Exit') effect do?",
+            options: [
+                "It makes a picture fly onto the screen.",
+                "It makes a picture pulse or spin to grab attention.",
+                "It makes the picture fly away or disappear when you are done talking about it.",
+                "It changes the slide background to red."
+            ],
+            correctAnswer: 2
+        },
+
+        // ==========================================
+        // BATCH 6: CYBER SECURITY
+        // ==========================================
+        {
+            subject: "Cyber Security",
+            question: "Which digital threat is similar to a virus, but can automatically jump from computer to computer on its own?",
+            options: [
+                "Trojan Horse",
+                "Phishing",
+                "Ransomware",
+                "Worm"
+            ],
+            correctAnswer: 3
+        },
+        {
+            subject: "Cyber Security",
+            question: "What acts as a digital barrier to block bad hackers from entering your computer from the internet?",
+            options: [
+                "Firewall",
+                "Antivirus",
+                "Virtual Private Network (VPN)",
+                "Encryption"
+            ],
+            correctAnswer: 0
+        },
+
+        // ==========================================
+        // BATCH 6: FUNDAMENTALS & COMPONENTS
+        // ==========================================
+        {
+            subject: "Computer Fundamentals",
+            question: "What is 'Humanware' in a computer system?",
+            options: [
+                "The physical mouse and keyboard.",
+                "The Operating System like Windows or Linux.",
+                "The humans, teachers, and students who turn on the computer and use it.",
+                "A type of malicious software."
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "Computer Fundamentals",
+            question: "Which type of storage device is shiny and uses bright laser lights to read your data instead of magnets?",
+            options: [
+                "Hard Disk Drive (HDD)",
+                "Floppy Disk",
+                "Optical Storage (CD / DVD)",
+                "Random Access Memory (RAM)"
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "Computer Fundamentals",
+            question: "Invented around 3000 BC, what is considered the very first manual calculating toy with beads?",
+            options: [
+                "Pascaline",
+                "Difference Engine",
+                "Analytical Engine",
+                "Abacus"
+            ],
+            correctAnswer: 3
+        },
+        {
+            subject: "Computer Components",
+            question: "Which port is used for a wired Local Area Network (LAN) connection to provide fast, stable internet?",
+            options: [
+                "HDMI",
+                "Ethernet (RJ-45)",
+                "TOSLINK",
+                "USB Type-C"
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "Computer Components",
+            question: "In computer air cooling, what is the role of the Heatsink and Fan?",
+            options: [
+                "To absorb heat from the CPU and blow it away so the part doesn't destroy itself.",
+                "To circulate liquid coolant through tubes.",
+                "To provide low-voltage DC power to the motherboard.",
+                "To process 3D graphics."
+            ],
+            correctAnswer: 0
+        }
+    ],
+    [
+        // ==========================================
+        // BATCH 7: TYPING THEORY & SHORTCUTS
+        // ==========================================
+        {
+            subject: "Typing Theory",
+            question: "What is the 'Golden Rule #1' for beginners learning touch typing?",
+            options: [
+                "Always type as fast as possible.",
+                "Never look at the keyboard!",
+                "Rest your wrists heavily on the desk.",
+                "Use only your index fingers."
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "Typing Theory",
+            question: "Where are the 'Function Keys' (F1-F12) located on a standard keyboard?",
+            options: [
+                "On the far right side.",
+                "In the center with the letters.",
+                "At the very top row.",
+                "Next to the spacebar."
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "Typing Theory",
+            question: "When typing a document, what does the shortcut 'Ctrl + F' do?",
+            options: [
+                "It opens the print menu.",
+                "It opens a search bar to find specific words in the document.",
+                "It formats the text.",
+                "It forces the program to close."
+            ],
+            correctAnswer: 1
+        },
+
+        // ==========================================
+        // BATCH 7: MS WORD
+        // ==========================================
+        {
+            subject: "MS Word",
+            question: "If you need a beautiful front page for a big project report, what feature should you use instead of making it manually?",
+            options: [
+                "Page Borders",
+                "Watermark",
+                "Insert > Cover Page",
+                "SmartArt"
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "MS Word",
+            question: "How do you make important words stand out by making them thicker and slanted?",
+            options: [
+                "Use the 'Cut' and 'Paste' tools.",
+                "Highlight them and click 'B' (Bold) and 'I' (Italic).",
+                "Change the Page Orientation.",
+                "Use the 'Bullets' button."
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS Word",
+            question: "Normally, MS Word forces you to type line by line. What should you use if you want text floating in the middle of a picture like a digital sticker?",
+            options: [
+                "A Text Box",
+                "A Header",
+                "A Footer",
+                "A Newspaper Column"
+            ],
+            correctAnswer: 0
+        },
+
+        // ==========================================
+        // BATCH 7: MS EXCEL
+        // ==========================================
+        {
+            subject: "MS Excel",
+            question: "When you print an Excel sheet, the light grey grid lines usually do NOT print. How do you draw real dark lines around your boxes?",
+            options: [
+                "Change the cell color to black.",
+                "Highlight them and use the 'Borders' button to choose 'All Borders'.",
+                "Use the 'Merge & Center' button.",
+                "Change the Number Style to Currency."
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS Excel",
+            question: "If you forgot to add a student in the middle of an alphabetical list, what is the best way to fix it without erasing anything?",
+            options: [
+                "Right-click the row number and click 'Insert' to get a brand new empty row.",
+                "Type over the next student's name.",
+                "Use the 'Remove Duplicates' tool.",
+                "Delete the whole column and start over."
+            ],
+            correctAnswer: 0
+        },
+        {
+            subject: "MS Excel",
+            question: "Which formula should you use to find the average marks of a student in cells A1 through A5?",
+            options: [
+                "=SUM(A1:A5)",
+                "=MAX(A1:A5)",
+                "=MIN(A1:A5)",
+                "=AVERAGE(A1:A5)"
+            ],
+            correctAnswer: 3
+        },
+
+        // ==========================================
+        // BATCH 7: MS POWERPOINT
+        // ==========================================
+        {
+            subject: "MS PowerPoint",
+            question: "If you want to save screen space while working, which shortcut hides or shows the Ribbon at the top?",
+            options: [
+                "Ctrl + S",
+                "Ctrl + F1",
+                "Alt + Tab",
+                "F5"
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS PowerPoint",
+            question: "What does the 'Send to Back' option do when you right-click a large picture?",
+            options: [
+                "It deletes the picture.",
+                "It slides the picture behind your text box, making your words readable again.",
+                "It moves the picture to the very last slide of the presentation.",
+                "It sends the picture in an email."
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS PowerPoint",
+            question: "When presenting like a professional, what is the difference between pressing 'F5' and 'Shift + F5'?",
+            options: [
+                "F5 saves the file; Shift + F5 closes the file.",
+                "F5 turns the screen black; Shift + F5 turns the screen white.",
+                "F5 starts the presentation from Slide 1; Shift + F5 starts from the current slide.",
+                "There is no difference."
+            ],
+            correctAnswer: 2
+        },
+
+        // ==========================================
+        // BATCH 7: CYBER SECURITY
+        // ==========================================
+        {
+            subject: "Cyber Security",
+            question: "What does Antivirus software do?",
+            options: [
+                "It makes your internet connection faster.",
+                "It scrambles your messages into a secret code.",
+                "It acts as a digital doctor, scanning files to catch and delete bad sicknesses before they hurt your data.",
+                "It creates strong passwords for you automatically."
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "Cyber Security",
+            question: "What is 'Encryption'?",
+            options: [
+                "Scrambling your messages into a secret code so thieves cannot read them.",
+                "Using a fingerprint to log into a computer.",
+                "Downloading a free game from a weird website.",
+                "Posting your location on social media."
+            ],
+            correctAnswer: 0
+        },
+        {
+            subject: "Cyber Security",
+            question: "To stay safe on social media, who should you accept friend requests from if your account is 'Private'?",
+            options: [
+                "Anyone who sends a request.",
+                "Only people you actually know in real life.",
+                "People with verified checkmarks.",
+                "Strangers who message you nicely."
+            ],
+            correctAnswer: 1
+        },
+
+        // ==========================================
+        // BATCH 7: FUNDAMENTALS & COMPONENTS
+        // ==========================================
+        {
+            subject: "Computer Fundamentals",
+            question: "Which of the following is an Input Device used to take a photo of a paper and put it inside the screen?",
+            options: [
+                "Printer",
+                "Scanner",
+                "Monitor",
+                "Speaker"
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "Computer Fundamentals",
+            question: "Which type of computer is a small, everyday machine built for one person, usually called a Personal Computer (PC)?",
+            options: [
+                "Mainframe Computer",
+                "Supercomputer",
+                "Microcomputer",
+                "Minicomputer"
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "Computer Fundamentals",
+            question: "What is the job of an 'Interpreter' translator software?",
+            options: [
+                "It reads an entire book of code and translates it all at once.",
+                "It blocks viruses from entering the computer.",
+                "It reads and translates code slowly, line-by-line.",
+                "It manages the computer's memory and hardware."
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "Computer Components",
+            question: "Which modern USB port features a reversible oval shape and supports high-speed data, video, and fast charging?",
+            options: [
+                "USB Type-A",
+                "USB Type-B",
+                "USB Type-C",
+                "VGA"
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "Computer Components",
+            question: "What is the primary function of the BIOS/UEFI chip on a motherboard?",
+            options: [
+                "To store files, movies, and games permanently.",
+                "To cool the CPU using liquid.",
+                "To initialize the hardware the moment you press the power button, before Windows even starts.",
+                "To connect the computer to Wi-Fi."
+            ],
+            correctAnswer: 2
+        }
     ]
 ];
 
