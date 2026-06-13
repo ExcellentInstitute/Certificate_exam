@@ -122,8 +122,9 @@
                 mcqContainer.innerHTML += html;
             });
 
-            // 3. Load Typing Test
-            document.getElementById('typing-source').innerText = examData.typingTest.text;
+            // 3. Load Typing Test (Picks a random paragraph from the bank)
+            const randomTest = examData.typingTests[Math.floor(Math.random() * examData.typingTests.length)];
+            document.getElementById('typing-source').innerText = randomTest.text;
         }
 
         // Placeholder for submitting data back to Google Apps Script
