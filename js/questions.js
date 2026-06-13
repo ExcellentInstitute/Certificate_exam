@@ -1940,6 +1940,265 @@ const questionBatches = [
             ],
             correctAnswer: 2
         }
+    ],
+    [
+        // ==========================================
+        // BATCH 10: THE FINAL 24 QUESTIONS
+        // ==========================================
+        {
+            subject: "Typing Theory",
+            question: "What is the 'Home Row' on a keyboard?",
+            options: [
+                "The very top row with the F1-F12 keys.",
+                "The middle horizontal row of letters (A, S, D, F...) where your fingers must always rest.",
+                "The number pad on the far right.",
+                "The row containing the Spacebar and Alt keys."
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "Typing Theory",
+            question: "When placing your hands on the Home Row, which key does your Left Pinky Finger rest on?",
+            options: ["A", "S", "D", "F"],
+            correctAnswer: 0
+        },
+        {
+            subject: "Typing Theory",
+            question: "When placing your hands on the Home Row, which key does your Right Pinky Finger rest on?",
+            options: ["J", "K", "L", "; (Semicolon)"],
+            correctAnswer: 3
+        },
+        {
+            subject: "Typing Theory",
+            question: "When practicing typing on a stool without back support, how often should you stand up and stretch to avoid pain?",
+            options: [
+                "10 minutes every hour.",
+                "2 minutes every hour.",
+                "5 minutes every 3 hours.",
+                "You do not need to take breaks."
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "Typing Theory",
+            question: "What does the rule 'Accuracy over Speed' mean for beginners?",
+            options: [
+                "Always type as fast as you can.",
+                "Speed is more important than spelling.",
+                "Type slowly and correctly first, because forcing speed early creates bad habits.",
+                "Only look at the keyboard if you want to type fast."
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "Typing Theory",
+            question: "What does the keyboard shortcut 'Ctrl + Y' do?",
+            options: [
+                "Copy",
+                "Paste",
+                "Undo the last mistake.",
+                "Redo (Re-applies an action you just Undid)."
+            ],
+            correctAnswer: 3
+        },
+        {
+            subject: "Typing Theory",
+            question: "What does the keyboard shortcut 'Ctrl + V' do?",
+            options: [
+                "Cuts the text.",
+                "Copies the text.",
+                "Paste (Places the text you just Copied or Cut).",
+                "Selects all text."
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "Computer Fundamentals",
+            question: "In the Data Processing Cycle, what is the 'Output'?",
+            options: [
+                "The raw information we give to the computer.",
+                "The final result the computer gives back to us to use.",
+                "The process of solving the math problem.",
+                "The keyboard and mouse."
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "Computer Fundamentals",
+            question: "Which computer is playfully known as the 'grandfather' of the computer world?",
+            options: [
+                "Microcomputer",
+                "Minicomputer",
+                "Mainframe Computer",
+                "Supercomputer"
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "Computer Fundamentals",
+            question: "What is the job of the Control Unit (C.U.) inside the CPU?",
+            options: [
+                "It prints documents.",
+                "It is the Math solver.",
+                "It is the Manager that controls everything and tells all other parts what to do step-by-step.",
+                "It stores photos permanently."
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "Computer Fundamentals",
+            question: "What does 'ROM' stand for in computer memory?",
+            options: [
+                "Random Only Memory",
+                "Read Only Memory",
+                "Real Operational Memory",
+                "Run On Machine"
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "Computer Fundamentals",
+            question: "Exactly how much data does one Megabyte (MB) hold?",
+            options: [
+                "1,024 Bytes",
+                "1,024 Kilobytes",
+                "1,024 Gigabytes",
+                "8 Bits"
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "Computer Fundamentals",
+            question: "What is the absolute smallest piece of data a computer can store (a single 0 or 1)?",
+            options: [
+                "A Byte",
+                "A Nibble",
+                "A Bit",
+                "A Kilobyte"
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "MS Word",
+            question: "If you want to draw a Water Cycle or a family tree without drawing circles manually, which tool provides ready-made diagrams?",
+            options: [
+                "SmartArt",
+                "WordArt",
+                "Format Painter",
+                "Page Borders"
+            ],
+            correctAnswer: 0
+        },
+        {
+            subject: "MS Excel",
+            question: "What does the formula '=MIN(A1:A5)' do?",
+            options: [
+                "Adds all the numbers together.",
+                "Finds the highest score.",
+                "Instantly finds the lowest score.",
+                "Finds the average score."
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "MS Excel",
+            question: "How do you rename a page like 'Sheet1' to '8th Class' in Excel?",
+            options: [
+                "Right-click the row number and click insert.",
+                "Double-click the name 'Sheet1' at the very bottom left corner and type the new name.",
+                "Go to the File menu and click Save As.",
+                "Use the Find and Replace tool."
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS Excel",
+            question: "What is the exact keyboard shortcut to instantly trigger the AutoSum tool?",
+            options: [
+                "Ctrl + S",
+                "Alt + =",
+                "Shift + F3",
+                "Ctrl + E"
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS PowerPoint",
+            question: "How do you apply a completely solid color or a photograph to your slide background instead of a theme?",
+            options: [
+                "Right-click the blank slide and choose 'Format Background'.",
+                "Use the 'Shape Fill' tool.",
+                "Insert a Text Box.",
+                "Use the 'Format Painter'."
+            ],
+            correctAnswer: 0
+        },
+        {
+            subject: "MS PowerPoint",
+            question: "What happens when you apply the 'Fade' transition between two slides?",
+            options: [
+                "Slide 1 will push upwards like a piece of paper.",
+                "Slide 1 will beautifully melt into Slide 2.",
+                "A yellow star will pulse.",
+                "The screen will turn black."
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "MS PowerPoint",
+            question: "What does a Yellow star ('Emphasis') animation do to a picture?",
+            options: [
+                "It makes the picture fly onto the screen.",
+                "It deletes the picture.",
+                "It makes the picture pulse or spin to grab attention while it is already on the screen.",
+                "It makes the picture fly away."
+            ],
+            correctAnswer: 2
+        },
+        {
+            subject: "Cyber Security",
+            question: "What type of bad program locks your photos and asks for money to unlock them?",
+            options: [
+                "Worm",
+                "Trojan Horse",
+                "Phishing",
+                "Ransomware"
+            ],
+            correctAnswer: 3
+        },
+        {
+            subject: "Cyber Security",
+            question: "Why is it important to update your Antivirus software every single week?",
+            options: [
+                "To make your Wi-Fi faster.",
+                "So it can catch new viruses and delete them before they hurt your data.",
+                "To clear your browsing history.",
+                "To free up space on your hard drive."
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "Cyber Security",
+            question: "What is the main danger of using Free Public Wi-Fi at a coffee shop?",
+            options: [
+                "The internet is too slow.",
+                "A hacker sitting nearby can look into the invisible Wi-Fi waves and read your passwords.",
+                "It will automatically delete your files.",
+                "It will turn off your Two-Factor Authentication."
+            ],
+            correctAnswer: 1
+        },
+        {
+            subject: "Computer Components",
+            question: "What does a Graphics Processing Unit (GPU) excel at compared to a standard CPU?",
+            options: [
+                "Storing files permanently.",
+                "Doing thousands of mathematical operations simultaneously to render images and video.",
+                "Connecting to a Local Area Network.",
+                "Cooling the motherboard."
+            ],
+            correctAnswer: 1
+        }
     ]
 ];
 
