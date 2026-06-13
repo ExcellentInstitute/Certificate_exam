@@ -7,140 +7,183 @@
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
     <style>
         :root {
-            --primary: #0056b3;
-            --primary-hover: #004494;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
             --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
+            --success-hover: #059669;
             --info: #0ea5e9;
-            --bg-color: #f4f7f6;
+            --info-hover: #0284c7;
+            --bg-color: #f0f4f8;
             --card-bg: #ffffff;
-            --text-main: #334155;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
         }
 
-        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-color); margin: 0; padding: 20px; color: var(--text-main); }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-color); margin: 0; padding: 20px; color: var(--text-dark); }
         
-        .header { background: linear-gradient(135deg, var(--primary), #2563eb); color: white; padding: 25px; border-radius: 12px; text-align: center; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .header h1 { margin: 0 0 5px 0; font-size: 28px; font-weight: 600; }
-        .header p { margin: 0; font-size: 14px; opacity: 0.9; }
+        .header { 
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); 
+            color: white; padding: 20px; border-radius: 12px; text-align: center; 
+            margin-bottom: 25px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); 
+        }
+        .header h1 { margin: 0 0 5px 0; font-size: 24px; font-weight: 600; letter-spacing: 0.5px; }
+        .header p { margin: 0; font-size: 13px; color: #cbd5e1; opacity: 0.9; }
 
-        .container { max-width: 1300px; margin: auto; }
+        .container { max-width: 1250px; margin: auto; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
         .full-width { grid-column: 1 / -1; }
         
-        .card { background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
-        .card-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 15px; }
-        .card-header h3 { margin: 0; color: var(--primary); font-size: 18px; display: flex; align-items: center; gap: 8px; }
-
-        /* Modern Tables */
-        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .card { 
+            background: var(--card-bg); padding: 25px; border-radius: 12px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #e2e8f0;
+        }
+        .card h3 { 
+            margin-top: 0; padding-bottom: 15px; color: var(--text-dark); 
+            border-bottom: 2px solid #f1f5f9; font-size: 18px; font-weight: 600; 
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        
+        /* Table Styling */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
         th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #f1f5f9; }
-        th { background-color: #f8fafc; font-weight: 600; color: #64748b; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
+        th { background-color: #f8fafc; color: var(--text-muted); font-weight: 500; text-transform: uppercase; font-size: 12px; letter-spacing: 0.5px; }
+        tbody tr { transition: background-color 0.2s ease; }
         tbody tr:hover { background-color: #f8fafc; }
 
-        /* Buttons */
-        .btn { padding: 8px 16px; border: none; border-radius: 6px; cursor: pointer; font-weight: 500; font-size: 13px; transition: all 0.2s; font-family: 'Poppins', sans-serif; display: inline-flex; align-items: center; gap: 6px; }
-        .btn-approve { background: var(--success); color: white; }
-        .btn-approve:hover { background: #059669; transform: translateY(-1px); }
-        .btn-download { background: var(--info); color: white; }
-        .btn-download:hover { background: #0284c7; transform: translateY(-1px); }
-        .btn-primary { background: var(--primary); color: white; padding: 10px 20px; font-size: 14px; }
-        .btn-primary:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 4px 10px rgba(0,86,179,0.2); }
+        /* Modern Buttons */
+        button { font-family: 'Poppins', sans-serif; transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 6px; }
+        button:active { transform: scale(0.97); }
 
-        /* Badges */
-        .badge { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block; }
-        .badge-waiting { background: #fef3c7; color: #b45309; }
-        .badge-active { background: #d1fae5; color: #047857; }
-        .badge-paused { background: #fee2e2; color: #b91c1c; }
+        .btn-approve { background: var(--success); color: white; border: none; padding: 6px 14px; cursor: pointer; border-radius: 6px; font-weight: 500; font-size: 13px; }
+        .btn-approve:hover { background: var(--success-hover); box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3); }
+        
+        .btn-download { background: var(--info); color: white; border: none; padding: 6px 14px; cursor: pointer; border-radius: 6px; font-weight: 500; font-size: 13px; }
+        .btn-download:hover { background: var(--info-hover); box-shadow: 0 2px 8px rgba(14, 165, 233, 0.3); }
+        
+        .btn-approve-all { background: var(--primary); color: white; border: none; padding: 8px 16px; cursor: pointer; border-radius: 6px; font-weight: 500; font-size: 13px; }
+        .btn-approve-all:hover { background: var(--primary-hover); box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3); }
 
+        /* Status Pills */
+        .status-badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-block; text-align: center; }
+        .status-waiting { background: #fef3c7; color: #d97706; }
+        .status-active { background: #d1fae5; color: #059669; }
+        .status-paused { background: #fee2e2; color: #dc2626; animation: pulse 2s infinite; }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.6; }
+            100% { opacity: 1; }
+        }
+        
         /* Login Overlay */
-        #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.9); display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(5px); }
-        .login-box { background: white; padding: 40px; border-radius: 12px; text-align: center; width: 350px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
-        .login-box i { font-size: 40px; color: var(--primary); margin-bottom: 15px; }
-        .login-box h2 { margin: 0 0 5px 0; font-size: 22px; color: var(--text-main); }
-        .login-box p { color: #64748b; font-size: 13px; margin-bottom: 25px; }
-        .login-box input { width: 100%; padding: 12px 15px; margin-bottom: 20px; border: 2px solid #e2e8f0; border-radius: 8px; outline: none; font-size: 14px; font-family: 'Poppins', sans-serif; box-sizing: border-box; }
+        #login-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(15, 23, 42, 0.85); backdrop-filter: blur(4px);
+            display: flex; justify-content: center; align-items: center; z-index: 1000; 
+        }
+        .login-box { 
+            background: white; padding: 40px; border-radius: 16px; text-align: center; 
+            width: 350px; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); 
+            border-top: 4px solid var(--primary);
+        }
+        .login-box h2 { margin-top: 0; color: var(--text-dark); font-size: 22px; }
+        .login-box p { color: var(--text-muted); font-size: 13px; margin-bottom: 20px; }
+        .login-box input { 
+            width: 100%; padding: 12px; margin: 10px 0 20px; border: 2px solid #e2e8f0; 
+            border-radius: 8px; font-size: 14px; outline: none; transition: border-color 0.3s;
+            text-align: center; letter-spacing: 2px;
+        }
         .login-box input:focus { border-color: var(--primary); }
+        .login-box button { 
+            background: var(--primary); color: white; border: none; padding: 12px; 
+            width: 100%; border-radius: 8px; cursor: pointer; font-size: 15px; font-weight: 500; 
+            justify-content: center;
+        }
+        .login-box button:hover { background: var(--primary-hover); }
         
         .hidden { display: none !important; }
-        #loading-indicator { text-align: center; font-style: italic; color: #64748b; margin-bottom: 15px; display: none; font-size: 13px; }
+        #loading-indicator { text-align: center; font-size: 13px; color: var(--text-muted); margin-top: 5px; display: none; }
+        
+        .highlight-marks { color: var(--primary); font-weight: 600; background: #eff6ff; padding: 4px 8px; border-radius: 4px; }
     </style>
 </head>
 <body>
 
     <div id="login-overlay">
         <div class="login-box">
-            <i class="fa-solid fa-shield-halved"></i>
+            <i class="fa-solid fa-user-shield" style="font-size: 40px; color: #2563eb; margin-bottom: 15px;"></i>
             <h2>Admin Login</h2>
-            <p>Secure Exam Control Panel</p>
+            <p>Excellent Institute Exam Control</p>
             <input type="password" id="admin-pass" placeholder="Enter Master Password">
-            <button class="btn btn-primary" style="width: 100%; justify-content: center;" onclick="loginAdmin()">Access Dashboard</button>
-            <p id="login-error" style="color: var(--danger); font-size: 13px; margin-top: 15px; margin-bottom: 0; display: none;"></p>
+            <button onclick="loginAdmin()"><i class="fa-solid fa-lock-open"></i> Access Dashboard</button>
+            <p id="login-error" style="color: #ef4444; font-size: 13px; margin-top: 15px;"></p>
         </div>
     </div>
 
     <div class="container hidden" id="main-dashboard">
         <div class="header">
-            <h1><i class="fa-solid fa-server"></i> Excellent Institute Exam Control</h1>
-            <p>Live Lab Monitoring • Auto-refreshes every 5 seconds</p>
+            <h1><i class="fa-solid fa-desktop"></i> Excellent Institute Exam Control</h1>
+            <p>Live Lab Monitoring (Auto-refreshes every 5 seconds)</p>
         </div>
 
-        <div id="loading-indicator"><i class="fa-solid fa-rotate fa-spin"></i> Syncing with server...</div>
+        <div id="loading-indicator"><i class="fa-solid fa-circle-notch fa-spin"></i> Syncing with server...</div>
 
         <div class="grid">
             <div class="card">
-                <div class="card-header">
-                    <h3><i class="fa-solid fa-users"></i> Waiting Room</h3>
-                    <button class="btn btn-primary" onclick="approveAll()"><i class="fa-solid fa-check-double"></i> Approve All</button>
-                </div>
+                <h3>
+                    <span><i class="fa-solid fa-hourglass-half" style="color: #d97706;"></i> Waiting Room</span>
+                    <button class="btn-approve-all" onclick="approveAll()"><i class="fa-solid fa-check-double"></i> Approve All</button>
+                </h3>
                 <table>
-                    <thead><tr><th>ID</th><th>Name</th><th>Course</th><th>Action</th></tr></thead>
-                    <tbody id="waiting-list"></tbody>
+                    <thead><tr><th>Student ID</th><th>Name</th><th>Course</th><th>Action</th></tr></thead>
+                    <tbody id="waiting-list">
+                        </tbody>
                 </table>
             </div>
 
             <div class="card">
-                <div class="card-header">
-                    <h3><i class="fa-solid fa-desktop"></i> Live Exam Status</h3>
-                </div>
+                <h3><span><i class="fa-solid fa-tower-broadcast" style="color: #059669;"></i> Live Exam Status</span></h3>
                 <table>
-                    <thead><tr><th>ID</th><th>Name</th><th>Status</th></tr></thead>
-                    <tbody id="active-list"></tbody>
+                    <thead><tr><th>Student ID</th><th>Name</th><th>Status</th></tr></thead>
+                    <tbody id="active-list">
+                        </tbody>
                 </table>
             </div>
 
             <div class="card full-width">
-                <div class="card-header">
-                    <h3><i class="fa-solid fa-file-contract"></i> Completed Exams & Results</h3>
-                </div>
+                <h3><span><i class="fa-solid fa-award" style="color: #2563eb;"></i> Completed Exams & Results</span></h3>
                 <table>
-                    <thead><tr><th>Date</th><th>ID</th><th>Name</th><th>Course</th><th>Total Marks</th><th>WPM</th><th>Certificate</th></tr></thead>
-                    <tbody id="results-list"></tbody>
+                    <thead><tr><th>Date</th><th>Student ID</th><th>Name</th><th>Course</th><th>Total Marks</th><th>WPM</th><th>Certificate</th></tr></thead>
+                    <tbody id="results-list">
+                        </tbody>
                 </table>
             </div>
         </div>
     </div>
 
     <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxFsBuyiWOdTMMGeOgTXhvSmAfUK_uMbdwVO945ejPvnsEOQtX9ZtMCh9RQtBWzHSVj/exec";
+        // ==========================================
+        // CONFIGURATION
+        // ==========================================
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxFsBuyiWOdTMMGeOgTXhvSmAfUK_uMbdwVO945ejPvnsEOQtX9ZtMCh9RQtBWzHSVj/exec"; // PASTE YOUR URL HERE
         let masterPass = "";
         let pollingInterval;
 
+        // ==========================================
+        // AUTHENTICATION & INITIALIZATION
+        // ==========================================
         function loginAdmin() {
             const passInput = document.getElementById('admin-pass').value.trim();
-            const errorMsg = document.getElementById('login-error');
             if (!passInput) return;
             
             masterPass = passInput;
-            errorMsg.innerText = "Verifying...";
-            errorMsg.style.display = "block";
-            errorMsg.style.color = "var(--primary)";
+            document.getElementById('login-error').innerText = "Verifying...";
             
             fetch(WEB_APP_URL, {
                 method: 'POST',
@@ -149,20 +192,23 @@
             .then(res => res.json())
             .then(data => {
                 if (data.error) {
-                    errorMsg.innerText = "Incorrect Password!";
-                    errorMsg.style.color = "var(--danger)";
+                    document.getElementById('login-error').innerHTML = "<i class='fa-solid fa-circle-exclamation'></i> Incorrect Password!";
                 } else {
                     document.getElementById('login-overlay').classList.add('hidden');
                     document.getElementById('main-dashboard').classList.remove('hidden');
-                    refreshDashboard();
-                    pollingInterval = setInterval(refreshDashboard, 5000);
+                    refreshDashboard(); 
+                    pollingInterval = setInterval(refreshDashboard, 5000); 
                 }
-            }).catch(err => { 
-                errorMsg.innerText = "Network Error."; 
-                errorMsg.style.color = "var(--danger)";
+            })
+            .catch(err => {
+                document.getElementById('login-error').innerText = "Network Error. Check console.";
+                console.error(err);
             });
         }
 
+        // ==========================================
+        // DASHBOARD DATA FETCHING
+        // ==========================================
         function refreshDashboard() {
             document.getElementById('loading-indicator').style.display = 'block';
             
@@ -179,8 +225,8 @@
         function renderLiveTables(students) {
             const waitingList = document.getElementById('waiting-list');
             const activeList = document.getElementById('active-list');
+            
             waitingList.innerHTML = ""; activeList.innerHTML = "";
-
             let waitingCount = 0, activeCount = 0;
 
             students.forEach(st => {
@@ -190,33 +236,31 @@
                     tr.innerHTML = `
                         <td><strong>${st.id}</strong></td>
                         <td>${st.name}</td>
-                        <td><span style="color:var(--info); font-weight:600;">${st.course}</span></td>
-                        <td><button class="btn btn-approve" onclick="approveSingle('${st.id}')"><i class="fa-solid fa-check"></i> Approve</button></td>
+                        <td>${st.course}</td>
+                        <td><button class="btn-approve" onclick="approveSingle('${st.id}')"><i class="fa-solid fa-check"></i> Approve</button></td>
                     `;
                     waitingList.appendChild(tr);
-                } else if (st.status !== "Finished") { 
+                } else if (st.status !== "Finished") {
                     activeCount++;
-                    let badgeClass = "badge-active";
-                    let statusText = st.status;
-                    
+                    // Map statuses to pill badges
+                    let statusClass = "status-active";
+                    let icon = "<i class='fa-solid fa-spinner fa-spin'></i>";
                     if (st.status.includes("Paused")) {
-                        badgeClass = "badge-paused";
-                        statusText = `<i class="fa-solid fa-triangle-exclamation"></i> ${st.status}`;
-                    } else {
-                        statusText = `<i class="fa-solid fa-spinner fa-spin"></i> Active`;
+                        statusClass = "status-paused";
+                        icon = "<i class='fa-solid fa-triangle-exclamation'></i>";
                     }
-
+                    
                     tr.innerHTML = `
                         <td><strong>${st.id}</strong></td>
                         <td>${st.name}</td>
-                        <td><span class="badge ${badgeClass}">${statusText}</span></td>
+                        <td><span class="status-badge ${statusClass}">${icon} ${st.status}</span></td>
                     `;
                     activeList.appendChild(tr);
                 }
             });
 
-            if (waitingCount === 0) waitingList.innerHTML = "<tr><td colspan='4' style='text-align:center; color:#94a3b8; padding:20px;'>No students in waiting room.</td></tr>";
-            if (activeCount === 0) activeList.innerHTML = "<tr><td colspan='3' style='text-align:center; color:#94a3b8; padding:20px;'>No active exams.</td></tr>";
+            if (waitingCount === 0) waitingList.innerHTML = "<tr><td colspan='4' style='text-align:center; color:#94a3b8; font-style:italic;'>No students waiting.</td></tr>";
+            if (activeCount === 0) activeList.innerHTML = "<tr><td colspan='3' style='text-align:center; color:#94a3b8; font-style:italic;'>No active exams.</td></tr>";
         }
 
         function renderResultsTable(results) {
@@ -224,56 +268,76 @@
             resultsList.innerHTML = "";
 
             if (results.length === 0) {
-                resultsList.innerHTML = "<tr><td colspan='7' style='text-align:center; color:#94a3b8; padding:20px;'>No results recorded yet.</td></tr>";
+                resultsList.innerHTML = "<tr><td colspan='7' style='text-align:center; color:#94a3b8; font-style:italic;'>No results recorded yet.</td></tr>";
                 return;
             }
 
+            // Reverse to show latest first
             results.reverse().forEach(res => {
                 const tr = document.createElement('tr');
                 const encodedData = encodeURIComponent(JSON.stringify(res));
                 
                 tr.innerHTML = `
-                    <td><span style="color:#64748b; font-size:12px;">${res.date.split(' ')[0]}</span></td>
-                    <td>${res.id}</td>
-                    <td><strong>${res.name}</strong></td>
+                    <td><span style="color: #64748b; font-size: 13px;">${res.date.split(' ')[0]}</span></td>
+                    <td><strong>${res.id}</strong></td>
+                    <td>${res.name}</td>
                     <td>${res.course}</td>
-                    <td><span class="badge badge-active" style="font-size:13px;">${res.marks} / 400</span></td>
-                    <td>${res.wpm} WPM</td>
-                    <td><button class="btn btn-download" onclick="downloadResultPDF('${encodedData}')"><i class="fa-solid fa-download"></i> PDF Report</button></td>
+                    <td><span class="highlight-marks">${res.marks} / 400</span></td>
+                    <td><strong>${res.wpm}</strong> <span style="font-size: 11px; color: #64748b;">WPM</span></td>
+                    <td><button class="btn-download" onclick="downloadResultPDF('${encodedData}')"><i class="fa-solid fa-file-pdf"></i> Download PDF</button></td>
                 `;
                 resultsList.appendChild(tr);
             });
         }
 
+        // ==========================================
+        // PDF GENERATION LOGIC
+        // ==========================================
         function downloadResultPDF(encodedData) {
             const student = JSON.parse(decodeURIComponent(encodedData));
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
+            // Branding
             doc.setFont("helvetica", "bold");
             doc.setFontSize(22);
-            doc.setTextColor(0, 86, 179);
+            doc.setTextColor(37, 99, 235); // Primary Blue
             doc.text("EXCELLENT INSTITUTE", 105, 20, null, null, "center");
             
-            doc.setFontSize(16);
-            doc.setTextColor(50, 50, 50);
-            doc.text("Official Examination Result", 105, 30, null, null, "center");
+            doc.setFontSize(14);
+            doc.setTextColor(100, 116, 139);
+            doc.text("Official Examination Result", 105, 28, null, null, "center");
             
-            doc.setDrawColor(200, 200, 200);
+            // Line break
+            doc.setDrawColor(226, 232, 240);
+            doc.setLineWidth(0.5);
             doc.line(20, 35, 190, 35);
             
-            doc.setFontSize(12);
+            // Student Information
+            doc.setFontSize(11);
             doc.setFont("helvetica", "normal");
-            doc.text(`Student Name: ${student.name}`, 20, 50);
-            doc.text(`Student ID: ${student.id}`, 20, 60);
-            doc.text(`Course Enrolled: ${student.course}`, 20, 70);
-            doc.text(`Exam Date: ${student.date}`, 20, 80);
+            doc.setTextColor(30, 41, 59);
             
+            doc.text(`Student Name:`, 20, 50); doc.setFont("helvetica", "bold"); doc.text(`${student.name}`, 55, 50); doc.setFont("helvetica", "normal");
+            doc.text(`Student ID:`, 20, 58); doc.setFont("helvetica", "bold"); doc.text(`${student.id}`, 55, 58); doc.setFont("helvetica", "normal");
+            doc.text(`Course:`, 20, 66); doc.setFont("helvetica", "bold"); doc.text(`${student.course}`, 55, 66); doc.setFont("helvetica", "normal");
+            doc.text(`Date:`, 20, 74); doc.setFont("helvetica", "bold"); doc.text(`${student.date}`, 55, 74);
+            
+            // Highlighted Score Box Area
+            doc.setFillColor(240, 244, 248);
+            doc.rect(120, 43, 70, 35, 'F');
+            doc.setFontSize(14);
+            doc.text(`Total Score:`, 125, 53); 
             doc.setFont("helvetica", "bold");
-            doc.text(`Overall Marks: ${student.marks} / 400`, 120, 50);
-            doc.text(`Typing Speed: ${student.wpm} WPM`, 120, 60);
-            doc.text(`Typing Accuracy: ${student.accuracy}%`, 120, 70);
+            doc.setTextColor(37, 99, 235);
+            doc.text(`${student.marks} / 400`, 155, 53);
             
+            doc.setFontSize(11);
+            doc.setTextColor(30, 41, 59);
+            doc.text(`Speed: ${student.wpm} WPM`, 125, 63);
+            doc.text(`Accuracy: ${student.accuracy}%`, 125, 71);
+            
+            // Parse Subject Details for Table
             let subjectRows = [];
             if(student.subjectDetails && student.subjectDetails !== "N/A") {
                 try {
@@ -284,23 +348,31 @@
                 } catch(e) { console.error("Error parsing subjects"); }
             }
             
+            // Draw Subject Table
             doc.autoTable({
-                startY: 95,
+                startY: 90,
                 head: [['Subject / Skill Assessment', 'Marks Obtained']],
                 body: subjectRows,
                 theme: 'grid',
-                headStyles: { fillColor: [0, 86, 179], textColor: 255 },
-                styles: { fontSize: 11, cellPadding: 6 }
+                headStyles: { fillColor: [37, 99, 235], textColor: 255, fontStyle: 'bold' },
+                styles: { fontSize: 10, cellPadding: 6, textColor: [30, 41, 59] },
+                alternateRowStyles: { fillColor: [248, 250, 252] }
             });
             
+            // Footer
             const finalY = doc.lastAutoTable.finalY || 150;
-            doc.setFontSize(10);
+            doc.setFontSize(9);
             doc.setFont("helvetica", "italic");
-            doc.text("This is an automatically generated electronic report.", 105, finalY + 20, null, null, "center");
+            doc.setTextColor(148, 163, 184);
+            doc.text("This is an automatically generated electronic report. Valid without signature.", 105, finalY + 20, null, null, "center");
             
-            doc.save(`${student.id}_Exam_Result.pdf`);
+            // Save the file securely via browser
+            doc.save(`Result_${student.id}.pdf`);
         }
 
+        // ==========================================
+        // CONTROL ACTIONS
+        // ==========================================
         function approveSingle(studentId) {
             fetch(WEB_APP_URL, {
                 method: 'POST',
