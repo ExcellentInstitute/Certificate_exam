@@ -4,26 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Excellent Institute - Admin Control Panel</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
     <style>
         body { font-family: Arial, sans-serif; background-color: #e9ecef; margin: 0; padding: 20px; }
         .header { background: #343a40; color: white; padding: 15px; border-radius: 5px; text-align: center; margin-bottom: 20px; }
         .container { max-width: 1200px; margin: auto; }
         .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .full-width { grid-column: 1 / -1; }
         .card { background: white; padding: 20px; border-radius: 5px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         h3 { margin-top: 0; border-bottom: 2px solid #0056b3; padding-bottom: 10px; color: #0056b3; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 14px; }
         th, td { padding: 10px; text-align: left; border-bottom: 1px solid #ddd; }
         th { background-color: #f8fafc; }
         .btn-approve { background: #28a745; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 3px; font-weight: bold; }
-        .btn-approve:hover { background: #218838; }
+        .btn-download { background: #17a2b8; color: white; border: none; padding: 6px 12px; cursor: pointer; border-radius: 3px; font-weight: bold; }
         .btn-approve-all { background: #0056b3; color: white; border: none; padding: 8px 15px; cursor: pointer; border-radius: 3px; float: right; font-weight: bold; }
-        .btn-approve-all:hover { background: #004494; }
         .status-waiting { color: #d9534f; font-weight: bold; }
         .status-active { color: #28a745; font-weight: bold; }
         .status-paused { color: #dc3545; font-weight: bold; background: #ffeeba; padding: 3px 6px; border-radius: 3px; }
-        .status-finished { color: #17a2b8; font-weight: bold; }
         
-        /* Login Overlay */
         #login-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); display: flex; justify-content: center; align-items: center; z-index: 1000; }
         .login-box { background: white; padding: 30px; border-radius: 8px; text-align: center; width: 300px; }
         .login-box input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
@@ -34,7 +36,6 @@
 </head>
 <body>
 
-    <!-- Admin Login Overlay -->
     <div id="login-overlay">
         <div class="login-box">
             <h2>Admin Login</h2>
@@ -45,7 +46,6 @@
         </div>
     </div>
 
-    <!-- Main Dashboard -->
     <div class="container hidden" id="main-dashboard">
         <div class="header">
             <h1>Excellent Institute Exam Control Panel</h1>
@@ -55,64 +55,45 @@
         <div id="loading-indicator">Syncing with server...</div>
 
         <div class="grid">
-            <!-- Waiting Room Section -->
             <div class="card">
                 <h3>Waiting Room 
                     <button class="btn-approve-all" onclick="approveAll()">Approve All</button>
                 </h3>
                 <table>
-                    <thead>
-                        <tr>
-                            <th>Student ID</th>
-                            <th>Name</th>
-                            <th>Course</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="waiting-list">
-                        <!-- Populated by JS -->
-                    </tbody>
+                    <thead><tr><th>ID</th><th>Name</th><th>Course</th><th>Action</th></tr></thead>
+                    <tbody id="waiting-list"></tbody>
                 </table>
             </div>
 
-            <!-- Active Exam Section -->
             <div class="card">
                 <h3>Live Exam Status</h3>
                 <table>
-                    <thead>
-                        <tr>
-                            <th>Student ID</th>
-                            <th>Name</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="active-list">
-                        <!-- Populated by JS -->
-                    </tbody>
+                    <thead><tr><th>ID</th><th>Name</th><th>Status</th></tr></thead>
+                    <tbody id="active-list"></tbody>
+                </table>
+            </div>
+
+            <div class="card full-width">
+                <h3>Completed Exams & Results</h3>
+                <table>
+                    <thead><tr><th>Date</th><th>ID</th><th>Name</th><th>Course</th><th>Total Marks</th><th>WPM</th><th>PDF Certificate</th></tr></thead>
+                    <tbody id="results-list"></tbody>
                 </table>
             </div>
         </div>
     </div>
 
     <script>
-        // ==========================================
-        // CONFIGURATION
-        // ==========================================
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxFsBuyiWOdTMMGeOgTXhvSmAfUK_uMbdwVO945ejPvnsEOQtX9ZtMCh9RQtBWzHSVj/exec"; // PASTE YOUR URL HERE
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxFsBuyiWOdTMMGeOgTXhvSmAfUK_uMbdwVO945ejPvnsEOQtX9ZtMCh9RQtBWzHSVj/exec";
         let masterPass = "";
         let pollingInterval;
 
-        // ==========================================
-        // AUTHENTICATION & INITIALIZATION
-        // ==========================================
         function loginAdmin() {
             const passInput = document.getElementById('admin-pass').value.trim();
             if (!passInput) return;
-            
             masterPass = passInput;
             document.getElementById('login-error').innerText = "Verifying...";
             
-            // Do a quick test fetch to verify password
             fetch(WEB_APP_URL, {
                 method: 'POST',
                 body: JSON.stringify({ action: 'admin_get_live_exams', pass: masterPass })
@@ -124,106 +105,155 @@
                 } else {
                     document.getElementById('login-overlay').classList.add('hidden');
                     document.getElementById('main-dashboard').classList.remove('hidden');
-                    refreshDashboard(); // Fetch immediately
-                    pollingInterval = setInterval(refreshDashboard, 5000); // Poll every 5 seconds
+                    refreshDashboard();
+                    pollingInterval = setInterval(refreshDashboard, 5000);
                 }
-            })
-            .catch(err => {
-                document.getElementById('login-error').innerText = "Network Error. Check console.";
-                console.error(err);
-            });
+            }).catch(err => { document.getElementById('login-error').innerText = "Network Error."; });
         }
 
-        // ==========================================
-        // DASHBOARD DATA FETCHING
-        // ==========================================
         function refreshDashboard() {
             document.getElementById('loading-indicator').style.display = 'block';
             
-            fetch(WEB_APP_URL, {
-                method: 'POST',
-                body: JSON.stringify({ action: 'admin_get_live_exams', pass: masterPass })
-            })
-            .then(res => res.json())
-            .then(response => {
+            // Fetch both live lab data AND completed results
+            Promise.all([
+                fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'admin_get_live_exams', pass: masterPass }) }).then(res => res.json()),
+                fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'admin_get_results', pass: masterPass }) }).then(res => res.json())
+            ]).then(([liveResponse, resultResponse]) => {
                 document.getElementById('loading-indicator').style.display = 'none';
-                if (response.data) {
-                    renderTables(response.data);
-                }
-            })
-            .catch(err => console.error("Polling error:", err));
+                if (liveResponse.data) renderLiveTables(liveResponse.data);
+                if (resultResponse.data) renderResultsTable(resultResponse.data);
+            }).catch(err => console.error("Polling error:", err));
         }
 
-        function renderTables(students) {
+        function renderLiveTables(students) {
             const waitingList = document.getElementById('waiting-list');
             const activeList = document.getElementById('active-list');
-            
-            waitingList.innerHTML = "";
-            activeList.innerHTML = "";
+            waitingList.innerHTML = ""; activeList.innerHTML = "";
 
-            let waitingCount = 0;
-            let activeCount = 0;
+            let waitingCount = 0, activeCount = 0;
 
             students.forEach(st => {
                 const tr = document.createElement('tr');
-                
                 if (st.status === "Waiting") {
                     waitingCount++;
-                    tr.innerHTML = `
-                        <td>${st.id}</td>
-                        <td>${st.name}</td>
-                        <td>${st.course}</td>
-                        <td><button class="btn-approve" onclick="approveSingle('${st.id}')">Approve</button></td>
-                    `;
+                    tr.innerHTML = `<td>${st.id}</td><td>${st.name}</td><td>${st.course}</td><td><button class="btn-approve" onclick="approveSingle('${st.id}')">Approve</button></td>`;
                     waitingList.appendChild(tr);
-                } else {
+                } else if (st.status !== "Finished") { // Finished students are flushed by Apps Script, but just in case
                     activeCount++;
-                    let statusClass = "status-active";
-                    if (st.status.includes("Paused")) statusClass = "status-paused";
-                    if (st.status === "Finished") statusClass = "status-finished";
-
-                    tr.innerHTML = `
-                        <td>${st.id}</td>
-                        <td>${st.name}</td>
-                        <td class="${statusClass}">${st.status}</td>
-                    `;
+                    let statusClass = st.status.includes("Paused") ? "status-paused" : "status-active";
+                    tr.innerHTML = `<td>${st.id}</td><td>${st.name}</td><td class="${statusClass}">${st.status}</td>`;
                     activeList.appendChild(tr);
                 }
             });
 
-            if (waitingCount === 0) {
-                waitingList.innerHTML = "<tr><td colspan='4' style='text-align:center; color:#888;'>No students in waiting room.</td></tr>";
-            }
-            if (activeCount === 0) {
-                activeList.innerHTML = "<tr><td colspan='3' style='text-align:center; color:#888;'>No active exams.</td></tr>";
-            }
+            if (waitingCount === 0) waitingList.innerHTML = "<tr><td colspan='4' style='text-align:center; color:#888;'>No students waiting.</td></tr>";
+            if (activeCount === 0) activeList.innerHTML = "<tr><td colspan='3' style='text-align:center; color:#888;'>No active exams.</td></tr>";
         }
 
-        // ==========================================
+        function renderResultsTable(results) {
+            const resultsList = document.getElementById('results-list');
+            resultsList.innerHTML = "";
+
+            if (results.length === 0) {
+                resultsList.innerHTML = "<tr><td colspan='7' style='text-align:center; color:#888;'>No results recorded yet.</td></tr>";
+                return;
+            }
+
+            // Reverse to show latest first
+            results.reverse().forEach(res => {
+                const tr = document.createElement('tr');
+                const encodedData = encodeURIComponent(JSON.stringify(res));
+                
+                tr.innerHTML = `
+                    <td>${res.date.split(' ')[0]}</td>
+                    <td>${res.id}</td>
+                    <td><strong>${res.name}</strong></td>
+                    <td>${res.course}</td>
+                    <td style="color: #0056b3; font-weight: bold;">${res.marks} / 400</td>
+                    <td>${res.wpm}</td>
+                    <td><button class="btn-download" onclick="downloadResultPDF('${encodedData}')">Download PDF</button></td>
+                `;
+                resultsList.appendChild(tr);
+            });
+        }
+
+        function downloadResultPDF(encodedData) {
+            const student = JSON.parse(decodeURIComponent(encodedData));
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            // Branding
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(22);
+            doc.setTextColor(0, 86, 179);
+            doc.text("EXCELLENT INSTITUTE", 105, 20, null, null, "center");
+            
+            doc.setFontSize(16);
+            doc.setTextColor(50, 50, 50);
+            doc.text("Official Examination Result", 105, 30, null, null, "center");
+            
+            // Line break
+            doc.setDrawColor(200, 200, 200);
+            doc.line(20, 35, 190, 35);
+            
+            // Student Information
+            doc.setFontSize(12);
+            doc.setFont("helvetica", "normal");
+            doc.text(`Student Name: ${student.name}`, 20, 50);
+            doc.text(`Student ID: ${student.id}`, 20, 60);
+            doc.text(`Course Enrolled: ${student.course}`, 20, 70);
+            doc.text(`Exam Date: ${student.date}`, 20, 80);
+            
+            doc.setFont("helvetica", "bold");
+            doc.text(`Overall Marks: ${student.marks} / 400`, 120, 50);
+            doc.text(`Typing Speed: ${student.wpm} WPM`, 120, 60);
+            doc.text(`Typing Accuracy: ${student.accuracy}%`, 120, 70);
+            
+            // Parse Subject Details for Table
+            let subjectRows = [];
+            if(student.subjectDetails && student.subjectDetails !== "N/A") {
+                try {
+                    const subjects = JSON.parse(student.subjectDetails);
+                    for(const [sub, scores] of Object.entries(subjects)) {
+                        subjectRows.push([sub, `${scores.scored} / ${scores.total}`]);
+                    }
+                } catch(e) { console.error("Error parsing subjects"); }
+            }
+            
+            // Draw Table
+            doc.autoTable({
+                startY: 95,
+                head: [['Subject / Skill Assessment', 'Marks Obtained']],
+                body: subjectRows,
+                theme: 'grid',
+                headStyles: { fillColor: [0, 86, 179], textColor: 255 },
+                styles: { fontSize: 11, cellPadding: 6 }
+            });
+            
+            // Footer
+            const finalY = doc.lastAutoTable.finalY || 150;
+            doc.setFontSize(10);
+            doc.setFont("helvetica", "italic");
+            doc.text("This is an automatically generated electronic report.", 105, finalY + 20, null, null, "center");
+            
+            // Save the file
+            doc.save(`${student.id}_Exam_Result.pdf`);
+        }
+
         // CONTROL ACTIONS
-        // ==========================================
         function approveSingle(studentId) {
             fetch(WEB_APP_URL, {
                 method: 'POST',
                 body: JSON.stringify({ action: 'admin_approve_exam', pass: masterPass, id: studentId })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) refreshDashboard();
-            });
+            }).then(res => res.json()).then(data => { if (data.success) refreshDashboard(); });
         }
 
         function approveAll() {
             if (!confirm("Approve all waiting students to start their exams?")) return;
-            
             fetch(WEB_APP_URL, {
                 method: 'POST',
                 body: JSON.stringify({ action: 'admin_approve_all', pass: masterPass })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) refreshDashboard();
-            });
+            }).then(res => res.json()).then(data => { if (data.success) refreshDashboard(); });
         }
     </script>
 </body>
