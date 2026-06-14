@@ -110,10 +110,14 @@
     </div>
 
     <div class="container hidden" id="main-dashboard">
-        <div class="header">
+        <div class="header" style="position: relative;">
             <h1><i class="fa-solid fa-desktop"></i> Excellent Institute Exam Control</h1>
             <p>Live Lab Monitoring & Pipeline Tracking</p>
+            <button onclick="downloadQuestionBank()" style="position: absolute; top: 25px; right: 30px; background: var(--info); font-size: 13px;">
+                <i class="fa-solid fa-download"></i> Question Bank PDF
+            </button>
         </div>
+
 
         <div id="loading-indicator"><i class="fa-solid fa-circle-notch fa-spin"></i> Syncing with server...</div>
 
@@ -436,6 +440,67 @@
             doc.text("This is an automatically generated electronic report. Valid without signature.", 105, finalY + 20, null, null, "center");
             
             doc.save(`Result_${student.id}.pdf`);
+        }
+                // ==========================================
+        // DOWNLOAD QUESTION BANK PDF
+        // ==========================================
+        function downloadQuestionBank() {
+            if (typeof questionBank === 'undefined') {
+                alert("Question bank not found. Make sure js/questions.js is linked properly.");
+                return;
+            }
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4'); // Portrait A4
+            
+            // Title
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(18);
+            doc.setTextColor(37, 99, 235);
+            doc.text("EXCELLENT INSTITUTE", 105, 15, null, null, "center");
+            
+            doc.setFontSize(12);
+            doc.setTextColor(100, 116, 139);
+            doc.text("Master Question & Answer Bank", 105, 22, null, null, "center");
+            
+            const mcqs = questionBank["CCA"].mcqs;
+            let tableData = [];
+            
+            // Format the data for the PDF table
+            mcqs.forEach((q, index) => {
+                // Turn options array into a neat list: A. option, B. option...
+                let optionsText = q.options.map((opt, i) => `${String.fromCharCode(65 + i)}. ${opt}`).join('\n');
+                
+                // Get the correct letter (0 = A, 1 = B, 2 = C, 3 = D)
+                let correctLetter = String.fromCharCode(65 + q.correctAnswer); 
+                
+                tableData.push([
+                    index + 1,
+                    q.subject,
+                    q.question,
+                    optionsText,
+                    `Option ${correctLetter}`
+                ]);
+            });
+
+            // Draw the Auto-paginated Table
+            doc.autoTable({
+                startY: 30,
+                head: [['#', 'Subject', 'Question', 'Options', 'Answer']],
+                body: tableData,
+                theme: 'grid',
+                headStyles: { fillColor: [37, 99, 235], textColor: 255 },
+                styles: { fontSize: 9, cellPadding: 3, valign: 'middle' },
+                columnStyles: {
+                    0: { cellWidth: 10, halign: 'center' }, // Number
+                    1: { cellWidth: 25 }, // Subject
+                    2: { cellWidth: 60 }, // Question
+                    3: { cellWidth: 70 }, // Options
+                    4: { cellWidth: 25, fontStyle: 'bold', textColor: [16, 185, 129] } // Answer (Green)
+                }
+            });
+
+            doc.save("Master_Question_Bank.pdf");
         }
     </script>
 </body>
