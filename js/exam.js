@@ -3,11 +3,11 @@ const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxFsBuyiWOdTMMGeOgT
 const adminPassword = "admin";
 
 let isExamPaused = false;
-let examStartTime = null;
 
-window.onload = () => {
-    examStartTime = new Date().getTime();
-};
+// TYPING TRACKER VARIABLES
+let typingTotalTimeMs = 0;
+let typingInterval = null;
+let typingLastStart = null;
 
 // ==========================================
 // 1. ANTI-CHEAT SYSTEM
@@ -56,16 +56,95 @@ function unlockExam() {
 }
 
 // ==========================================
-// 2. EXAM EVALUATION & SUBMISSION
+// 2. LIVE TYPING TRACKER (Pauses on click out)
+// ==========================================
+
+function initTypingTracker() {
+    const typingArea = document.getElementById('typing-area');
+    
+    typingArea.addEventListener('focus', () => {
+        // Resume Timer
+        typingLastStart = Date.now();
+        document.getElementById('live-time').innerText = "Time: " + formatTime(typingTotalTimeMs) + " (Typing...)";
+        document.getElementById('live-time').style.color = "#28a745"; 
+        
+        typingInterval = setInterval(() => {
+            let currentMs = typingTotalTimeMs + (Date.now() - typingLastStart);
+            document.getElementById('live-time').innerText = "Time: " + formatTime(currentMs) + " (Typing...)";
+            updateLiveStats(currentMs);
+        }, 1000);
+    });
+
+    typingArea.addEventListener('blur', () => {
+        // Pause Timer
+        if (typingLastStart) {
+            typingTotalTimeMs += (Date.now() - typingLastStart);
+            typingLastStart = null;
+        }
+        clearInterval(typingInterval);
+        document.getElementById('live-time').innerText = "Time: " + formatTime(typingTotalTimeMs) + " (Paused)";
+        document.getElementById('live-time').style.color = "#dc2626"; 
+    });
+
+    typingArea.addEventListener('input', () => {
+        let currentMs = typingTotalTimeMs;
+        if (typingLastStart) currentMs += (Date.now() - typingLastStart);
+        updateLiveStats(currentMs);
+    });
+}
+
+function formatTime(ms) {
+    let totalSeconds = Math.floor(ms / 1000);
+    let mins = Math.floor(totalSeconds / 60);
+    let secs = totalSeconds % 60;
+    return `${mins < 10 ? '0' : ''}${mins}:${secs < 10 ? '0' : ''}${secs}`;
+}
+
+function updateLiveStats(currentMs) {
+    const originalText = document.getElementById('typing-source').innerText.trim();
+    const typedText = document.getElementById('typing-area').value.trim();
+    
+    let minutesTaken = currentMs / 60000;
+    
+    const originalWords = originalText.split(/\s+/);
+    const typedWords = typedText.split(/\s+/);
+    
+    let correctWords = 0;
+    for (let i = 0; i < Math.min(originalWords.length, typedWords.length); i++) {
+        if (originalWords[i] === typedWords[i]) correctWords++;
+    }
+
+    let accuracy = 0;
+    if (typedWords.length > 0 && typedText !== "") {
+        accuracy = (correctWords / originalWords.length) * 100;
+        if (accuracy > 100) accuracy = 100;
+    }
+    
+    let wpm = 0;
+    if (typedText.length > 0 && minutesTaken > 0) {
+        wpm = (typedText.length / 5) / minutesTaken;
+    }
+    
+    document.getElementById('live-accuracy').innerText = `Accuracy: ${accuracy.toFixed(1)}%`;
+    document.getElementById('live-wpm').innerText = `WPM: ${wpm.toFixed(1)}`;
+}
+
+// ==========================================
+// 3. EXAM EVALUATION & SUBMISSION
 // ==========================================
 
 function evaluateTyping() {
     const originalText = document.getElementById('typing-source').innerText.trim();
     const typedText = document.getElementById('typing-area').value.trim();
     
-    const endTime = new Date().getTime();
-    let minutesTaken = (endTime - examStartTime) / 60000;
-    if (minutesTaken < 1) minutesTaken = 1; 
+    // Grab the exact time spent typing
+    let finalTimeMs = typingTotalTimeMs;
+    if (typingLastStart) {
+        finalTimeMs += (Date.now() - typingLastStart); // Add pending time if they submit while focused
+    }
+    
+    let minutesTaken = finalTimeMs / 60000;
+    if (minutesTaken < 0.1) minutesTaken = 0.1; // Prevent divide-by-zero errors if they submit instantly
 
     const originalWords = originalText.split(/\s+/);
     const typedWords = typedText.split(/\s+/);
