@@ -67,7 +67,14 @@
 
             <div class="typing-section">
                 <h3>Paragraph Writing Test (50 Marks)</h3>
-                <p><strong>Instructions:</strong> Type the paragraph below exactly as it appears. Accuracy is prioritized over speed.</p>
+                <p><strong>Instructions:</strong> Type the paragraph below exactly as it appears. <span style="color: #dc2626; font-weight: bold;">The timer only runs when you are actively typing inside the box.</span></p>
+                
+                <div id="typing-stats" style="display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: 600; color: #0056b3; background: #e2e8f0; padding: 10px; border-radius: 5px;">
+                    <span id="live-time" style="color: #dc2626;">Time: 00:00 (Paused)</span>
+                    <span id="live-wpm">WPM: 0.0</span>
+                    <span id="live-accuracy">Accuracy: 0.0%</span>
+                </div>
+                
                 <div style="background: white; padding: 15px; border: 1px solid #ccc; border-radius: 5px; font-family: serif; margin-bottom: 15px;" id="typing-source">
                     </div>
                 <textarea id="typing-area" placeholder="Start typing here..."></textarea>
@@ -148,6 +155,9 @@
             // Randomly picks the 50-Mark paragraph typing test
             const randomTest = examData.typingTests[Math.floor(Math.random() * examData.typingTests.length)];
             document.getElementById('typing-source').innerText = randomTest.text;
+            
+            // Activate the Live Timer System
+            initTypingTracker();
             
             // IMPORTANT: Store the final customized list globally so calculateMCQ() evaluates the right questions
             window.activeExamPaper = finalExamQuestions;
