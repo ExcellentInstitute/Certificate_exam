@@ -3,11 +3,16 @@ const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxFsBuyiWOdTMMGeOgT
 const adminPassword = "admin";
 
 let isExamPaused = false;
+let examStartTime = null;
 
 // TYPING TRACKER VARIABLES
 let typingTotalTimeMs = 0;
 let typingInterval = null;
 let typingLastStart = null;
+
+window.onload = () => {
+    examStartTime = new Date().getTime();
+};
 
 // ==========================================
 // 1. ANTI-CHEAT SYSTEM
@@ -63,6 +68,9 @@ function initTypingTracker() {
     const typingArea = document.getElementById('typing-area');
     
     typingArea.addEventListener('focus', () => {
+        // FIX: Clear any ghost intervals before starting a new one so the timer doesn't speed up
+        clearInterval(typingInterval);
+        
         // Resume Timer
         typingLastStart = Date.now();
         document.getElementById('live-time').innerText = "Time: " + formatTime(typingTotalTimeMs) + " (Typing...)";
