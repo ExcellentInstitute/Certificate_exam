@@ -5,7 +5,7 @@
 let isExamPaused = false;
 
 document.addEventListener("fullscreenchange", () => {
-    // FIX: Only trigger anti-cheat if the exam is actively running.
+    // FIX: Only trigger anti-cheat if the exam is actively running and is timed.
     // If they have submitted, examActive is false, so it won't lock them out.
     if (typeof examActive !== 'undefined' && examActive && typeof isTimed !== 'undefined' && isTimed) {
         if (!document.fullscreenElement && !isExamPaused) {
@@ -15,7 +15,7 @@ document.addEventListener("fullscreenchange", () => {
 });
 
 window.addEventListener("blur", () => {
-    // FIX: Only trigger anti-cheat if the exam is actively running.
+    // FIX: Only trigger anti-cheat if the exam is actively running and is timed.
     if (typeof examActive !== 'undefined' && examActive && typeof isTimed !== 'undefined' && isTimed) {
         if (!isExamPaused) {
             lockExam("You switched tabs or minimized the window.");
@@ -64,7 +64,7 @@ function unlockExam() {
             // Restore student status back to Active on the Admin Dashboard
             if (typeof studentData !== 'undefined' && studentData !== null) {
                 firebase.database().ref('exam_live/' + studentData.id).update({ 
-                    status: 'Active' 
+                    status: 'Active (Testing)' 
                 }).catch(e => console.warn(e));
             }
             
@@ -218,6 +218,7 @@ function calculateMCQ() {
         const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
         if (selectedOption) {
             const selectedAnswerIndex = parseInt(selectedOption.value);
+            // Support both old 'q.ans' and new 'q.correctAnswer' structure
             const correctIndex = q.ans !== undefined ? q.ans : q.correctAnswer;
             
             if (selectedAnswerIndex === correctIndex) {
@@ -257,6 +258,7 @@ function submitExam() {
         studentId = sData.id; studentName = sData.name; studentCourse = sData.course;
     }
 
+    // Generate Result Object for Firebase
     const now = new Date();
     const options = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true };
     const dateString = now.toLocaleString('en-IN', options).replace(/am/i, 'AM').replace(/pm/i, 'PM');
@@ -272,12 +274,14 @@ function submitExam() {
         date: dateString
     };
 
+    // Push to Firebase and process UI
     if (typeof firebase !== 'undefined') {
         const db = firebase.database();
         const resultKey = `${studentId}_${Date.now()}`;
         
         db.ref('exam_results/' + resultKey).set(resultData)
         .then(() => {
+            // Update live status to "Finished" so admin knows they are done
             return db.ref('exam_live/' + studentId).update({ status: 'Finished' });
         })
         .then(() => {
@@ -343,6 +347,7 @@ function finishSubmissionUI(totalMarks, typingResults, mcqData) {
     reportText += `Candidate Name: ${typeof studentData !== 'undefined' && studentData ? studentData.name : 'Student'}\n`;
     reportText += `Date: ${new Date().toLocaleDateString()}\n`;
     
+    // FIX: Removed the buggy element fetching that crashed the app
     reportText += `Exam: Computer Knowledge - Final Test\n\n`;
     reportText += `QUESTION BREAKDOWN:\n`;
     
