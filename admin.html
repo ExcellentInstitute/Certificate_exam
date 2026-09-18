@@ -11,7 +11,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
-    <!-- NEW: Firebase SDKs for Direct Database Connection -->
+    <!-- Firebase SDKs for Direct Database Connection -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
@@ -244,7 +244,13 @@
             // Listen to live waiting room & active exams
             db.ref('exam_live').on('value', snap => {
                 globalLiveExams = [];
-                snap.forEach(child => { if(child.val()) globalLiveExams.push(child.val()); });
+                snap.forEach(child => { 
+                    if(child.val()) {
+                        let stData = child.val();
+                        stData._key = child.key; // Safely capture the Firebase Key for ghost deletion
+                        globalLiveExams.push(stData); 
+                    }
+                });
                 renderAllTables();
             });
 
@@ -266,8 +272,8 @@
         // ==========================================
         // 3. FIREBASE CONTROL ACTIONS
         // ==========================================
-        function approveSingle(studentId) {
-            firebase.database().ref('exam_live/' + studentId).update({ status: 'Approved' })
+        function approveSingle(sessionKey) {
+            firebase.database().ref('exam_live/' + sessionKey).update({ status: 'Approved' })
             .catch(err => alert("Error approving: " + err.message));
         }
 
@@ -277,7 +283,8 @@
             let updates = {};
             globalLiveExams.forEach(st => {
                 if (st.status === 'Waiting') {
-                    updates[st.id + '/status'] = 'Approved';
+                    // Uses the reliable _key to avoid undefined errors
+                    updates[(st._key || st.id) + '/status'] = 'Approved';
                 }
             });
             
@@ -285,6 +292,14 @@
                 firebase.database().ref('exam_live').update(updates)
                 .catch(err => alert("Error approving: " + err.message));
             }
+        }
+        
+        // --- NEW: MANUAL REMOVE ACTION FOR GHOST SESSIONS ---
+        function removeLiveSession(sessionKey) {
+            if (!confirm("Are you sure you want to remove this session from the live tracker?")) return;
+            
+            firebase.database().ref('exam_live/' + sessionKey).remove()
+            .catch(err => alert("Error removing session: " + err.message));
         }
 
         function deleteResult(resultId) {
@@ -433,13 +448,26 @@
                 const tr = document.createElement('tr');
                 if (st.status === "Waiting") {
                     waitingCount++;
-                    tr.innerHTML = `<td><strong>${st.id}</strong></td><td>${st.name}</td><td>${st.course}</td><td><button class="btn-approve" onclick="approveSingle('${st.id}')"><i class="fa-solid fa-check"></i> Approve</button></td>`;
+                    tr.innerHTML = `
+                        <td><strong>${st.id || 'N/A'}</strong></td>
+                        <td>${st.name || 'N/A'}</td>
+                        <td>${st.course || 'N/A'}</td>
+                        <td>
+                            <button class="btn-approve" onclick="approveSingle('${st._key || st.id}')"><i class="fa-solid fa-check"></i> Approve</button>
+                            <button class="btn-delete" style="padding: 6px 10px; margin-left: 5px;" onclick="removeLiveSession('${st._key || st.id}')" title="Remove"><i class="fa-solid fa-trash"></i></button>
+                        </td>`;
                     waitingList.appendChild(tr);
                 } else if (st.status !== "Finished") {
                     activeCount++;
                     let statusClass = "status-active", icon = "<i class='fa-solid fa-spinner fa-spin'></i>";
-                    if (st.status.includes("Paused")) { statusClass = "status-paused"; icon = "<i class='fa-solid fa-triangle-exclamation'></i>"; }
-                    tr.innerHTML = `<td><strong>${st.id}</strong></td><td>${st.name}</td><td><span class="status-badge ${statusClass}">${icon} ${st.status}</span></td>`;
+                    if (st.status && st.status.includes("Paused")) { statusClass = "status-paused"; icon = "<i class='fa-solid fa-triangle-exclamation'></i>"; }
+                    tr.innerHTML = `
+                        <td><strong>${st.id || 'N/A'}</strong></td>
+                        <td>${st.name || 'N/A'}</td>
+                        <td>
+                            <span class="status-badge ${statusClass}">${icon} ${st.status || 'Unknown'}</span>
+                            <button class="btn-delete" style="padding: 4px 8px; margin-left: 10px; border-radius: 4px;" onclick="removeLiveSession('${st._key || st.id}')" title="Force Remove Session"><i class="fa-solid fa-xmark"></i></button>
+                        </td>`;
                     activeList.appendChild(tr);
                 }
             });
