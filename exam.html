@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Exam - Excellent Institute</title>
+    
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- NEW: Firebase SDKs for Direct Database Connection -->
+    <!-- NEW: Firebase SDKs for Real-Time Status & Results Sync -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
@@ -24,6 +25,16 @@
         #lock-screen input { padding: 10px; margin: 15px 0; border-radius: 5px; border: none; width: 250px; text-align: center; font-family: monospace; letter-spacing: 2px;}
         #lock-screen button { padding: 10px 20px; background: #343a40; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: 600;}
         #lock-error { color: #ffcccc; font-size: 13px; font-weight: bold; margin-bottom: 15px; display: none; }
+
+        /* NEW: Entry Gate Styles */
+        #entry-gate {
+            position: fixed; inset: 0; background: #0056b3; z-index: 100000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; color: white;
+        }
+        #entry-gate h1 { font-size: 40px; margin-bottom: 20px; }
+        #entry-gate p { font-size: 18px; margin-bottom: 30px; text-align: center; max-width: 600px; line-height: 1.5; }
+        #entry-gate button { padding: 15px 40px; font-size: 20px; font-weight: bold; cursor: pointer; border-radius: 8px; border: none; background: #28a745; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: 0.2s; }
+        #entry-gate button:hover { background: #218838; transform: translateY(-2px); }
 
         .header { background: #0056b3; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
         .student-info { display: flex; align-items: center; gap: 15px; }
@@ -44,6 +55,13 @@
 </head>
 <body>
 
+    <!-- ENTRY GATE: Forces User Gesture for Full Screen -->
+    <div id="entry-gate">
+        <h1><i class="fa-solid fa-desktop"></i> Ready to Begin?</h1>
+        <p>To prevent cheating, this exam runs in strict Full-Screen mode.<br><strong>Do not switch tabs, minimize the browser, or exit Full-Screen.</strong> Doing so will instantly pause your exam and alert the Admin.</p>
+        <button onclick="startActualExam()">Enter Full-Screen & Start</button>
+    </div>
+
     <div id="lock-screen">
         <h1 style="margin: 0; font-size: 40px;"><i class="fa-solid fa-triangle-exclamation"></i> EXAM PAUSED</h1>
         <p style="font-size: 18px; margin-top: 10px;">Suspicious activity detected.</p>
@@ -54,7 +72,7 @@
         <button id="unlock-btn" onclick="unlockExam()"><i class="fa-solid fa-lock-open"></i> Resume Exam</button>
     </div>
 
-    <div id="exam-content">
+    <div id="exam-content" style="display: none;">
         <div class="header">
             <div>
                 <h2 style="margin:0;">Excellent Institute</h2>
@@ -116,16 +134,38 @@
             firebase.initializeApp(firebaseConfig);
         }
 
-        // Initialize Anonymous Auth to securely update exam_live status
+        // Initialize Anonymous Auth to securely push results
         firebase.auth().onAuthStateChanged((user) => {
             if (!user) {
                 firebase.auth().signInAnonymously().catch((error) => {
-                    console.warn("Silent Authentication Failed. Real-time status tracking may be limited.", error);
+                    console.warn("Silent Authentication Failed. Ensure Anonymous Auth is enabled in Firebase.", error);
                 });
             }
         });
 
         let studentData = null;
+        let examActive = false; // Required by exam.js to arms the anti-cheat
+        let isTimed = true;     // Required by exam.js to arms the anti-cheat
+
+        // ==========================================
+        // LAUNCH ACTUAL EXAM (ENTER FULL SCREEN)
+        // ==========================================
+        function startActualExam() {
+            document.documentElement.requestFullscreen().then(() => {
+                document.getElementById('entry-gate').style.display = 'none';
+                document.getElementById('exam-content').style.display = 'block';
+                examActive = true; 
+                
+                // Update Admin Dashboard in real-time
+                if (typeof firebase !== 'undefined' && studentData && studentData.id) {
+                    firebase.database().ref('exam_live/' + studentData.id).update({
+                        status: 'Active (Testing)'
+                    }).catch(e => console.warn(e));
+                }
+            }).catch(err => {
+                alert("Your browser blocked full-screen. Please click the button again.");
+            });
+        }
 
         function initExam() {
             const savedData = localStorage.getItem('examStudent');
@@ -153,13 +193,10 @@
                 document.getElementById('header-photo').style.display = "none";
             }
 
-            // ==========================================
             // SMART EXAM DISTRIBUTER (Exactly 400 Marks)
-            // ==========================================
             const examData = questionBank["CCA"]; 
             const mcqContainer = document.getElementById('mcq-container');
             
-            // The 7 required subjects for MCQs
             const requiredSubjects = [
                 "MS Word", "MS Excel", "MS PowerPoint", 
                 "Computer Fundamentals", "Computer Components", 
@@ -202,16 +239,6 @@
 
         document.addEventListener('DOMContentLoaded', () => {
             initExam();
-            if (typeof examStartTime !== 'undefined') {
-                examStartTime = new Date().getTime(); 
-            }
-            
-            // Ensure status remains "Active" on refresh
-            if (studentData && studentData.id) {
-                firebase.database().ref('exam_live/' + studentData.id).update({
-                    status: 'Active'
-                }).catch(e => console.warn(e));
-            }
         });
     </script>
 </body>
