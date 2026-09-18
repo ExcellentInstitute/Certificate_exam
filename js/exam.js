@@ -5,7 +5,8 @@
 let isExamPaused = false;
 
 document.addEventListener("fullscreenchange", () => {
-    // FIX: Only trigger anti-cheat if the exam is actively running and is timed.
+    // FIX: Only trigger anti-cheat if the exam is actively running.
+    // If they have submitted, examActive is false, so it won't lock them out.
     if (typeof examActive !== 'undefined' && examActive && typeof isTimed !== 'undefined' && isTimed) {
         if (!document.fullscreenElement && !isExamPaused) {
             lockExam("You exited full screen mode.");
@@ -14,7 +15,7 @@ document.addEventListener("fullscreenchange", () => {
 });
 
 window.addEventListener("blur", () => {
-    // FIX: Only trigger anti-cheat if the exam is actively running and is timed.
+    // FIX: Only trigger anti-cheat if the exam is actively running.
     if (typeof examActive !== 'undefined' && examActive && typeof isTimed !== 'undefined' && isTimed) {
         if (!isExamPaused) {
             lockExam("You switched tabs or minimized the window.");
@@ -41,10 +42,11 @@ function lockExam(reason) {
 function unlockExam() {
     const pass = document.getElementById("admin-unlock-pass").value;
     const errorMsg = document.getElementById("lock-error");
-    const unlockBtn = document.getElementById("unlock-btn");
+    const unlockBtn = document.getElementById("unlock-btn") || document.querySelector("#lock-screen button");
     
     if (!pass) return;
 
+    let originalText = unlockBtn.innerHTML;
     unlockBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
     unlockBtn.disabled = true;
     if (errorMsg) errorMsg.style.display = "none";
@@ -66,11 +68,11 @@ function unlockExam() {
                 }).catch(e => console.warn(e));
             }
             
-            unlockBtn.innerHTML = '<i class="fa-solid fa-lock-open"></i> Resume Exam';
+            unlockBtn.innerHTML = originalText;
             unlockBtn.disabled = false;
         }).catch(err => {
             alert("Browser blocked full screen. Please click Resume again.");
-            unlockBtn.innerHTML = '<i class="fa-solid fa-lock-open"></i> Resume Exam';
+            unlockBtn.innerHTML = originalText;
             unlockBtn.disabled = false;
         });
     })
@@ -82,7 +84,7 @@ function unlockExam() {
         } else {
             alert("Incorrect Admin Password.");
         }
-        unlockBtn.innerHTML = '<i class="fa-solid fa-lock-open"></i> Resume Exam';
+        unlockBtn.innerHTML = originalText;
         unlockBtn.disabled = false;
     });
 }
@@ -136,7 +138,9 @@ function formatTime(ms) {
 }
 
 function updateLiveStats(currentMs) {
-    const originalText = document.getElementById('typing-source').innerText.trim();
+    const sourceEl = document.getElementById('typing-source');
+    if (!sourceEl) return;
+    const originalText = sourceEl.innerText.trim();
     const typedText = document.getElementById('typing-area').value.trim();
     let minutesTaken = currentMs / 60000;
     const originalWords = originalText.split(/\s+/);
@@ -163,7 +167,8 @@ function updateLiveStats(currentMs) {
 // ==========================================
 
 function evaluateTyping() {
-    const originalText = document.getElementById('typing-source').innerText.trim();
+    const sourceEl = document.getElementById('typing-source');
+    const originalText = sourceEl ? sourceEl.innerText.trim() : "";
     const typedText = document.getElementById('typing-area').value.trim();
     
     let finalTimeMs = typingTotalTimeMs;
@@ -201,7 +206,7 @@ function evaluateTyping() {
 function calculateMCQ() {
     let mcqMarks = 0;
     let subjectMarks = {};
-    const activeQuestions = window.activeExamPaper; 
+    const activeQuestions = window.activeExamPaper || (typeof currentQuestions !== 'undefined' ? currentQuestions : []); 
     
     activeQuestions.forEach((q, index) => {
         if (!subjectMarks[q.subject]) {
@@ -213,7 +218,6 @@ function calculateMCQ() {
         const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
         if (selectedOption) {
             const selectedAnswerIndex = parseInt(selectedOption.value);
-            // Support both old 'q.ans' and new 'q.correctAnswer' structure
             const correctIndex = q.ans !== undefined ? q.ans : q.correctAnswer;
             
             if (selectedAnswerIndex === correctIndex) {
@@ -230,9 +234,13 @@ function submitExam() {
     if (!confirm("Are you sure you want to submit your exam? You cannot undo this action.")) return;
 
     const submitBtn = document.querySelector('.submit-btn');
-    submitBtn.innerText = "Evaluating and Submitting...";
-    submitBtn.disabled = true;
-    submitBtn.style.background = "#6c757d";
+    let originalSubmitText = "Submit Final Exam";
+    if (submitBtn) {
+        originalSubmitText = submitBtn.innerHTML;
+        submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Evaluating and Submitting...';
+        submitBtn.disabled = true;
+        submitBtn.style.background = "#6c757d";
+    }
 
     const mcqData = calculateMCQ();
     const typingResults = evaluateTyping();
@@ -249,7 +257,6 @@ function submitExam() {
         studentId = sData.id; studentName = sData.name; studentCourse = sData.course;
     }
 
-    // Generate Result Object for Firebase
     const now = new Date();
     const options = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true };
     const dateString = now.toLocaleString('en-IN', options).replace(/am/i, 'AM').replace(/pm/i, 'PM');
@@ -265,14 +272,12 @@ function submitExam() {
         date: dateString
     };
 
-    // Push to Firebase and process UI
     if (typeof firebase !== 'undefined') {
         const db = firebase.database();
         const resultKey = `${studentId}_${Date.now()}`;
         
         db.ref('exam_results/' + resultKey).set(resultData)
         .then(() => {
-            // Update live status to "Finished" so admin knows they are done
             return db.ref('exam_live/' + studentId).update({ status: 'Finished' });
         })
         .then(() => {
@@ -299,39 +304,67 @@ function finishSubmissionUI(totalMarks, typingResults, mcqData) {
         else if (document.msExitFullscreen) document.msExitFullscreen().catch(err => console.log(err));
     }
 
-    document.getElementById('exam-interface').style.display = 'none';
-    document.getElementById('result-screen').style.display = 'block';
+    document.getElementById('exam-content').style.display = 'none';
+    
+    // Ensure result screen exists
+    let resultScreen = document.getElementById('result-screen');
+    if (!resultScreen) {
+        // If result-screen is missing in exam.html, we dynamically inject it.
+        document.body.innerHTML += `
+        <div id="result-screen" style="padding: 40px; background-color: #e6f0fa; height: 100vh; overflow-y: auto; box-sizing: border-box;">
+            <div class="score-card" style="background: white; max-width: 800px; margin: 0 auto; padding: 40px; border-radius: 8px; box-shadow: 0 0 15px rgba(0,0,0,0.2); box-sizing: border-box;">
+                <h2 style="color: #2c6eb5; font-size: 30px; margin-top: 0; text-align: center;">Exam Completed Successfully</h2>
+                <p style="text-align: center; color: #666;">Your result file has been generated and saved.</p>
+                <div style="background: #f4f7f6; padding: 20px; border-radius: 5px; margin-bottom: 30px;">
+                    <div class="stat-row" style="display: flex; justify-content: space-between; margin: 15px 0; font-size: 18px;"><span>Total Questions:</span> <strong id="res-total">0</strong></div>
+                    <div class="stat-row" style="display: flex; justify-content: space-between; margin: 15px 0; font-size: 18px;"><span>Attempted:</span> <strong id="res-attempted">0</strong></div>
+                    <div class="stat-row" style="display: flex; justify-content: space-between; margin: 15px 0; font-size: 18px;"><span>Correct Answers:</span> <strong id="res-correct" style="color: green;">0</strong></div>
+                    <div class="stat-row" style="display: flex; justify-content: space-between; margin: 15px 0; font-size: 18px;"><span>Incorrect Answers:</span> <strong id="res-incorrect" style="color: red;">0</strong></div>
+                    <hr>
+                    <div class="stat-row" style="display: flex; justify-content: space-between; margin: 15px 0; font-size: 24px; color: #2c6eb5;"><span>Final Score:</span> <strong id="res-score">0</strong></div>
+                </div>
+                <h3 style="color: #2c6eb5; border-bottom: 2px solid #ccc; padding-bottom: 5px;">Detailed Review</h3>
+                <div id="review-container"></div>
+                <br>
+                <button class="start-btn" style="width: 100%; background: #0056b3; color: white; padding: 15px; font-size: 18px; border-radius: 8px; margin-top: 30px; cursor: pointer; border: none; font-weight: bold;" onclick="window.location.href='certificate_exam_index.html'">Return to Setup Screen</button>
+            </div>
+        </div>`;
+        resultScreen = document.getElementById('result-screen');
+    } else {
+        resultScreen.style.display = 'block';
+    }
     
     let correct = 0;
     let attempted = 0;
+    const activeQuestions = window.activeExamPaper || (typeof currentQuestions !== 'undefined' ? currentQuestions : []);
     
     let reportText = `EXCELLENT INSTITUTE - MOCK TEST RESULT\n`;
     reportText += `--------------------------------------\n`;
-    reportText += `Candidate Name: ${studentData ? studentData.name : 'Student'}\n`;
+    reportText += `Candidate Name: ${typeof studentData !== 'undefined' && studentData ? studentData.name : 'Student'}\n`;
     reportText += `Date: ${new Date().toLocaleDateString()}\n`;
     
-    const subjEl = document.getElementById('exam-subject');
-    const setEl = document.getElementById('test-set');
-    const subjText = subjEl ? subjEl.options[subjEl.selectedIndex].text : "Computer Knowledge";
-    const diffText = setEl ? setEl.options[setEl.selectedIndex].text : "Set 1";
-    
-    reportText += `Exam: ${subjText} - ${diffText}\n\n`;
+    reportText += `Exam: Computer Knowledge - Final Test\n\n`;
     reportText += `QUESTION BREAKDOWN:\n`;
     
     let reviewHTML = "";
 
-    // FIX: Dynamically loop based on the exact number of active questions
-    for (let i = 0; i < currentQuestions.length; i++) { 
-        let q = currentQuestions[i];
+    for (let i = 0; i < activeQuestions.length; i++) { 
+        let q = activeQuestions[i];
         if (!q) continue; 
         
-        let userAnsText = userAnswers[i] !== null ? q.options[userAnswers[i]] : "Not Attempted";
+        let userAnsVal = null;
+        const selectedOption = document.querySelector(`input[name="q${i}"]:checked`);
+        if (selectedOption) {
+            userAnsVal = parseInt(selectedOption.value);
+        }
+
+        let userAnsText = userAnsVal !== null ? q.options[userAnsVal] : "Not Attempted";
         const correctIndex = q.ans !== undefined ? q.ans : q.correctAnswer;
         let correctAnsText = q.options[correctIndex]; 
         
-        if (userAnswers[i] !== null && statuses[i] !== 3) {
+        if (userAnsVal !== null) {
             attempted++;
-            if (userAnswers[i] === correctIndex) {
+            if (userAnsVal === correctIndex) {
                 correct++;
                 reportText += `Q${i+1}: CORRECT\n`;
             } else {
@@ -341,38 +374,43 @@ function finishSubmissionUI(totalMarks, typingResults, mcqData) {
             reportText += `Q${i+1}: NOT ATTEMPTED / UNANSWERED (Correct: ${correctAnsText})\n`;
         }
 
-        reviewHTML += `<div class="review-item">`;
-        reviewHTML += `<div class="review-q">Q${i+1}. ${q.q || q.question}</div>`;
+        reviewHTML += `<div class="review-item" style="background: #f9f9f9; border: 1px solid #ddd; padding: 20px; margin-bottom: 20px; border-radius: 5px;">`;
+        reviewHTML += `<div class="review-q" style="font-weight: bold; font-size: 18px; margin-bottom: 15px;">Q${i+1}. ${q.q || q.question}</div>`;
         
         for(let j=0; j<4; j++) {
             let optClass = "review-opt";
-            if(userAnswers[i] === j && userAnswers[i] !== correctIndex) optClass += " review-wrong"; 
-            if(j === correctIndex) optClass += " review-correct"; 
-            reviewHTML += `<div class="${optClass}">${String.fromCharCode(65+j)}. ${q.options[j]}</div>`;
+            let optStyle = "padding: 8px; margin-bottom: 5px; border-radius: 4px; background: #fff; border: 1px solid #eee;";
+            if(userAnsVal === j && userAnsVal !== correctIndex) {
+                optStyle = "padding: 8px; margin-bottom: 5px; border-radius: 4px; background-color: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; text-decoration: line-through;";
+            } 
+            if(j === correctIndex) {
+                optStyle = "padding: 8px; margin-bottom: 5px; border-radius: 4px; background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; font-weight: bold;";
+            } 
+            reviewHTML += `<div class="${optClass}" style="${optStyle}">${String.fromCharCode(65+j)}. ${q.options[j]}</div>`;
         }
         
-        if(q.exp || q.explanation) reviewHTML += `<div class="review-exp"><strong>Explanation:</strong> ${q.exp || q.explanation}</div>`;
+        if(q.exp || q.explanation) reviewHTML += `<div class="review-exp" style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #ccc; font-size: 15px; color: #444;"><strong>Explanation:</strong> ${q.exp || q.explanation}</div>`;
         reviewHTML += `</div>`;
     }
     
     let wrong = attempted - correct;
     let score = totalMarks;
 
-    document.getElementById('res-total').innerText = currentQuestions.length;
-    document.getElementById('res-attempted').innerText = attempted;
-    document.getElementById('res-correct').innerText = correct;
-    document.getElementById('res-incorrect').innerText = wrong;
-    document.getElementById('res-score').innerText = score.toFixed(2);
+    if (document.getElementById('res-total')) document.getElementById('res-total').innerText = activeQuestions.length;
+    if (document.getElementById('res-attempted')) document.getElementById('res-attempted').innerText = attempted;
+    if (document.getElementById('res-correct')) document.getElementById('res-correct').innerText = correct;
+    if (document.getElementById('res-incorrect')) document.getElementById('res-incorrect').innerText = wrong;
+    if (document.getElementById('res-score')) document.getElementById('res-score').innerText = score.toFixed(2);
 
-    document.getElementById('review-container').innerHTML = reviewHTML;
+    if (document.getElementById('review-container')) document.getElementById('review-container').innerHTML = reviewHTML;
 
     reportText += `\nSUMMARY:\n`;
-    reportText += `Attempted: ${attempted}/${currentQuestions.length}\n`;
+    reportText += `Attempted: ${attempted}/${activeQuestions.length}\n`;
     reportText += `Correct: ${correct}\n`;
     reportText += `Incorrect: ${wrong}\n`;
     reportText += `Final Score: ${score.toFixed(2)}\n`;
 
-    downloadFile(reportText, studentData ? studentData.name : 'Student');
+    downloadFile(reportText, typeof studentData !== 'undefined' && studentData ? studentData.name : 'Student');
 }
 
 function downloadFile(content, name) {
