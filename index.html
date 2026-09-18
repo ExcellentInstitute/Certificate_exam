@@ -381,9 +381,6 @@
                 startBtn.onclick = () => {
                     // Update status to Active in Firebase
                     firebase.database().ref('exam_live/' + currentStudentId).update({ status: 'Active' });
-
-                    // Browser requires a direct user click to trigger fullscreen
-                    document.documentElement.requestFullscreen().catch(e => console.log("Fullscreen ignored:", e));
                     
                     // Small delay ensures full screen triggers before changing the page
                     startBtn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin'></i> Loading Exam...";
