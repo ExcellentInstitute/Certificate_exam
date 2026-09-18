@@ -11,6 +11,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
+    <!-- NEW: Firebase SDKs for Direct Database Connection -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
     <style>
         :root {
             --primary: #2563eb; --primary-hover: #1d4ed8;
@@ -108,9 +113,9 @@
             <i class="fa-solid fa-user-shield" style="font-size: 40px; color: #2563eb; margin-bottom: 15px;"></i>
             <h2>Admin Login</h2>
             <p>Excellent Institute Exam Control</p>
-            <input type="password" id="admin-pass" placeholder="Enter Master Password">
+            <input type="password" id="admin-pass" placeholder="Enter Admin Password">
             <button onclick="loginAdmin()"><i class="fa-solid fa-lock-open"></i> Access Dashboard</button>
-            <p id="login-error" style="color: #ef4444; font-size: 13px; margin-top: 15px;"></p>
+            <p id="login-error" style="color: #ef4444; font-size: 13px; margin-top: 15px; font-weight: bold;"></p>
         </div>
     </div>
 
@@ -175,51 +180,121 @@
     
     <script src="js/questions.js"></script>
     <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxFsBuyiWOdTMMGeOgTXhvSmAfUK_uMbdwVO945ejPvnsEOQtX9ZtMCh9RQtBWzHSVj/exec"; // PASTE YOUR URL HERE
-        let masterPass = "";
-        let pollingInterval;
-        
-        // Load manual overrides from local storage (so they survive auto-refreshes)
+        // ==========================================
+        // FIREBASE CONFIGURATION (SECURE ADMIN AUTH)
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyAPJ28Y1jBL30phxN-8yV-4X0raSEuBkx4",
+            authDomain: "excellent-institute-vault.firebaseapp.com",
+            databaseURL: "https://excellent-institute-vault-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "excellent-institute-vault",
+            storageBucket: "excellent-institute-vault.firebasestorage.app",
+            messagingSenderId: "132693034261",
+            appId: "1:132693034261:web:90db93c407607bd3c5951c",
+            measurementId: "G-CTLW9E7MYK"
+        };
+
+        if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+
+        // Local storage for manual overrides
         let manualOverrides = JSON.parse(localStorage.getItem('adminOverrides')) || { forceTop: [], skip: [] };
 
+        let globalStudents = [];
+        let globalLiveExams = [];
+        let globalResults = [];
+
+        // ==========================================
+        // 1. SECURE ADMIN LOGIN
+        // ==========================================
         function loginAdmin() {
             const passInput = document.getElementById('admin-pass').value.trim();
             if (!passInput) return;
-            masterPass = passInput;
-            document.getElementById('login-error').innerText = "Verifying...";
             
-            fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'admin_get_live_exams', pass: masterPass }) })
-            .then(res => res.json())
-            .then(data => {
-                if (data.error) {
-                    document.getElementById('login-error').innerHTML = "<i class='fa-solid fa-circle-exclamation'></i> Incorrect Password!";
-                } else {
-                    document.getElementById('login-overlay').classList.add('hidden');
-                    document.getElementById('main-dashboard').classList.remove('hidden');
-                    refreshDashboard(); 
-                    pollingInterval = setInterval(refreshDashboard, 5000); 
-                }
-            }).catch(err => { document.getElementById('login-error').innerText = "Network Error."; });
+            document.getElementById('login-error').innerHTML = "<i class='fa-solid fa-spinner fa-spin'></i> Authenticating securely...";
+            
+            // Login via Firebase to bypass RTDB 'auth != null' rules securely
+            firebase.auth().signInWithEmailAndPassword('admin@ei.com', passInput)
+            .then(() => {
+                document.getElementById('login-overlay').classList.add('hidden');
+                document.getElementById('main-dashboard').classList.remove('hidden');
+                setupRealtimeListeners(); 
+            })
+            .catch(err => {
+                console.error(err);
+                document.getElementById('login-error').innerHTML = "<i class='fa-solid fa-circle-exclamation'></i> Incorrect Password or Network Error!";
+            });
         }
 
-        function refreshDashboard() {
+        // ==========================================
+        // 2. REAL-TIME DATABASE LISTENERS (No Polling)
+        // ==========================================
+        function setupRealtimeListeners() {
             document.getElementById('loading-indicator').style.display = 'block';
-            
-            Promise.all([
-                fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'admin_get_live_exams', pass: masterPass }) }).then(res => res.json()),
-                fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'admin_get_results', pass: masterPass }) }).then(res => res.json()),
-                fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'get_data', pass: masterPass }) }).then(res => res.json())
-            ]).then(([liveResponse, resultResponse, dbResponse]) => {
-                document.getElementById('loading-indicator').style.display = 'none';
-                
-                let liveData = liveResponse.data || [];
-                let resultsData = resultResponse.data || [];
+            const db = firebase.database();
 
-                if (liveResponse.data) renderLiveTables(liveData);
-                if (resultResponse.data) renderResultsTable(resultsData);
-                if (dbResponse.students) renderPipelineTables(dbResponse.students, resultsData, liveData);
-                
-            }).catch(err => console.error("Polling error:", err));
+            // Listen to full student registry
+            db.ref('students').on('value', snap => {
+                globalStudents = [];
+                snap.forEach(child => { if(child.val()) globalStudents.push(child.val()); });
+                renderAllTables();
+            });
+
+            // Listen to live waiting room & active exams
+            db.ref('exam_live').on('value', snap => {
+                globalLiveExams = [];
+                snap.forEach(child => { if(child.val()) globalLiveExams.push(child.val()); });
+                renderAllTables();
+            });
+
+            // Listen to completed results
+            db.ref('exam_results').on('value', snap => {
+                globalResults = [];
+                snap.forEach(child => { if(child.val()) globalResults.push(child.val()); });
+                document.getElementById('loading-indicator').style.display = 'none';
+                renderAllTables();
+            });
+        }
+
+        function renderAllTables() {
+            renderLiveTables(globalLiveExams);
+            renderResultsTable(globalResults);
+            renderPipelineTables(globalStudents, globalResults, globalLiveExams);
+        }
+
+        // ==========================================
+        // 3. FIREBASE CONTROL ACTIONS
+        // ==========================================
+        function approveSingle(studentId) {
+            firebase.database().ref('exam_live/' + studentId).update({ status: 'Approved' })
+            .catch(err => alert("Error approving: " + err.message));
+        }
+
+        function approveAll() {
+            if (!confirm("Approve all waiting students to start their exams?")) return;
+            
+            let updates = {};
+            globalLiveExams.forEach(st => {
+                if (st.status === 'Waiting') {
+                    updates[st.id + '/status'] = 'Approved';
+                }
+            });
+            
+            if (Object.keys(updates).length > 0) {
+                firebase.database().ref('exam_live').update(updates)
+                .catch(err => alert("Error approving: " + err.message));
+            }
+        }
+
+        function deleteResult(resultId) {
+            if (!confirm("⚠️ WARNING: Are you sure you want to permanently delete this exam result? This cannot be undone.")) return;
+            
+            firebase.database().ref('exam_results').orderByChild('id').equalTo(resultId).once('value', snap => {
+                snap.forEach(child => {
+                    child.ref.remove().catch(err => alert("Error deleting result: " + err.message));
+                });
+            });
         }
 
         // ==========================================
@@ -242,7 +317,7 @@
             }
             
             localStorage.setItem('adminOverrides', JSON.stringify(manualOverrides));
-            refreshDashboard(); // Immediately show changes
+            renderAllTables(); // Instantly re-sorts tables locally
         }
 
         // ==========================================
@@ -266,9 +341,9 @@
                 if (completedIds.has(sId) || completedIds.has(sPhone) || liveIds.has(sId) || liveIds.has(sPhone)) return; 
 
                 let admissionDate = new Date(st.date);
-                let durationMonths = parseInt(st.duration);
+                let durationMonths = parseInt(st.duration) || 12;
 
-                if (!isNaN(durationMonths) && admissionDate instanceof Date && !isNaN(admissionDate)) {
+                if (!isNaN(durationMonths) && admissionDate instanceof Date && !isNaN(admissionDate.getTime())) {
                     let completionDate = new Date(admissionDate);
                     completionDate.setMonth(completionDate.getMonth() + durationMonths);
                     
@@ -346,7 +421,7 @@
         }
 
         // ==========================================
-        // RENDER OTHER TABLES
+        // RENDER LIVE TABLES & RESULTS
         // ==========================================
         function renderLiveTables(students) {
             const waitingList = document.getElementById('waiting-list');
@@ -381,7 +456,10 @@
                 return;
             }
 
-            results.reverse().forEach(res => {
+            // Sort by date descending
+            results.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+            results.forEach(res => {
                 const tr = document.createElement('tr');
                 const encodedData = encodeURIComponent(JSON.stringify(res));
                 let dateDisplay = res.date.includes('T') ? res.date.split('T')[0] : res.date.split(' ')[0];
@@ -395,34 +473,11 @@
                     <td><strong>${res.wpm}</strong> <span style="font-size: 11px; color: #64748b;">WPM</span></td>
                     <td>
                         <button class="btn-download" onclick="downloadResultPDF('${encodedData}')"><i class="fa-solid fa-file-pdf"></i></button>
-                        <button class="btn-delete" title="Delete Result" onclick="deleteResult('${res.id}', '${res.marks}', '${res.wpm}')"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn-delete" title="Delete Result" onclick="deleteResult('${res.id}')"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 resultsList.appendChild(tr);
             });
-        }
-
-        // ==========================================
-        // CONTROL ACTIONS
-        // ==========================================
-        function approveSingle(studentId) {
-            fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'admin_approve_exam', pass: masterPass, id: studentId }) })
-            .then(res => res.json()).then(data => { if (data.success) refreshDashboard(); });
-        }
-
-        function approveAll() {
-            if (!confirm("Approve all waiting students to start their exams?")) return;
-            fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'admin_approve_all', pass: masterPass }) })
-            .then(res => res.json()).then(data => { if (data.success) refreshDashboard(); });
-        }
-
-        function deleteResult(studentId, marks, wpm) {
-            if (!confirm("⚠️ WARNING: Are you sure you want to permanently delete this exam result? This cannot be undone.")) return;
-            fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify({ action: 'admin_delete_result', pass: masterPass, studentId: studentId, marks: marks, wpm: wpm }) })
-            .then(res => res.json()).then(data => { 
-                if (data.success) refreshDashboard(); 
-                else alert("Error deleting result: " + data.error);
-            }).catch(err => alert("Network error while trying to delete."));
         }
 
         // ==========================================
