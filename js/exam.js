@@ -1,27 +1,24 @@
-// Replace with your actual Web App URL
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxFsBuyiWOdTMMGeOgTXhvSmAfUK_uMbdwVO945ejPvnsEOQtX9ZtMCh9RQtBWzHSVj/exec";
-const adminPassword = "admin";
+// ==========================================
+// 1. ANTI-CHEAT & LOCKOUT SYSTEM
+// ==========================================
 
 let isExamPaused = false;
 
-// NEW TYPING TRACKER VARIABLES
-let typingTotalTimeMs = 0;
-let typingInterval = null;
-let typingLastStart = null;
-
-// ==========================================
-// 1. ANTI-CHEAT SYSTEM
-// ==========================================
-
 document.addEventListener("fullscreenchange", () => {
-    if (!document.fullscreenElement && !isExamPaused) {
-        lockExam("You exited full screen mode.");
+    // FIX: Only trigger anti-cheat if the exam is actively running and is timed.
+    if (typeof examActive !== 'undefined' && examActive && typeof isTimed !== 'undefined' && isTimed) {
+        if (!document.fullscreenElement && !isExamPaused) {
+            lockExam("You exited full screen mode.");
+        }
     }
 });
 
 window.addEventListener("blur", () => {
-    if (!isExamPaused) {
-        lockExam("You switched tabs or minimized the window.");
+    // FIX: Only trigger anti-cheat if the exam is actively running and is timed.
+    if (typeof examActive !== 'undefined' && examActive && typeof isTimed !== 'undefined' && isTimed) {
+        if (!isExamPaused) {
+            lockExam("You switched tabs or minimized the window.");
+        }
     }
 });
 
@@ -31,33 +28,72 @@ function lockExam(reason) {
     document.getElementById("lock-screen").style.display = "flex";
     document.getElementById("lock-reason").innerText = reason;
     
+    // Alert the Admin Dashboard in Real-Time via Firebase
     if (typeof studentData !== 'undefined' && studentData !== null) {
-        fetch(WEB_APP_URL, {
-            method: 'POST',
-            redirect: 'follow',
-            headers: { "Content-Type": "text/plain" },
-            body: JSON.stringify({ action: 'log_cheat', id: studentData.id, reason: reason })
-        }).catch(err => console.error("Failed to log cheat alert:", err));
+        if (typeof firebase !== 'undefined') {
+            firebase.database().ref('exam_live/' + studentData.id).update({ 
+                status: 'Paused: ' + reason 
+            }).catch(e => console.warn(e));
+        }
     }
 }
 
 function unlockExam() {
     const pass = document.getElementById("admin-unlock-pass").value;
-    if (pass === adminPassword) {
+    const errorMsg = document.getElementById("lock-error");
+    const unlockBtn = document.getElementById("unlock-btn");
+    
+    if (!pass) return;
+
+    unlockBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Verifying...';
+    unlockBtn.disabled = true;
+    if (errorMsg) errorMsg.style.display = "none";
+
+    // SECURE FIX: Authenticate Admin via Firebase, NO HARDCODED PASSWORD
+    firebase.auth().signInWithEmailAndPassword('admin@ei.com', pass)
+    .then(() => {
+        // Successfully authenticated as Admin, unlock the exam
         document.documentElement.requestFullscreen().then(() => {
             document.getElementById("lock-screen").style.display = "none";
             document.getElementById("exam-content").style.display = "block";
             isExamPaused = false;
             document.getElementById("admin-unlock-pass").value = "";
-        }).catch(err => alert("Browser blocked full screen. Please try again."));
-    } else {
-        alert("Incorrect Admin Password.");
-    }
+            
+            // Restore student status back to Active on the Admin Dashboard
+            if (typeof studentData !== 'undefined' && studentData !== null) {
+                firebase.database().ref('exam_live/' + studentData.id).update({ 
+                    status: 'Active' 
+                }).catch(e => console.warn(e));
+            }
+            
+            unlockBtn.innerHTML = '<i class="fa-solid fa-lock-open"></i> Resume Exam';
+            unlockBtn.disabled = false;
+        }).catch(err => {
+            alert("Browser blocked full screen. Please click Resume again.");
+            unlockBtn.innerHTML = '<i class="fa-solid fa-lock-open"></i> Resume Exam';
+            unlockBtn.disabled = false;
+        });
+    })
+    .catch((error) => {
+        // Invalid Admin password
+        if (errorMsg) {
+            errorMsg.innerHTML = '<i class="fa-solid fa-xmark"></i> Incorrect Admin Password';
+            errorMsg.style.display = "block";
+        } else {
+            alert("Incorrect Admin Password.");
+        }
+        unlockBtn.innerHTML = '<i class="fa-solid fa-lock-open"></i> Resume Exam';
+        unlockBtn.disabled = false;
+    });
 }
 
 // ==========================================
 // 2. LIVE TYPING TRACKER
 // ==========================================
+
+let typingTotalTimeMs = 0;
+let typingInterval = null;
+let typingLastStart = null;
 
 function initTypingTracker() {
     const typingArea = document.getElementById('typing-area');
@@ -123,14 +159,13 @@ function updateLiveStats(currentMs) {
 }
 
 // ==========================================
-// 3. EXAM EVALUATION & SUBMISSION
+// 3. EXAM EVALUATION & SUBMISSION (FIREBASE)
 // ==========================================
 
 function evaluateTyping() {
     const originalText = document.getElementById('typing-source').innerText.trim();
     const typedText = document.getElementById('typing-area').value.trim();
     
-    // Calculate active time
     let finalTimeMs = typingTotalTimeMs;
     if (typingLastStart) finalTimeMs += (Date.now() - typingLastStart);
     let minutesTaken = finalTimeMs / 60000;
@@ -178,7 +213,10 @@ function calculateMCQ() {
         const selectedOption = document.querySelector(`input[name="q${index}"]:checked`);
         if (selectedOption) {
             const selectedAnswerIndex = parseInt(selectedOption.value);
-            if (selectedAnswerIndex === q.correctAnswer) {
+            // Support both old 'q.ans' and new 'q.correctAnswer' structure
+            const correctIndex = q.ans !== undefined ? q.ans : q.correctAnswer;
+            
+            if (selectedAnswerIndex === correctIndex) {
                 mcqMarks += 2;
                 subjectMarks[q.subject].scored += 2;
             }
@@ -211,44 +249,140 @@ function submitExam() {
         studentId = sData.id; studentName = sData.name; studentCourse = sData.course;
     }
 
-    fetch(WEB_APP_URL, {
-        method: 'POST',
-        redirect: 'follow',
-        headers: { "Content-Type": "text/plain" },
-        body: JSON.stringify({ 
-            action: 'submit_exam', 
-            id: studentId,
-            name: studentName,
-            course: studentCourse,
-            marks: totalMarks,
-            wpm: typingResults.wpm,
-            accuracy: typingResults.accuracy,
-            subjectMarks: finalSubjects 
+    // Generate Result Object for Firebase
+    const now = new Date();
+    const options = { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true };
+    const dateString = now.toLocaleString('en-IN', options).replace(/am/i, 'AM').replace(/pm/i, 'PM');
+
+    const resultData = {
+        id: studentId,
+        name: studentName,
+        course: studentCourse,
+        marks: totalMarks,
+        wpm: typingResults.wpm,
+        accuracy: typingResults.accuracy,
+        subjectDetails: JSON.stringify(finalSubjects),
+        date: dateString
+    };
+
+    // Push to Firebase and process UI
+    if (typeof firebase !== 'undefined') {
+        const db = firebase.database();
+        const resultKey = `${studentId}_${Date.now()}`;
+        
+        db.ref('exam_results/' + resultKey).set(resultData)
+        .then(() => {
+            // Update live status to "Finished" so admin knows they are done
+            return db.ref('exam_live/' + studentId).update({ status: 'Finished' });
         })
-    })
-    .then(res => res.json())
-    .then(data => {
-        if (data.success) {
-            localStorage.removeItem('examStudent');
-            document.getElementById('exam-content').innerHTML = `
-                <div style="text-align:center; padding: 50px; margin-top: 100px;">
-                    <h1 style="color: #28a745;">Exam Submitted Successfully!</h1>
-                    <p style="color: #666; font-size: 18px;">Total Marks: <strong>${totalMarks} / 400</strong></p>
-                    <button onclick="window.location.href='index.html'" style="margin-top: 30px; padding: 10px 20px; background: #0056b3; color: white; border: none; border-radius: 5px; cursor: pointer;">Return to Home</button>
-                </div>
-            `;
-            if (document.fullscreenElement) document.exitFullscreen().catch(e => {});
+        .then(() => {
+            finishSubmissionUI(totalMarks, typingResults, mcqData);
+        })
+        .catch(err => {
+            console.error("Submission Error:", err);
+            alert("Failed to sync result to server. Generating local file anyway.");
+            finishSubmissionUI(totalMarks, typingResults, mcqData);
+        });
+    } else {
+        finishSubmissionUI(totalMarks, typingResults, mcqData);
+    }
+}
+
+function finishSubmissionUI(totalMarks, typingResults, mcqData) {
+    // 🚨 CRITICAL FIX: Turn off Exam Active flag!
+    // This stops the blur and fullscreenchange listeners from locking the student out.
+    examActive = false; 
+
+    if (document.fullscreenElement || document.webkitIsFullScreen || document.mozFullScreen || document.msFullscreenElement) {
+        if (document.exitFullscreen) document.exitFullscreen().catch(err => console.log(err));
+        else if (document.webkitExitFullscreen) document.webkitExitFullscreen().catch(err => console.log(err));
+        else if (document.msExitFullscreen) document.msExitFullscreen().catch(err => console.log(err));
+    }
+
+    document.getElementById('exam-interface').style.display = 'none';
+    document.getElementById('result-screen').style.display = 'block';
+    
+    let correct = 0;
+    let attempted = 0;
+    
+    let reportText = `EXCELLENT INSTITUTE - MOCK TEST RESULT\n`;
+    reportText += `--------------------------------------\n`;
+    reportText += `Candidate Name: ${studentData ? studentData.name : 'Student'}\n`;
+    reportText += `Date: ${new Date().toLocaleDateString()}\n`;
+    
+    const subjEl = document.getElementById('exam-subject');
+    const setEl = document.getElementById('test-set');
+    const subjText = subjEl ? subjEl.options[subjEl.selectedIndex].text : "Computer Knowledge";
+    const diffText = setEl ? setEl.options[setEl.selectedIndex].text : "Set 1";
+    
+    reportText += `Exam: ${subjText} - ${diffText}\n\n`;
+    reportText += `QUESTION BREAKDOWN:\n`;
+    
+    let reviewHTML = "";
+
+    // FIX: Dynamically loop based on the exact number of active questions
+    for (let i = 0; i < currentQuestions.length; i++) { 
+        let q = currentQuestions[i];
+        if (!q) continue; 
+        
+        let userAnsText = userAnswers[i] !== null ? q.options[userAnswers[i]] : "Not Attempted";
+        const correctIndex = q.ans !== undefined ? q.ans : q.correctAnswer;
+        let correctAnsText = q.options[correctIndex]; 
+        
+        if (userAnswers[i] !== null && statuses[i] !== 3) {
+            attempted++;
+            if (userAnswers[i] === correctIndex) {
+                correct++;
+                reportText += `Q${i+1}: CORRECT\n`;
+            } else {
+                reportText += `Q${i+1}: INCORRECT (Picked: ${userAnsText} | Correct: ${correctAnsText})\n`;
+            }
         } else {
-            alert("Error submitting exam: " + data.error);
-            submitBtn.innerText = "Submit Final Exam";
-            submitBtn.disabled = false;
-            submitBtn.style.background = "#28a745";
+            reportText += `Q${i+1}: NOT ATTEMPTED / UNANSWERED (Correct: ${correctAnsText})\n`;
         }
-    })
-    .catch(err => {
-        alert("Network error while submitting. Try again.");
-        submitBtn.innerText = "Submit Final Exam";
-        submitBtn.disabled = false;
-        submitBtn.style.background = "#28a745";
-    });
+
+        reviewHTML += `<div class="review-item">`;
+        reviewHTML += `<div class="review-q">Q${i+1}. ${q.q || q.question}</div>`;
+        
+        for(let j=0; j<4; j++) {
+            let optClass = "review-opt";
+            if(userAnswers[i] === j && userAnswers[i] !== correctIndex) optClass += " review-wrong"; 
+            if(j === correctIndex) optClass += " review-correct"; 
+            reviewHTML += `<div class="${optClass}">${String.fromCharCode(65+j)}. ${q.options[j]}</div>`;
+        }
+        
+        if(q.exp || q.explanation) reviewHTML += `<div class="review-exp"><strong>Explanation:</strong> ${q.exp || q.explanation}</div>`;
+        reviewHTML += `</div>`;
+    }
+    
+    let wrong = attempted - correct;
+    let score = totalMarks;
+
+    document.getElementById('res-total').innerText = currentQuestions.length;
+    document.getElementById('res-attempted').innerText = attempted;
+    document.getElementById('res-correct').innerText = correct;
+    document.getElementById('res-incorrect').innerText = wrong;
+    document.getElementById('res-score').innerText = score.toFixed(2);
+
+    document.getElementById('review-container').innerHTML = reviewHTML;
+
+    reportText += `\nSUMMARY:\n`;
+    reportText += `Attempted: ${attempted}/${currentQuestions.length}\n`;
+    reportText += `Correct: ${correct}\n`;
+    reportText += `Incorrect: ${wrong}\n`;
+    reportText += `Final Score: ${score.toFixed(2)}\n`;
+
+    downloadFile(reportText, studentData ? studentData.name : 'Student');
+}
+
+function downloadFile(content, name) {
+    const dateStr = new Date().toISOString().split('T')[0]; 
+    const fileName = `${name.replace(/\s+/g, '_')}_${dateStr}_Result.txt`;
+    const blob = new Blob([content], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
 }
