@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Live Exam - Excellent Institute</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- NEW: Firebase SDKs for Direct Database Connection -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
     <style>
         body { font-family: 'Poppins', sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
         
@@ -14,8 +21,9 @@
             display: none; flex-direction: column; justify-content: center; align-items: center;
             z-index: 9999; text-align: center; padding: 20px;
         }
-        #lock-screen input { padding: 10px; margin: 15px 0; border-radius: 5px; border: none; width: 250px; text-align: center; }
-        #lock-screen button { padding: 10px 20px; background: #343a40; color: white; border: none; border-radius: 5px; cursor: pointer; }
+        #lock-screen input { padding: 10px; margin: 15px 0; border-radius: 5px; border: none; width: 250px; text-align: center; font-family: monospace; letter-spacing: 2px;}
+        #lock-screen button { padding: 10px 20px; background: #343a40; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: 600;}
+        #lock-error { color: #ffcccc; font-size: 13px; font-weight: bold; margin-bottom: 15px; display: none; }
 
         .header { background: #0056b3; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
         .student-info { display: flex; align-items: center; gap: 15px; }
@@ -37,18 +45,19 @@
 <body>
 
     <div id="lock-screen">
-        <h1><i class="fa-solid fa-triangle-exclamation"></i> EXAM PAUSED</h1>
-        <p>Suspicious activity detected.</p>
-        <h3 id="lock-reason" style="color: #ffcccc;"></h3>
-        <p>Please call the Admin to unlock your session.</p>
-        <input type="password" id="admin-unlock-pass" placeholder="Admin Password">
-        <button onclick="unlockExam()">Resume Exam</button>
+        <h1 style="margin: 0; font-size: 40px;"><i class="fa-solid fa-triangle-exclamation"></i> EXAM PAUSED</h1>
+        <p style="font-size: 18px; margin-top: 10px;">Suspicious activity detected.</p>
+        <h3 id="lock-reason" style="color: #ffcccc; margin: 10px 0 20px 0;"></h3>
+        <p style="background: rgba(0,0,0,0.2); padding: 10px; border-radius: 5px;">Your status has been updated on the Admin Dashboard.<br>Please call the Admin to unlock your session.</p>
+        <input type="password" id="admin-unlock-pass" placeholder="Enter Admin Password">
+        <p id="lock-error"><i class="fa-solid fa-xmark"></i> Incorrect Password</p>
+        <button id="unlock-btn" onclick="unlockExam()"><i class="fa-solid fa-lock-open"></i> Resume Exam</button>
     </div>
 
     <div id="exam-content">
         <div class="header">
             <div>
-                <h2>Excellent Institute</h2>
+                <h2 style="margin:0;">Excellent Institute</h2>
                 <p style="margin:0; font-size: 14px;">Professional Examination</p>
             </div>
             <div class="student-info">
@@ -61,13 +70,13 @@
         </div>
 
         <div class="container">
-            <h3>Multiple Choice Questions (2 Marks Each)</h3>
+            <h3 style="color: #0056b3; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">Multiple Choice Questions (2 Marks Each)</h3>
             <div id="mcq-container">
-                </div>
+            </div>
 
             <div class="typing-section">
-                <h3>Paragraph Writing Test (50 Marks)</h3>
-                <p><strong>Instructions:</strong> Type the paragraph below exactly as it appears. <span style="color: #dc2626; font-weight: bold;">The timer only runs when you are actively typing inside the box.</span></p>
+                <h3 style="color: #0056b3; margin-top: 0;">Paragraph Writing Test (50 Marks)</h3>
+                <p style="font-size: 14px;"><strong>Instructions:</strong> Type the paragraph below exactly as it appears. <span style="color: #dc2626; font-weight: bold;">The timer only runs when you are actively typing inside the box.</span></p>
                 
                 <div id="typing-stats" style="display: flex; justify-content: space-between; margin-bottom: 15px; font-weight: 600; color: #0056b3; background: #e2e8f0; padding: 10px; border-radius: 5px;">
                     <span id="live-time" style="color: #dc2626;">Time: 00:00 (Paused)</span>
@@ -75,35 +84,71 @@
                     <span id="live-accuracy">Accuracy: 0.0%</span>
                 </div>
 
-                <div style="background: white; padding: 15px; border: 1px solid #ccc; border-radius: 5px; font-family: serif; margin-bottom: 15px;" id="typing-source">
-                    </div>
+                <div style="background: white; padding: 15px; border: 1px solid #ccc; border-radius: 5px; font-family: serif; margin-bottom: 15px; font-size: 16px; line-height: 1.5;" id="typing-source">
+                </div>
                 <textarea id="typing-area" placeholder="Start typing here..."></textarea>
             </div>
 
-            <button class="submit-btn" onclick="submitExam()">Submit Final Exam</button>
+            <button class="submit-btn" onclick="submitExam()"><i class="fa-solid fa-paper-plane"></i> Submit Final Exam</button>
         </div>
     </div>
 
+    <!-- Ensure these load strictly in order -->
     <script src="js/questions.js"></script>
     <script src="js/exam.js"></script>
     
     <script>
+        // ==========================================
+        // FIREBASE CONFIGURATION (SECURE ANONYMOUS AUTH)
+        // ==========================================
+        const firebaseConfig = {
+            apiKey: "AIzaSyAPJ28Y1jBL30phxN-8yV-4X0raSEuBkx4",
+            authDomain: "excellent-institute-vault.firebaseapp.com",
+            databaseURL: "https://excellent-institute-vault-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "excellent-institute-vault",
+            storageBucket: "excellent-institute-vault.firebasestorage.app",
+            messagingSenderId: "132693034261",
+            appId: "1:132693034261:web:90db93c407607bd3c5951c",
+            measurementId: "G-CTLW9E7MYK"
+        };
+
+        if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+
+        // Initialize Anonymous Auth to securely update exam_live status
+        firebase.auth().onAuthStateChanged((user) => {
+            if (!user) {
+                firebase.auth().signInAnonymously().catch((error) => {
+                    console.warn("Silent Authentication Failed. Real-time status tracking may be limited.", error);
+                });
+            }
+        });
+
         let studentData = null;
 
         function initExam() {
             const savedData = localStorage.getItem('examStudent');
             if (!savedData) {
                 alert("Unauthorized access. Please log in first.");
-                window.location.href = "index.html";
+                window.location.href = "certificate_exam_index.html";
                 return;
             }
             
             studentData = JSON.parse(savedData);
             document.getElementById('header-name').innerText = studentData.name;
-            document.getElementById('header-course').innerText = studentData.course;
+            document.getElementById('header-course').innerText = studentData.course || 'N/A';
             
-            if(studentData.image && studentData.image.trim() !== "") {
-                document.getElementById('header-photo').src = studentData.image;
+            // Format Drive Links for Photo
+            let rawUrl = studentData.image || studentData.photo || studentData.profilepic || null;
+            if (rawUrl && !rawUrl.startsWith('data:image') && rawUrl.includes('drive.google.com')) {
+                const driveRegex = /drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?.*id=)([a-zA-Z0-9_-]+)/;
+                const match = rawUrl.match(driveRegex);
+                if (match) rawUrl = `https://drive.google.com/uc?export=view&id=${match[1]}`;
+            }
+
+            if(rawUrl && rawUrl.trim() !== "") {
+                document.getElementById('header-photo').src = rawUrl;
             } else {
                 document.getElementById('header-photo').style.display = "none";
             }
@@ -124,20 +169,13 @@
             let finalExamQuestions = [];
             
             requiredSubjects.forEach(sub => {
-                // 1. Get all available questions for this specific subject
                 let subQuestions = examData.mcqs.filter(q => q.subject === sub);
-                
-                // 2. Shuffle them so it's a random test every time
                 subQuestions.sort(() => Math.random() - 0.5);
-                
-                // 3. Pluck EXACTLY 25 questions from this subject (25 * 2 = 50 Marks)
                 finalExamQuestions.push(...subQuestions.slice(0, 25));
             });
             
-            // 4. Shuffle the final 175 questions so subjects are completely mixed up
             finalExamQuestions.sort(() => Math.random() - 0.5);
             
-            // 5. Load them into the HTML
             finalExamQuestions.forEach((q, index) => {
                 let html = `
                 <div class="question-card">
@@ -152,24 +190,27 @@
                 mcqContainer.innerHTML += html;
             });
 
-            // Randomly picks the 50-Mark paragraph typing test
             const randomTest = examData.typingTests[Math.floor(Math.random() * examData.typingTests.length)];
             document.getElementById('typing-source').innerText = randomTest.text;
             
-            // ACTIVATE THE LIVE TIMER SYSTEM (NEW)
             if (typeof initTypingTracker === "function") {
                 initTypingTracker();
             }
             
-            // IMPORTANT: Store the final customized list globally so calculateMCQ() evaluates the right questions
             window.activeExamPaper = finalExamQuestions;
         }
 
-        // SAFE STARTUP LOGIC: This ensures everything loads perfectly in order
         document.addEventListener('DOMContentLoaded', () => {
             initExam();
             if (typeof examStartTime !== 'undefined') {
-                examStartTime = new Date().getTime(); // Starts the timer safely
+                examStartTime = new Date().getTime(); 
+            }
+            
+            // Ensure status remains "Active" on refresh
+            if (studentData && studentData.id) {
+                firebase.database().ref('exam_live/' + studentData.id).update({
+                    status: 'Active'
+                }).catch(e => console.warn(e));
             }
         });
     </script>
