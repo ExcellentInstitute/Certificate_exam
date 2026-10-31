@@ -142,6 +142,15 @@
                 </table>
             </div>
 
+            <!-- RESTORED: LIVE EXAM STATUS & PRACTICAL/VIVA TRACKER -->
+            <div class="card">
+                <h3><span><i class="fa-solid fa-tower-broadcast" style="color: #059669;"></i> Live Exam & Practical Status</span></h3>
+                <table>
+                    <thead><tr><th>Student ID</th><th>Name</th><th>Live Status & Viva</th></tr></thead>
+                    <tbody id="active-list"></tbody>
+                </table>
+            </div>
+
             <!-- NEW: COURSE & VARIABLE SUBJECT CONTROL CENTER -->
             <div class="card full-width" style="border-left: 4px solid var(--primary);">
                 <h3>
@@ -190,7 +199,44 @@
         </div>
     </div>
     
+    <!-- ADMIN-ONLY VIVA & PRACTICAL EXAMINER MODAL -->
+    <div id="viva-modal" class="hidden" style="position:fixed; inset:0; background:rgba(15,23,42,0.85); z-index:2000; display:flex; justify-content:center; align-items:center; padding:20px;">
+        <div style="background:white; width:100%; max-width:950px; max-height:90vh; border-radius:16px; display:flex; flex-direction:column; overflow:hidden; box-shadow:0 25px 50px rgba(0,0,0,0.25);">
+            <div style="background:#0f172a; color:white; padding:18px 25px; display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                    <h3 style="margin:0; font-size:18px;"><i class="fa-solid fa-microphone-lines" style="color:#38bdf8;"></i> Admin-Only Viva & Practical Examiner Console</h3>
+                    <p id="viva-student-header" style="margin:3px 0 0 0; font-size:12px; color:#cbd5e1;">Student Details</p>
+                </div>
+                <button onclick="closeVivaModal()" style="background:#ef4444; color:white; border:none; padding:6px 12px; border-radius:6px; cursor:pointer;">Close</button>
+            </div>
+            <div style="padding:20px 25px; overflow-y:auto; flex:1;">
+                <div style="background:#f8fafc; border:1px solid #cbd5e1; padding:12px 16px; border-radius:10px; margin-bottom:15px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                    <div>
+                        <strong style="font-size:13px; color:#1e293b;">Selected Practical Task:</strong>
+                        <div id="viva-practical-task" style="font-size:13px; color:#2563eb; font-weight:600;">Not selected yet</div>
+                    </div>
+                    <div style="display:flex; gap:15px; align-items:center;">
+                        <div>
+                            <label style="font-size:12px; font-weight:600; display:block;">Practical Marks (Max 50):</label>
+                            <input type="number" id="admin-practical-marks" min="0" max="50" value="40" style="width:80px; padding:6px; border:1px solid #94a3b8; border-radius:6px; font-weight:700;">
+                        </div>
+                        <div>
+                            <label style="font-size:12px; font-weight:600; display:block;">Viva Answered (<span id="viva-asked-count">0</span>/10 min):</label>
+                            <input type="number" id="admin-viva-marks" min="0" max="50" value="0" style="width:80px; padding:6px; border:1px solid #94a3b8; border-radius:6px; font-weight:700;">
+                        </div>
+                        <button class="btn-approve" onclick="savePracticalAndVivaMarks()" style="padding:10px 18px;"><i class="fa-solid fa-check-double"></i> Save Practical & Viva</button>
+                    </div>
+                </div>
+                <p style="font-size:12px; color:#64748b; margin:0 0 10px 0;">
+                    <i class="fa-solid fa-eye-slash"></i> <strong>Confidential (Admin Only):</strong> Below are the 50 Viva questions for this course. Ask the student at least 10 questions orally and click <strong>Correct (+5M)</strong> or <strong>Wrong (0M)</strong>.
+                </p>
+                <div id="viva-questions-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+            </div>
+        </div>
+    </div>
+
     <script src="js/questions.js"></script>
+    <script src="js/tally_and_practical_data.js"></script>
     <script>
         // ==========================================
         // FIREBASE CONFIGURATION (SECURE ADMIN AUTH)
@@ -563,6 +609,7 @@
         function renderLiveTables(students) {
             const waitingList = document.getElementById('waiting-list');
             const activeList = document.getElementById('active-list');
+            if (!waitingList || !activeList) return;
             waitingList.innerHTML = ""; activeList.innerHTML = "";
             let waitingCount = 0, activeCount = 0;
 
@@ -583,12 +630,17 @@
                     activeCount++;
                     let statusClass = "status-active", icon = "<i class='fa-solid fa-spinner fa-spin'></i>";
                     if (st.status && st.status.includes("Paused")) { statusClass = "status-paused"; icon = "<i class='fa-solid fa-triangle-exclamation'></i>"; }
+                    
+                    const safeKey = st._key || st.id;
+                    const practicalBadge = st.selectedPractical ? `<div style="font-size:11px; color:#2563eb; margin-top:3px;"><i class="fa-solid fa-laptop-code"></i> ${st.selectedPractical}</div>` : '';
+
                     tr.innerHTML = `
                         <td><strong>${st.id || 'N/A'}</strong></td>
-                        <td>${st.name || 'N/A'}</td>
+                        <td>${st.name || 'N/A'}${practicalBadge}</td>
                         <td>
-                            <span class="status-badge ${statusClass}">${icon} ${st.status || 'Unknown'}</span>
-                            <button class="btn-delete" style="padding: 4px 8px; margin-left: 10px; border-radius: 4px;" onclick="removeLiveSession('${st._key || st.id}')" title="Force Remove Session"><i class="fa-solid fa-xmark"></i></button>
+                            <span class="status-badge ${statusClass}">${icon} ${st.status || 'Active'}</span>
+                            <button class="btn-download" style="padding: 4px 10px; margin-left: 6px; font-size: 12px;" onclick="openVivaModal('${safeKey}')" title="Conduct 50-Question Viva & Grade Practical"><i class="fa-solid fa-microphone"></i> Viva</button>
+                            <button class="btn-delete" style="padding: 4px 8px; margin-left: 4px; border-radius: 4px;" onclick="removeLiveSession('${safeKey}')" title="Force Remove Session"><i class="fa-solid fa-xmark"></i></button>
                         </td>`;
                     activeList.appendChild(tr);
                 }
@@ -598,6 +650,104 @@
             if (activeCount === 0) activeList.innerHTML = "<tr><td colspan='3' style='text-align:center; color:#94a3b8; font-style:italic;'>No active exams.</td></tr>";
         }
 
+        // ==========================================
+        // ADMIN-ONLY VIVA & PRACTICAL EXAMINER LOGIC
+        // ==========================================
+        let activeVivaStudentKey = null;
+        let vivaScoresMap = {};
+
+        function openVivaModal(sessionKey) {
+            const st = globalLiveExams.find(s => (s._key || s.id) === sessionKey);
+            if (!st) return;
+            activeVivaStudentKey = sessionKey;
+            vivaScoresMap = {};
+
+            document.getElementById('viva-student-header').innerText = `${st.name} (${st.id}) • Course: ${st.course || 'N/A'}`;
+            document.getElementById('viva-practical-task').innerText = st.selectedPractical || "Student is still choosing a Practical question...";
+            document.getElementById('admin-viva-marks').value = 0;
+            document.getElementById('viva-asked-count').innerText = "0";
+
+            const listContainer = document.getElementById('viva-questions-list');
+            listContainer.innerHTML = "";
+
+            const vivaPool = (typeof VIVA_MASTER_BANK !== 'undefined') ? VIVA_MASTER_BANK : [];
+            vivaPool.forEach((vq, idx) => {
+                const item = document.createElement('div');
+                item.id = `viva-row-${idx}`;
+                item.style.cssText = "padding:12px 15px; border:1px solid #e2e8f0; border-radius:8px; background:#ffffff; display:flex; justify-content:space-between; align-items:center; gap:15px;";
+                item.innerHTML = `
+                    <div style="flex:1;">
+                        <div style="font-weight:600; font-size:13px; color:#1e293b;">Q${idx + 1}. [${vq.topic}] ${vq.q}</div>
+                        <div style="font-size:12px; color:#059669; margin-top:4px;"><strong>Ans:</strong> ${vq.a}</div>
+                    </div>
+                    <div style="display:flex; gap:6px;">
+                        <button onclick="markVivaQuestion(${idx}, true)" style="background:#10b981; color:white; border:none; padding:5px 10px; border-radius:6px; cursor:pointer; font-size:12px;"><i class="fa-solid fa-check"></i> Correct</button>
+                        <button onclick="markVivaQuestion(${idx}, false)" style="background:#ef4444; color:white; border:none; padding:5px 10px; border-radius:6px; cursor:pointer; font-size:12px;"><i class="fa-solid fa-xmark"></i> Wrong</button>
+                    </div>
+                `;
+                listContainer.appendChild(item);
+            });
+
+            document.getElementById('viva-modal').classList.remove('hidden');
+        }
+
+        function markVivaQuestion(idx, isCorrect) {
+            vivaScoresMap[idx] = isCorrect ? 5 : 0;
+            const row = document.getElementById(`viva-row-${idx}`);
+            if (row) {
+                row.style.background = isCorrect ? "#ecfdf5" : "#fef2f2";
+                row.style.borderColor = isCorrect ? "#10b981" : "#ef4444";
+            }
+            const askedCount = Object.keys(vivaScoresMap).length;
+            const totalVivaMarks = Math.min(50, Object.values(vivaScoresMap).reduce((a, b) => a + b, 0));
+            document.getElementById('viva-asked-count').innerText = askedCount;
+            document.getElementById('admin-viva-marks').value = totalVivaMarks;
+        }
+
+        function closeVivaModal() {
+            document.getElementById('viva-modal').classList.add('hidden');
+            activeVivaStudentKey = null;
+        }
+
+        function savePracticalAndVivaMarks() {
+            if (!activeVivaStudentKey) return;
+            const askedCount = Object.keys(vivaScoresMap).length;
+            if (askedCount < 10 && !confirm(`You have only marked ${askedCount} viva questions (minimum recommended is 10). Save anyway?`)) {
+                return;
+            }
+
+            const pMarks = parseInt(document.getElementById('admin-practical-marks').value) || 0;
+            const vMarks = parseInt(document.getElementById('admin-viva-marks').value) || 0;
+            const st = globalLiveExams.find(s => (s._key || s.id) === activeVivaStudentKey);
+
+            // Update student's latest exam_results record with Practical & Viva marks
+            firebase.database().ref('exam_results').orderByChild('id').equalTo(st.id).limitToLast(1).once('value', snap => {
+                snap.forEach(child => {
+                    const existing = child.val();
+                    let subjectsObj = {};
+                    try { subjectsObj = JSON.parse(existing.subjectDetails || "{}"); } catch(e) {}
+                    subjectsObj[`Practical (${st.selectedPractical || 'Lab Assessment'})`] = { scored: pMarks, total: 50 };
+                    subjectsObj[`Viva Voce (Oral Assessment - ${askedCount} Qs)`] = { scored: vMarks, total: 50 };
+
+                    child.ref.update({
+                        practicalMarks: pMarks,
+                        vivaMarks: vMarks,
+                        marks: (parseInt(existing.marks) || 0) + pMarks + vMarks,
+                        subjectDetails: JSON.stringify(subjectsObj)
+                    });
+                });
+            });
+
+            // Mark student completely finished in exam_live
+            firebase.database().ref('exam_live/' + activeVivaStudentKey).update({
+                status: 'Finished',
+                practicalMarks: pMarks,
+                vivaMarks: vMarks
+            }).then(() => {
+                alert("Practical & Viva Marks Saved Successfully!");
+                closeVivaModal();
+            });
+        }
         function renderResultsTable(results) {
             const resultsList = document.getElementById('results-list');
             resultsList.innerHTML = "";
