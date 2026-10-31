@@ -144,16 +144,15 @@
     
     <script>
         // ==========================================
-        // AUTO-RESET PRE-ZOOM & LOCK ZOOM LEVEL
+        // COPY-PASTE PROOF HTML ESCAPER & ZOOM LOCK
         // ==========================================
-        // Safely escapes <, >, &, ", ' so HTML/C tags like <table>, <ul>, <stdio.h> never break the page layout
         function escapeHTML(str) {
             return String(str || "")
-                .replace(/&/g, "&")
-                .replace(/</g, "<")
-                .replace(/>/g, ">")
-                .replace(/"/g, """)
-                .replace(/'/g, "'");
+                .replace(/&/g, "\x26amp;")
+                .replace(/</g, "\x26lt;")
+                .replace(/>/g, "\x26gt;")
+                .replace(/"/g, "\x26quot;")
+                .replace(/'/g, "\x26#039;");
         }
 
         function enforceDefaultZoom() {
@@ -161,12 +160,10 @@
             document.body.style.zoom = "100%";
         }
 
-        // Prevent Ctrl + Wheel Zoom
         window.addEventListener('wheel', function(e) {
             if (e.ctrlKey) e.preventDefault();
         }, { passive: false });
 
-        // Prevent Ctrl + (+ / - / 0) Zoom keys
         window.addEventListener('keydown', function(e) {
             if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
                 e.preventDefault();
@@ -194,14 +191,6 @@
             firebase.initializeApp(firebaseConfig);
         }
 
-        firebase.auth().onAuthStateChanged((user) => {
-            if (!user) {
-                firebase.auth().signInAnonymously().catch((error) => {
-                    console.warn("Silent Authentication Failed.", error);
-                });
-            }
-        });
-
         let studentData = null;
         let examActive = false;
         let isTimed = true;
@@ -213,27 +202,22 @@
             enforceDefaultZoom();
             
             const docEl = document.documentElement;
-            // Support for all browsers (Chrome, Safari, Firefox, Edge)
             const requestFS = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
             
             if (requestFS) {
                 try {
                     const promise = requestFS.call(docEl);
-                    if (promise !== undefined) {
-                        // Modern Browsers
-                        promise.then(enterExamUI).catch(err => {
-                            alert("Your browser blocked full-screen, but you can still proceed.");
-                            enterExamUI(); // Let them in anyway if blocked
+                    if (promise && typeof promise.then === "function") {
+                        promise.then(enterExamUI).catch(() => {
+                            enterExamUI();
                         });
                     } else {
-                        // Older Browsers (like Safari) that don't use Promises
                         enterExamUI();
                     }
                 } catch (e) {
-                    enterExamUI(); // Ultimate safety fallback
+                    enterExamUI();
                 }
             } else {
-                // If browser doesn't support full-screen at all
                 enterExamUI();
             }
         }
@@ -244,7 +228,6 @@
             document.getElementById('exam-content').style.display = 'block';
             examActive = true; 
             
-            // Update Admin Dashboard in real-time
             if (typeof firebase !== 'undefined' && studentData && studentData.id) {
                 firebase.database().ref('exam_live/' + studentData.id).update({
                     id: studentData.id,
@@ -271,7 +254,6 @@
             document.getElementById('header-name').innerText = `${studentData.name} (${studentData.id || ''})`;
             document.getElementById('header-course').innerText = `${catalogEntry.name} • ${studentData.duration ? studentData.duration + ' Months' : catalogEntry.duration}`;
             
-            // Format Drive Links for Photo
             let rawUrl = studentData.image || studentData.photo || studentData.profilepic || null;
             if (rawUrl && !rawUrl.startsWith('data:image') && rawUrl.includes('drive.google.com')) {
                 const driveRegex = /drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?.*id=)([a-zA-Z0-9_-]+)/;
@@ -285,10 +267,13 @@
                 document.getElementById('header-photo').style.display = "none";
             }
 
-            // 1. Fetch Admin's Active Subjects for this Course from Firebase (or fallback to full course syllabus)
+            // Ensure anonymous auth is active before reading Firebase config
             let activeSubjects = [...catalogEntry.subjects];
             try {
                 if (typeof firebase !== 'undefined') {
+                    if (!firebase.auth().currentUser) {
+                        await firebase.auth().signInAnonymously().catch(() => {});
+                    }
                     const snap = await firebase.database().ref('exam_config/courses/' + courseKey + '/activeSubjects').once('value');
                     if (snap.exists() && Array.isArray(snap.val()) && snap.val().length > 0) {
                         activeSubjects = snap.val();
@@ -301,15 +286,15 @@
             document.getElementById('exam-paper-title').innerText = `${catalogEntry.name}`;
             document.getElementById('active-subjects-count').innerText = `${activeSubjects.length} Active Subjects`;
 
-            // 2. Render Subject Filter Pills so students can filter or view all subjects easily
+            // Render Subject Filter Pills
             const pillsBar = document.getElementById('subject-pills-bar');
-            pillsBar.innerHTML = `<button onclick="filterQuestionsBySubject('ALL', this)" style="background:#2563eb; color:white; border:none; padding:4px 12px; border-radius:15px; font-size:12px; cursor:pointer; white-space:nowrap; font-weight:600;">All Subjects</button>`;
+            pillsBar.innerHTML = `<button onclick="filterQuestionsBySubject('ALL', this)" style="background:#2563eb; color:white; border:none; padding:5px 14px; border-radius:15px; font-size:12px; cursor:pointer; white-space:nowrap; font-weight:600;">All Subjects</button>`;
             activeSubjects.forEach(sub => {
                 const escapedSub = sub.replace(/'/g, "\\'");
-                pillsBar.innerHTML += `<button onclick="filterQuestionsBySubject('${escapedSub}', this)" style="background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; padding:4px 12px; border-radius:15px; font-size:12px; cursor:pointer; white-space:nowrap;">${sub}</button>`;
+                pillsBar.innerHTML += `<button onclick="filterQuestionsBySubject('${escapedSub}', this)" style="background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; padding:5px 14px; border-radius:15px; font-size:12px; cursor:pointer; white-space:nowrap;">${escapeHTML(sub)}</button>`;
             });
 
-            // 3. Distribute up to 175 Unique MCQs (No duplicate questions on the same paper)
+            // Distribute 175 Unique MCQs across Active Subjects
             const totalTargetMCQs = 175;
             const basePerSubject = Math.floor(totalTargetMCQs / activeSubjects.length);
             let remainder = totalTargetMCQs % activeSubjects.length;
@@ -325,20 +310,14 @@
                     ? getQuestionsForSubject(courseKey, sub)
                     : questionBank["CCA"].mcqs;
 
-                // Filter out any question already placed on this exam paper
-                let uniqueSubPool = subPool.filter(q => {
-                    const key = String(q.question || "").trim();
-                    if (usedQuestionTexts.has(key)) return false;
-                    return true;
-                });
-
+                let uniqueSubPool = subPool.filter(q => !usedQuestionTexts.has(String(q.question || "").trim()));
                 uniqueSubPool.sort(() => Math.random() - 0.5);
+
                 let picked = uniqueSubPool.slice(0, quota);
                 picked.forEach(q => usedQuestionTexts.add(String(q.question || "").trim()));
                 finalExamQuestions.push(...picked);
             });
 
-            // If any new subject had fewer unique questions than its quota, top up from remaining unused questions
             if (finalExamQuestions.length < totalTargetMCQs && typeof questionBatches !== 'undefined') {
                 const backupPool = questionBatches.flat().filter(q => !usedQuestionTexts.has(String(q.question || "").trim()));
                 backupPool.sort(() => Math.random() - 0.5);
@@ -353,11 +332,9 @@
                 }
             }
 
-            // Shuffle final paper
             finalExamQuestions.sort(() => Math.random() - 0.5);
             document.getElementById('total-q-count').innerText = finalExamQuestions.length;
 
-            // 4. Render Questions into HTML (with escapeHTML so <table>, <ul>, <div> render as text!)
             const mcqContainer = document.getElementById('mcq-container');
             let allCardsHtml = "";
             finalExamQuestions.forEach((q, index) => {
@@ -377,7 +354,6 @@
             });
             mcqContainer.innerHTML = allCardsHtml;
 
-            // 5. Load 50-Mark Typing Test
             const typingPool = (questionBank[courseKey] && questionBank[courseKey].typingTests) ? questionBank[courseKey].typingTests : typingTestsArray;
             const randomTest = typingPool[Math.floor(Math.random() * typingPool.length)];
             document.getElementById('typing-source').innerText = randomTest.text;
@@ -390,7 +366,6 @@
         }
 
         function updateAnsweredProgress() {
-            const total = window.activeExamPaper ? window.activeExamPaper.length : 175;
             const answered = document.querySelectorAll('#mcq-container input[type="radio"]:checked').length;
             document.getElementById('answered-count').innerText = answered;
         }
@@ -416,5 +391,7 @@
             initExam();
         });
     </script>
+</body>
+</html>
 </body>
 </html>
