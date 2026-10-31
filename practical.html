@@ -114,6 +114,16 @@
                     return;
                 }
 
+                // Register student in exam_live with full details so Admin sees them immediately
+                firebase.database().ref('exam_live/' + studentData.id).update({
+                    id: studentData.id,
+                    name: studentData.name,
+                    course: `${studentData.course || courseKey} (${studentData.duration || '?'}M)`,
+                    courseKey: courseKey,
+                    phase: 'Stage 2: Practical & Viva',
+                    status: 'Selecting Practical Task'
+                }).catch(() => {});
+
                 const tasks = PRACTICAL_EXAM_BANK[courseKey] || PRACTICAL_EXAM_BANK["DEFAULT"];
                 renderTasks(tasks);
                 listenForAdminCompletion();
@@ -146,6 +156,9 @@
 
             if (typeof firebase !== 'undefined' && studentData && studentData.id) {
                 firebase.database().ref('exam_live/' + studentData.id).update({
+                    id: studentData.id,
+                    name: studentData.name,
+                    course: `${studentData.course || 'N/A'} (${studentData.duration || '?'}M)`,
                     selectedPractical: title,
                     status: 'Doing Practical & Viva'
                 });
