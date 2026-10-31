@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <title>Excellent Institute - Student Exam Portal</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -196,6 +196,7 @@
         <div id="start-btn-container"></div>
     </div>
 
+    <script src="js/questions.js"></script>
     <script>
         // ==========================================
         // FIREBASE CONFIGURATION (SECURE ANONYMOUS AUTH)
@@ -333,17 +334,21 @@
         }
 
         // ==========================================
-        // 2. REAL-TIME WAITING ROOM LOGIC (NO POLLING)
+        // 2. REAL-TIME WAITING ROOM LOGIC (ZERO WASTED BANDWIDTH)
         // ==========================================
         function registerInLivePipeline(studentData) {
             dbRef = firebase.database().ref('exam_live/' + currentStudentId);
             
+            // Automatically remove from Waiting Room ONLY if they disconnect before approval
+            dbRef.onDisconnect().remove();
+
             // Push status & detected course key to Admin Dashboard
             dbRef.set({
                 id: studentData.id,
                 name: studentData.name,
                 course: `${studentData.course || 'N/A'} (${studentData.duration || '?'}M)`,
                 courseKey: studentData.detectedCourseKey || 'CCA_6M',
+                phase: 'Stage 1: Theory & Typing',
                 status: 'Waiting'
             }).catch(err => console.error("Failed to sync with Admin Dashboard:", err));
 
@@ -351,14 +356,10 @@
             dbRef.on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data && data.status === 'Approved') {
-                    dbRef.off(); // Stop listening
+                    dbRef.onDisconnect().cancel(); // Keep session alive when moving to exam.html
+                    dbRef.off(); 
                     launchExam();
                 }
-            });
-
-            // Cleanup if they close the tab before starting
-            window.addEventListener('beforeunload', () => {
-                dbRef.remove();
             });
         }
 
@@ -370,37 +371,21 @@
             badge.innerHTML = "<i class='fa-solid fa-check-circle'></i> Approved! Ready to Start.";
             badge.style.background = "#d1fae5";
             badge.style.color = "#059669";
-            badge.style.animation = "none"; // Stop pulsing
+            badge.style.animation = "none";
             
-            // Prevent duplicate buttons
             const btnContainer = document.getElementById('start-btn-container');
             if (btnContainer.innerHTML === "") {
                 const startBtn = document.createElement('button');
-                startBtn.innerHTML = "Start Exam Now <i class='fa-solid fa-arrow-right'></i>";
-                startBtn.style.background = "#10b981";
-                startBtn.style.marginTop = "25px";
-                startBtn.style.padding = "16px";
-                startBtn.style.fontSize = "18px";
-                startBtn.style.color = "white";
-                startBtn.style.border = "none";
-                startBtn.style.borderRadius = "10px";
-                startBtn.style.cursor = "pointer";
-                startBtn.style.fontWeight = "bold";
-                startBtn.style.width = "100%";
-                startBtn.style.display = "flex";
-                startBtn.style.justifyContent = "center";
-                startBtn.style.alignItems = "center";
-                startBtn.style.gap = "10px";
+                startBtn.innerHTML = "Start Theory Exam (Stage 1) <i class='fa-solid fa-arrow-right'></i>";
+                startBtn.style.cssText = "background:#10b981; margin-top:25px; padding:16px; font-size:17px; color:white; border:none; border-radius:10px; cursor:pointer; font-weight:600; width:100%; display:flex; justify-content:center; align-items:center; gap:10px;";
                 
                 startBtn.onclick = () => {
-                    // Update status to Active in Firebase
-                    firebase.database().ref('exam_live/' + currentStudentId).update({ status: 'Active' });
-                    
-                    // Small delay ensures full screen triggers before changing the page
-                    startBtn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin'></i> Loading Exam...";
-                    setTimeout(() => {
+                    startBtn.disabled = true;
+                    startBtn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin'></i> Launching Exam Environment...";
+                    firebase.database().ref('exam_live/' + currentStudentId).update({ status: 'Entering Exam' })
+                    .finally(() => {
                         window.location.href = `exam.html?id=${currentStudentId}`;
-                    }, 500);
+                    });
                 };
                 
                 btnContainer.appendChild(startBtn);
