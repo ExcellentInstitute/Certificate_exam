@@ -2266,17 +2266,215 @@ const typingTestsArray = [
 ];
 
 // ==========================================
-// AUTO-ASSEMBLY ENGINE (DO NOT TOUCH THIS)
+// 3. COURSE-SPECIFIC QUESTION BATCHES
 // ==========================================
-// The .flat() command automatically merges all your batches into one master list.
-const questionBank = {
-    "CCA": { 
+// As we create questions from your books 1-by-1, paste the batches inside the matching course array below!
+const courseSpecificBatches = {
+    "BCC": [],
+    "CCA_3M": [],
+    "CCA_6M": [],
+    "DCA": [],
+    "PGDCA": [],
+    "TALLY": []
+};
+
+// ==========================================
+// 4. MASTER COURSE CATALOG & SUBJECT REGISTRY
+// ==========================================
+const COURSE_CATALOG = {
+    "BCC": {
+        code: "BCC",
+        name: "Basic Computer Course (BCC)",
+        duration: "3 Months",
         subjects: [
-            "Computer Fundamentals", "Operating System Basics", 
-            "MS Word", "MS Excel", "MS PowerPoint", 
+            "I. Computer Fundamentals",
+            "II. Operating System Basics (Windows/Linux)",
+            "III. MS Word",
+            "IV. MS Excel",
+            "V. MS PowerPoint",
+            "VI. Internet & Email",
+            "VII. Cyber Safety & Security Basics",
+            "VIII. Introduction to Multimedia"
+        ]
+    },
+    "CCA_3M": {
+        code: "CCA_3M",
+        name: "Certificate in Course of Application (CCA)",
+        duration: "3 Months",
+        subjects: [
+            "I. Computer Fundamentals",
+            "II. Windows Operating System",
+            "III. Notepad",
+            "IV. Paint",
+            "V. MS Word – Basics",
+            "VI. MS Word – Advanced",
+            "VII. MS Excel",
+            "VIII. MS PowerPoint",
+            "IX. Internet",
+            "X. Email"
+        ]
+    },
+    "CCA_6M": {
+        code: "CCA_6M",
+        name: "Certificate in Computer Application (CCA)",
+        duration: "6 Months",
+        subjects: [
+            "I. Computer Fundamentals",
+            "II. Operating System",
+            "III. Microsoft Word (Word Processing)",
+            "IV. Microsoft Excel (Data Handling & Analysis)",
+            "V. Microsoft PowerPoint (Presentation Skills)",
+            "VI. Internet Basics & Email Usage",
+            "VII. Digital Services",
+            "VIII. Computer Networking Basics",
+            "IX. Cyber Security & Digital Safety"
+        ]
+    },
+    "DCA": {
+        code: "DCA",
+        name: "Diploma in Computer Application (DCA)",
+        duration: "6 Months",
+        subjects: [
+            "I. Basics of Computer",
+            "II. Windows Operating System",
+            "III. MS Office (Word, Excel, PowerPoint)",
+            "IV. Internet & Email Usage",
+            "V. Digital Services",
+            "VI. Photoshop & Image Editing",
+            "VII. Graphics Designing",
+            "VIII. Tally with GST"
+        ]
+    },
+    "PGDCA": {
+        code: "PGDCA",
+        name: "Post Graduate Diploma in Computer Application (PGDCA)",
+        duration: "6 Months",
+        subjects: [
+            "I. Computer Fundamentals & Operating Systems",
+            "II. Programming in C & Data Structures",
+            "III. Database Management System (DBMS) with SQL",
+            "IV. Web Designing using HTML, CSS & JavaScript",
+            "V. Object Oriented Programming using Java",
+            "VI. Software Engineering & Project Management",
+            "VII. Python Programming with Data Analysis Basics",
+            "VIII. Tally ERP with GST"
+        ]
+    },
+    "TALLY": {
+        code: "TALLY",
+        name: "Certificate in Tally (TALLY)",
+        duration: "6 Months",
+        subjects: [
+            "I. Introduction to Accounting",
+            "II. Basics of Tally",
+            "III. Company Creation & Ledger Management",
+            "IV. Voucher Entry in Tally",
+            "V. Inventory Management",
+            "VI. Taxation in Tally (GST, TDS, TCS)",
+            "VII. Payroll & Employee Records",
+            "VIII. Banking Features in Tally"
+        ]
+    }
+};
+
+// Smart Subject Alias Mapper: Maps new syllabus subject titles to existing foundation questions
+// whenever a subject doesn't have its own dedicated book questions yet.
+const SUBJECT_FALLBACK_MAP = {
+    "computer fundamentals": ["Computer Fundamentals", "Computer Components", "Typing Theory"],
+    "basics of computer": ["Computer Fundamentals", "Computer Components", "Typing Theory"],
+    "computer fundamentals & operating systems": ["Computer Fundamentals", "Operating System Basics", "Computer Components"],
+    "operating system": ["Operating System Basics"],
+    "windows operating system": ["Operating System Basics"],
+    "operating system basics (windows/linux)": ["Operating System Basics"],
+    "ms word": ["MS Word", "Typing Theory"],
+    "ms word – basics": ["MS Word", "Typing Theory"],
+    "ms word – advanced": ["MS Word"],
+    "microsoft word (word processing)": ["MS Word", "Typing Theory"],
+    "ms excel": ["MS Excel"],
+    "microsoft excel (data handling & analysis)": ["MS Excel"],
+    "ms powerpoint": ["MS PowerPoint"],
+    "microsoft powerpoint (presentation skills)": ["MS PowerPoint"],
+    "ms office (word, excel, powerpoint)": ["MS Word", "MS Excel", "MS PowerPoint"],
+    "cyber safety & security basics": ["Cyber Security"],
+    "cyber security & digital safety": ["Cyber Security"],
+    "internet & email": ["Cyber Security", "Computer Networking Basics"],
+    "internet basics & email usage": ["Cyber Security", "Computer Networking Basics"],
+    "internet & email usage": ["Cyber Security", "Computer Networking Basics"],
+    "internet": ["Cyber Security", "Computer Networking Basics"],
+    "email": ["Cyber Security"],
+    "computer networking basics": ["Computer Networking Basics", "Computer Components"],
+    "introduction to multimedia": ["Computer Fundamentals", "Computer Components"],
+    "notepad": ["Typing Theory", "Operating System Basics"],
+    "paint": ["MS PowerPoint", "Operating System Basics"]
+};
+
+// Helper: Automatically detects the exact Course Key from a student's database profile
+function detectCourseKey(studentObj) {
+    if (!studentObj) return "CCA_6M";
+    const rawCourse = String(studentObj.course || "").trim().toUpperCase();
+    const rawDuration = parseInt(studentObj.duration) || 6;
+
+    // Direct match on catalog keys
+    if (COURSE_CATALOG[rawCourse]) return rawCourse;
+
+    if (rawCourse.includes("PGDCA") || rawCourse.includes("POST GRADUATE")) return "PGDCA";
+    if (rawCourse.includes("DCA")) return "DCA";
+    if (rawCourse.includes("BCC") || rawCourse.includes("BASIC COMPUTER")) return "BCC";
+    if (rawCourse.includes("TALLY")) return "TALLY";
+    if (rawCourse.includes("COURSE OF APPLICATION")) return "CCA_3M";
+    if (rawCourse.includes("CCA") || rawCourse.includes("COMPUTER APPLICATION")) {
+        return rawDuration <= 3 ? "CCA_3M" : "CCA_6M";
+    }
+    return "CCA_6M"; // Safe default fallback
+}
+
+// Helper: Gets questions for a specific Course + Subject (prioritizes course-specific batches, falls back to master pool)
+function getQuestionsForSubject(courseKey, subjectName) {
+    const allBaseMcqs = questionBatches.flat();
+    const courseMcqs = (courseSpecificBatches[courseKey] || []).flat();
+    const combinedPool = [...courseMcqs, ...allBaseMcqs];
+
+    // 1. Exact subject name match (ignoring Roman numeral prefixes like "I. ")
+    const cleanSub = subjectName.replace(/^[IVX]+\.\s*/i, "").trim().toLowerCase();
+    let matched = combinedPool.filter(q => {
+        const qSub = String(q.subject || "").replace(/^[IVX]+\.\s*/i, "").trim().toLowerCase();
+        return qSub === subjectName.toLowerCase() || qSub === cleanSub;
+    });
+
+    // 2. Fallback to Smart Alias Map if we need more questions to fill the subject quota
+    if (matched.length < 25 && SUBJECT_FALLBACK_MAP[cleanSub]) {
+        const mappedSubjects = SUBJECT_FALLBACK_MAP[cleanSub].map(s => s.toLowerCase());
+        const fallbackMatches = allBaseMcqs.filter(q => mappedSubjects.includes(String(q.subject || "").toLowerCase()));
+        matched = [...matched, ...fallbackMatches];
+    }
+
+    // 3. Ultimate safety fallback: if a brand new subject (like Java or Tally) has 0 questions uploaded yet,
+    // pull from the general pool so the student's exam paper never breaks during testing.
+    if (matched.length === 0) {
+        matched = [...allBaseMcqs];
+    }
+
+    // Tag returned questions with the official syllabus subject name for the student's report card
+    return matched.map(q => ({ ...q, subject: subjectName }));
+}
+
+// Master questionBank object for backward compatibility + multi-course access
+const questionBank = {
+    "CCA": {
+        subjects: [
+            "Computer Fundamentals", "Operating System Basics",
+            "MS Word", "MS Excel", "MS PowerPoint",
             "Cyber Security", "Computer Components", "Typing Theory", "Computer Networking Basics"
         ],
         mcqs: questionBatches.flat(),
         typingTests: typingTestsArray
     }
 };
+
+Object.keys(COURSE_CATALOG).forEach(key => {
+    questionBank[key] = {
+        ...COURSE_CATALOG[key],
+        mcqs: [...(courseSpecificBatches[key] || []).flat(), ...questionBatches.flat()],
+        typingTests: typingTestsArray
+    };
+});
