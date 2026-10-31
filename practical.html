@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <title>Stage 2: Practical & Viva Examination - Excellent Institute</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+    <style>
+        body { font-family: 'Poppins', sans-serif; background: #f0f4f8; margin: 0; padding: 0; color: #1e293b; }
+        .header { background: linear-gradient(135deg, #0f172a 0%, #1e3a8a 100%); color: white; padding: 18px 35px; display: flex; justify-content: space-between; align-items: center; }
+        .container { max-width: 960px; margin: 30px auto; padding: 0 20px; }
+        .banner { background: #ffffff; border-left: 5px solid #2563eb; padding: 22px 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.04); margin-bottom: 25px; }
+        .task-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        .task-card { background: white; border: 2px solid #e2e8f0; border-radius: 14px; padding: 25px; transition: all 0.2s; position: relative; }
+        .task-card:hover { border-color: #93c5fd; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.08); }
+        .task-card.selected { border-color: #10b981; background: #f0fdf4; }
+        .app-badge { display: inline-block; background: #eff6ff; color: #2563eb; font-weight: 600; font-size: 12px; padding: 4px 12px; border-radius: 20px; margin-bottom: 10px; }
+        .select-btn { background: #2563eb; color: white; border: none; padding: 12px 22px; border-radius: 8px; font-weight: 600; cursor: pointer; font-family: 'Poppins'; font-size: 14px; margin-top: 15px; }
+        .select-btn:hover { background: #1d4ed8; }
+        .viva-box { background: #fffbeb; border: 1px solid #fde68a; padding: 20px 25px; border-radius: 12px; margin-top: 25px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div>
+            <h2 style="margin:0; font-size:20px;"><i class="fa-solid fa-laptop-code"></i> Excellent Institute — Stage 2: Practical & Viva</h2>
+            <p style="margin:2px 0 0 0; font-size:12px; color:#cbd5e1;">Hands-on Software Assessment & Oral Viva Voce</p>
+        </div>
+        <div style="text-align:right;">
+            <strong id="st-name">Student Name</strong><br>
+            <span id="st-course" style="font-size:12px; color:#38bdf8;">Course</span>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="banner">
+            <h3 style="margin:0 0 8px 0; color:#1e293b;"><i class="fa-solid fa-circle-info" style="color:#2563eb;"></i> Stage 2 Instructions</h3>
+            <p style="margin:0; font-size:14px; color:#475569; line-height:1.6;">
+                1. Review the Practical Assignments below and <strong>select any ONE (1) Practical Question</strong>.<br>
+                2. Open the required software on your system (<strong>Tally Prime / MS Word / MS Excel</strong>) and complete all steps listed in your chosen task.<br>
+                3. While you work or once you finish, the Examiner will call you for your <strong>Oral Viva Voce (10 Questions)</strong>.
+            </p>
+        </div>
+
+        <div id="practical-tasks-container" class="task-grid"></div>
+
+        <div class="viva-box">
+            <h4 style="margin:0 0 6px 0; color:#b45309;"><i class="fa-solid fa-microphone-lines"></i> Live Practical & Viva Status: <span id="live-viva-status" style="color:#d97706;">Please select 1 Practical Question above</span></h4>
+            <p style="margin:0; font-size:13px; color:#78350f;">Once the Examiner finishes grading your practical work on your screen and completes your 10 Viva questions, your exam will automatically conclude.</p>
+        </div>
+    </div>
+
+    <script src="js/questions.js"></script>
+    <script src="js/tally_and_practical_data.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyAPJ28Y1jBL30phxN-8yV-4X0raSEuBkx4",
+            authDomain: "excellent-institute-vault.firebaseapp.com",
+            databaseURL: "https://excellent-institute-vault-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "excellent-institute-vault",
+            storageBucket: "excellent-institute-vault.firebasestorage.app",
+            messagingSenderId: "132693034261",
+            appId: "1:132693034261:web:90db93c407607bd3c5951c",
+            measurementId: "G-CTLW9E7MYK"
+        };
+
+        if (typeof firebase !== 'undefined' && !firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+
+        let studentData = null;
+        let lockedTaskTitle = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const saved = localStorage.getItem('examStudent');
+            if (!saved) {
+                window.location.href = "index.html";
+                return;
+            }
+            studentData = JSON.parse(saved);
+            const courseKey = typeof detectCourseKey === 'function' ? detectCourseKey(studentData) : "CCA_6M";
+
+            document.getElementById('st-name').innerText = `${studentData.name} (${studentData.id})`;
+            document.getElementById('st-course').innerText = `${studentData.course || courseKey}`;
+
+            const tasks = (courseKey === "TALLY" || courseKey === "DCA" || courseKey === "PGDCA")
+                ? [...PRACTICAL_EXAM_BANK["TALLY"], ...PRACTICAL_EXAM_BANK["DEFAULT"].slice(0, 2)]
+                : PRACTICAL_EXAM_BANK["DEFAULT"];
+
+            renderTasks(tasks);
+            listenForAdminCompletion();
+        });
+
+        function renderTasks(tasks) {
+            const container = document.getElementById('practical-tasks-container');
+            container.innerHTML = "";
+            tasks.forEach((t, idx) => {
+                const stepsHtml = t.steps.map(s => `<li style="margin-bottom:6px;">${s}</li>`).join('');
+                const isSelected = lockedTaskTitle === t.title;
+                container.innerHTML += `
+                    <div class="task-card ${isSelected ? 'selected' : ''}" id="task-card-${idx}">
+                        <span class="app-badge"><i class="fa-solid fa-desktop"></i> Software: ${t.app} • ${t.marks} Marks</span>
+                        <h3 style="margin:0 0 12px 0; font-size:17px;">${t.title}</h3>
+                        <ol style="margin:0; padding-left:20px; font-size:14px; color:#334155; line-height:1.6;">${stepsHtml}</ol>
+                        <button class="select-btn" style="background:${isSelected ? '#10b981' : '#2563eb'};" onclick="selectPracticalTask('${t.title.replace(/'/g, "\\'")}', ${idx})">
+                            ${isSelected ? '<i class="fa-solid fa-lock"></i> Selected for Practical Exam (Active)' : '<i class="fa-solid fa-check"></i> Select This Practical Question'}
+                        </button>
+                    </div>
+                `;
+            });
+        }
+
+        function selectPracticalTask(title, idx) {
+            lockedTaskTitle = title;
+            document.getElementById('live-viva-status').innerText = `Working on: ${title} (Awaiting Examiner Viva)`;
+            document.getElementById('live-viva-status').style.color = "#059669";
+
+            if (typeof firebase !== 'undefined' && studentData && studentData.id) {
+                firebase.database().ref('exam_live/' + studentData.id).update({
+                    selectedPractical: title,
+                    status: 'Doing Practical & Viva'
+                });
+            }
+
+            const cards = document.querySelectorAll('.task-card');
+            cards.forEach((c, i) => {
+                c.classList.toggle('selected', i === idx);
+                const btn = c.querySelector('.select-btn');
+                if (i === idx) {
+                    btn.style.background = '#10b981';
+                    btn.innerHTML = '<i class="fa-solid fa-lock"></i> Selected for Practical Exam (Active)';
+                } else {
+                    btn.style.background = '#64748b';
+                    btn.innerHTML = 'Switch to This Practical Question';
+                }
+            });
+        }
+
+        function listenForAdminCompletion() {
+            if (typeof firebase === 'undefined' || !studentData || !studentData.id) return;
+            firebase.database().ref('exam_live/' + studentData.id).on('value', snap => {
+                const data = snap.val();
+                if (data && data.status === 'Finished') {
+                    localStorage.removeItem('examStudent');
+                    document.querySelector('.container').innerHTML = `
+                        <div style="background:white; padding:50px; border-radius:16px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.08); margin-top:40px;">
+                            <i class="fa-solid fa-circle-check" style="font-size:60px; color:#10b981; margin-bottom:15px;"></i>
+                            <h2 style="margin:0 0 10px 0;">All Exam Stages Completed!</h2>
+                            <p style="color:#64748b; font-size:15px;">Your Theory, Typing, Practical (${data.practicalMarks || 0}/50), and Viva (${data.vivaMarks || 0}/50) marks have been recorded.</p>
+                            <button class="select-btn" onclick="window.location.href='index.html'">Return to Home</button>
+                        </div>
+                    `;
+                }
+            });
+        }
+    </script>
+</body>
+</html>
