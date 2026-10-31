@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-    <title>Excellent Institute - Student Exam Portal</title>
+    <title>Excellent Institute - Student Examination Portal</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- NEW: Firebase SDKs for Direct Database Connection -->
+    <!-- Firebase SDKs for Direct Database Connection -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
@@ -17,9 +17,8 @@
         :root {
             --primary: #2563eb;
             --primary-hover: #1d4ed8;
-            --bg-color: #f0f4f8;
             --card-bg: #ffffff;
-            --text-dark: #1e293b;
+            --text-dark: #0f172a;
             --text-muted: #64748b;
             --danger: #ef4444;
             --success: #10b981;
@@ -29,15 +28,16 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
 
         body {
-            background: var(--bg-color);
+            background: radial-gradient(circle at top left, #1e3a8a 0%, #0f172a 55%, #020617 100%);
             min-height: 100vh;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            color: var(--text-dark);
         }
 
-        /* Animations */
         @keyframes fadeInUp {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -47,53 +47,71 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        .fade-in-up { animation: fadeInUp 0.6s ease-out forwards; }
+        .fade-in-up { animation: fadeInUp 0.5s ease-out forwards; }
 
-        /* Card Container */
         .container {
             background: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            border-radius: 20px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
             width: 100%;
-            max-width: 550px;
+            max-width: 580px;
             padding: 40px;
             text-align: center;
-            display: none; 
-            border-top: 5px solid var(--primary);
+            display: none;
+            position: relative;
+            overflow: hidden;
+        }
+        .container::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #2563eb, #38bdf8, #10b981);
         }
         .container.active { display: block; }
 
-        /* Typography & Header */
-        .logo-placeholder {
-            width: 80px; height: 80px;
-            background: #eff6ff; border-radius: 50%;
+        .logo-badge {
+            width: 84px; height: 84px;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 20px; font-size: 36px; color: var(--primary);
+            margin: 0 auto 18px; font-size: 36px; color: var(--primary);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.15);
+            border: 2px solid #bfdbfe;
         }
-        h2 { color: var(--text-dark); font-size: 24px; margin-bottom: 5px; font-weight: 600; }
-        p.subtitle { color: var(--text-muted); font-size: 14px; margin-bottom: 25px; }
+        .institute-tag {
+            display: inline-block;
+            background: #eff6ff; color: var(--primary);
+            font-size: 11px; font-weight: 700; letter-spacing: 1px;
+            padding: 4px 12px; border-radius: 20px; text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        h2 { color: var(--text-dark); font-size: 25px; margin-bottom: 4px; font-weight: 700; }
+        p.subtitle { color: var(--text-muted); font-size: 13.5px; margin-bottom: 28px; }
 
-        /* Form Elements */
-        .input-group { position: relative; margin-bottom: 20px; text-align: left; }
-        .input-group i {
+        .input-group { position: relative; margin-bottom: 18px; text-align: left; }
+        .input-group label { display: block; font-size: 12px; font-weight: 600; color: #475569; margin-bottom: 6px; margin-left: 4px; }
+        .input-wrapper { position: relative; }
+        .input-wrapper i {
             position: absolute; left: 16px; top: 50%;
-            transform: translateY(-50%); color: #94a3b8; font-size: 18px;
+            transform: translateY(-50%); color: #64748b; font-size: 18px;
         }
         input {
-            width: 100%; padding: 14px 14px 14px 45px;
-            border: 2px solid #e2e8f0; border-radius: 10px;
-            font-size: 15px; outline: none; transition: all 0.3s ease;
-            letter-spacing: 1px; color: var(--text-dark);
+            width: 100%; padding: 15px 15px 15px 46px;
+            border: 2px solid #cbd5e1; border-radius: 12px;
+            font-size: 15px; font-weight: 500; outline: none; transition: all 0.25s ease;
+            letter-spacing: 0.8px; color: var(--text-dark); background: #f8fafc;
         }
-        input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1); }
+        input:focus { border-color: var(--primary); background: #ffffff; box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12); }
 
         button {
-            width: 100%; background: var(--primary); color: white;
-            border: none; padding: 14px; border-radius: 10px;
-            font-size: 16px; font-weight: 500; cursor: pointer;
+            width: 100%; background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); color: white;
+            border: none; padding: 15px; border-radius: 12px;
+            font-size: 16px; font-weight: 600; cursor: pointer;
             transition: all 0.2s ease; display: flex; justify-content: center; align-items: center; gap: 10px;
+            box-shadow: 0 6px 15px rgba(37, 99, 235, 0.25);
         }
-        button:hover { background: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
+        button:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(37, 99, 235, 0.35); }
         button:active { transform: translateY(0); }
         button:disabled { background: #94a3b8; cursor: not-allowed; transform: none; box-shadow: none; }
 
@@ -102,134 +120,175 @@
             border: 3px solid rgba(255,255,255,0.3); border-top-color: white;
             border-radius: 50%; animation: spin 1s linear infinite; display: none;
         }
-        .error-msg { color: var(--danger); font-size: 13px; margin-top: 10px; display: none; font-weight: 500; }
+        .error-msg {
+            color: var(--danger); background: #fef2f2; border: 1px solid #fecaca;
+            padding: 10px 14px; border-radius: 10px; font-size: 13px;
+            margin-bottom: 16px; display: none; font-weight: 500; text-align: left;
+        }
 
-        /* Waiting Room Specifics */
+        .feature-pills {
+            display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;
+            margin-top: 25px; padding-top: 20px; border-top: 1px solid #f1f5f9;
+        }
+        .feature-pill {
+            font-size: 11px; color: #475569; background: #f8fafc;
+            border: 1px solid #e2e8f0; padding: 5px 10px; border-radius: 8px;
+            display: flex; align-items: center; gap: 5px; font-weight: 500;
+        }
+
         .student-profile {
-            background: #f8fafc; border: 1px solid #e2e8f0;
-            padding: 15px; border-radius: 12px; margin-bottom: 25px;
+            background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 100%);
+            border: 1px solid #bfdbfe;
+            padding: 16px; border-radius: 14px; margin-bottom: 22px;
             text-align: left; display: flex; align-items: center; gap: 15px;
         }
         .student-avatar {
-            width: 60px; height: 60px;
+            width: 64px; height: 64px;
             background: var(--primary); color: white;
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 24px; font-weight: bold; overflow: hidden; border: 2px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            font-size: 24px; font-weight: bold; overflow: hidden; border: 3px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.12); flex-shrink: 0;
         }
         .status-badge {
             background: #fef3c7; color: #d97706;
-            padding: 8px 16px; border-radius: 20px; font-size: 14px;
-            font-weight: 600; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 20px;
+            padding: 8px 16px; border-radius: 20px; font-size: 13.5px;
+            font-weight: 600; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 18px;
             animation: pulse 2s infinite;
         }
 
+        .stage-card {
+            border: 2px solid #cbd5e1; border-radius: 14px; padding: 18px;
+            margin-bottom: 14px; background: #ffffff; transition: all 0.2s ease;
+            text-align: left;
+        }
+        .stage-card:hover { border-color: #93c5fd; }
+
         .rules-box {
             text-align: left; background: #fffbeb;
-            padding: 20px; border-radius: 12px; border: 1px solid #fde68a;
+            padding: 18px 20px; border-radius: 12px; border: 1px solid #fde68a;
         }
-        .rules-box h3 { font-size: 15px; color: #b45309; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; }
-        .rule-item { margin-bottom: 12px; font-size: 13px; color: #78350f; line-height: 1.5; }
+        .rules-box h3 { font-size: 14.5px; color: #b45309; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+        .rule-item { margin-bottom: 10px; font-size: 12.5px; color: #78350f; line-height: 1.5; }
         .rule-item strong { color: #92400e; }
         .rule-odia { font-style: italic; color: #b45309; display: block; margin-top: 2px; font-size: 12px; }
+
+        .switch-user-btn {
+            background: transparent; color: #64748b; border: 1px solid #cbd5e1;
+            padding: 8px 14px; font-size: 12px; border-radius: 8px; cursor: pointer;
+            box-shadow: none; width: auto; display: inline-flex; margin-top: 15px;
+        }
+        .switch-user-btn:hover { background: #f1f5f9; color: #0f172a; transform: none; box-shadow: none; }
     </style>
 </head>
 <body>
 
+    <!-- SECTION 1: STUDENT LOGIN -->
     <div id="login-section" class="container active fade-in-up">
-        <div class="logo-placeholder">
-            <i class="fa-solid fa-user-graduate"></i>
+        <div class="logo-badge">
+            <i class="fa-solid fa-graduation-cap"></i>
         </div>
+        <span class="institute-tag">ISO & Udyam Registered Center</span>
         <h2>Excellent Institute</h2>
-        <p class="subtitle">Secure Examination Portal</p>
+        <p class="subtitle">Official Computer Examination & Assessment Portal</p>
 
         <div class="input-group">
-            <i class="fa-solid fa-id-card"></i>
-            <input type="text" id="student-id" placeholder="Enter Student ID or Phone" autocomplete="off">
+            <label for="student-id">STUDENT ID OR REGISTERED MOBILE NUMBER</label>
+            <div class="input-wrapper">
+                <i class="fa-solid fa-id-badge"></i>
+                <input type="text" id="student-id" placeholder="e.g. STU51882 or 9861XXXXXX" autocomplete="off" onkeydown="if(event.key==='Enter') attemptLogin()">
+            </div>
         </div>
         
-        <p id="login-error" class="error-msg"><i class="fa-solid fa-circle-exclamation"></i> Invalid Student ID. Please try again.</p>
+        <div id="login-error" class="error-msg"></div>
 
         <button onclick="attemptLogin()" id="login-btn">
-            <span id="btn-text">Authenticate & Enter</span>
+            <span id="btn-text">Verify Profile & Continue</span>
+            <i class="fa-solid fa-arrow-right" id="btn-arrow"></i>
             <div class="spinner" id="login-spinner"></div>
         </button>
+
+        <div class="feature-pills">
+            <span class="feature-pill"><i class="fa-solid fa-shield-halved" style="color:#2563eb;"></i> Anti-Cheat Protected</span>
+            <span class="feature-pill"><i class="fa-solid fa-bolt" style="color:#f59e0b;"></i> Auto Course Detection</span>
+            <span class="feature-pill"><i class="fa-solid fa-award" style="color:#10b981;"></i> Instant Evaluation</span>
+        </div>
     </div>
 
+    <!-- SECTION 2: STAGE SELECTION & WAITING ROOM -->
     <div id="waiting-section" class="container fade-in-up">
-        <h2 id="portal-stage-heading">Select Examination Stage</h2>
+        <h2 id="portal-stage-heading" style="margin-bottom: 12px;">Select Examination Stage</h2>
         
         <div class="status-badge" id="approval-badge" style="display: none;">
-            <i class="fa-solid fa-clock"></i> Waiting for Admin Approval...
+            <i class="fa-solid fa-clock"></i> Waiting for Examiner Approval...
         </div>
 
         <div class="student-profile">
             <div class="student-avatar" id="avatar-initial">S</div>
             <div style="flex: 1;">
-                <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; justify-content: space-between; align-items: center; gap: 8px;">
                     <h3 id="display-name" style="font-size: 16px; color: var(--text-dark); margin: 0;">Student Name</h3>
-                    <span id="display-id-badge" style="font-size: 11px; background: #e2e8f0; color: #334155; padding: 2px 8px; border-radius: 12px; font-weight: 600;">ID</span>
+                    <span id="display-id-badge" style="font-size: 11px; background: #2563eb; color: #ffffff; padding: 2px 9px; border-radius: 12px; font-weight: 600;">ID</span>
                 </div>
                 <div id="display-course" style="font-size: 13px; color: var(--primary); font-weight: 600; margin-top: 3px;">Course</div>
                 <div id="display-duration" style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Duration</div>
             </div>
         </div>
 
-        <!-- NEW: STAGE SELECTION CARDS (Main Exam vs Practical) -->
-        <div id="stage-selection-box" style="text-align: left; margin-bottom: 20px;">
-            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px; font-weight: 500;">Choose which exam you are taking today:</p>
+        <!-- STAGE SELECTION CARDS (Main Exam vs Practical) -->
+        <div id="stage-selection-box">
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px; font-weight: 500; text-align: left;">Select your examination module below:</p>
             
-            <!-- Option 1: Main Exam -->
-            <div id="card-main-exam" style="border: 2px solid #cbd5e1; border-radius: 12px; padding: 16px; margin-bottom: 12px; background: #ffffff; transition: 0.2s;">
+            <!-- Stage 1: Main Exam -->
+            <div id="card-main-exam" class="stage-card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                    <strong style="color: var(--text-dark); font-size: 15px;"><i class="fa-solid fa-file-pen" style="color: var(--primary);"></i> Stage 1: Main Exam (Theory & Typing)</strong>
-                    <span id="badge-main-status" style="font-size: 11px; padding: 3px 8px; border-radius: 10px; background: #eff6ff; color: var(--primary); font-weight: 600;">400 Marks</span>
+                    <strong style="color: var(--text-dark); font-size: 15px;"><i class="fa-solid fa-file-signature" style="color: var(--primary);"></i> Stage 1: Main Exam (Theory & Typing)</strong>
+                    <span id="badge-main-status" style="font-size: 11px; padding: 3px 9px; border-radius: 10px; background: #eff6ff; color: var(--primary); font-weight: 600;">400 Marks</span>
                 </div>
-                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">175 Multiple Choice Questions (350M) + Live Paragraph Typing Test (50M).</p>
-                <button id="btn-choose-main" onclick="selectExamStage('MAIN')" style="padding: 10px; font-size: 14px;">
-                    <i class="fa-solid fa-paper-plane"></i> Enter Main Exam Waiting Room
+                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Course-Specific MCQs (350 Marks) + Live Paragraph Typing Test (50 Marks).</p>
+                <button id="btn-choose-main" onclick="selectExamStage('MAIN')" style="padding: 11px; font-size: 14px;">
+                    <i class="fa-solid fa-right-to-bracket"></i> Enter Main Exam Waiting Room
                 </button>
             </div>
 
-            <!-- Option 2: Practical & Viva Exam (Locked until Main Exam is done) -->
-            <div id="card-practical-exam" style="border: 2px solid #e2e8f0; border-radius: 12px; padding: 16px; background: #f8fafc; transition: 0.2s;">
+            <!-- Stage 2: Practical & Viva Exam (Locked until Main Exam is completed) -->
+            <div id="card-practical-exam" class="stage-card" style="background: #f8fafc;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                    <strong style="color: var(--text-dark); font-size: 15px;"><i class="fa-solid fa-laptop-code" style="color: var(--success);"></i> Stage 2: Practical & Viva Exam</strong>
-                    <span id="badge-practical-status" style="font-size: 11px; padding: 3px 8px; border-radius: 10px; background: #fee2e2; color: var(--danger); font-weight: 600;"><i class="fa-solid fa-lock"></i> Locked</span>
+                    <strong style="color: var(--text-dark); font-size: 15px;"><i class="fa-solid fa-laptop-code" style="color: var(--success);"></i> Stage 2: Practical & Viva Voce</strong>
+                    <span id="badge-practical-status" style="font-size: 11px; padding: 3px 9px; border-radius: 10px; background: #fee2e2; color: var(--danger); font-weight: 600;"><i class="fa-solid fa-lock"></i> Locked</span>
                 </div>
-                <p id="practical-lock-msg" style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Hands-on Software Task (50M) + Admin Oral Viva Voce (50M). Unlocks automatically after completing the Main Exam.</p>
-                <button id="btn-choose-practical" onclick="selectExamStage('PRACTICAL')" disabled style="padding: 10px; font-size: 14px; background: #94a3b8;">
+                <p id="practical-lock-msg" style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Hands-on Software Task (50 Marks) + Examiner Oral Viva (50 Marks). Unlocks after completing the Main Exam.</p>
+                <button id="btn-choose-practical" onclick="selectExamStage('PRACTICAL')" disabled style="padding: 11px; font-size: 14px;">
                     <i class="fa-solid fa-lock"></i> Complete Main Exam First to Unlock
                 </button>
             </div>
         </div>
         
         <div class="rules-box" id="exam-rules-box" style="display: none;">
-            <h3><i class="fa-solid fa-triangle-exclamation"></i> Mandatory Exam Rules</h3>
-            
+            <h3><i class="fa-solid fa-triangle-exclamation"></i> Mandatory Examination Rules</h3>
             <div class="rule-item">
-                <strong>1. Stay in Full-Screen:</strong> Do not exit full-screen mode.
+                <strong>1. Stay in Full-Screen:</strong> Do not exit full-screen mode during the test.
                 <span class="rule-odia">ପରୀକ୍ଷା ସମୟରେ ଫୁଲ୍ ସ୍କ୍ରିନ୍ ରୁ ବାହାରନ୍ତୁ ନାହିଁ।</span>
             </div>
-            
             <div class="rule-item">
-                <strong>2. No Switching:</strong> Do not open other tabs or use `Alt + Tab`.
+                <strong>2. No Tab Switching:</strong> Do not open other tabs or press <code>Alt + Tab</code>.
                 <span class="rule-odia">ଅନ୍ୟ ଟ୍ୟାବ୍ ଖୋଲନ୍ତୁ ନାହିଁ କିମ୍ବା Alt+Tab ବ୍ୟବହାର କରନ୍ତୁ ନାହିଁ।</span>
             </div>
-            
-            <div class="rule-item">
-                <strong>3. Auto-Pause:</strong> Breaking rules will pause the exam and alert the admin.
+            <div class="rule-item" style="margin-bottom:0;">
+                <strong>3. Auto-Lock Security:</strong> Breaking rules immediately pauses the exam and alerts the Examiner.
                 <span class="rule-odia">ଯଦି ଆପଣ ନିୟମ ଭାଙ୍ଗନ୍ତି, ପରୀକ୍ଷା ସାଙ୍ଗେ ସାଙ୍ଗେ ବନ୍ଦ ହେବ।</span>
             </div>
         </div>
 
         <div id="start-btn-container"></div>
+
+        <button class="switch-user-btn" onclick="resetToLogin()">
+            <i class="fa-solid fa-arrow-left"></i> Switch Student ID
+        </button>
     </div>
 
     <script src="js/questions.js"></script>
+    <script src="js/tally_and_practical_data.js"></script>
     <script>
-        // ==========================================
-        // FIREBASE CONFIGURATION (SECURE ANONYMOUS AUTH)
-        // ==========================================
         const firebaseConfig = {
             apiKey: "AIzaSyAPJ28Y1jBL30phxN-8yV-4X0raSEuBkx4",
             authDomain: "excellent-institute-vault.firebaseapp.com",
@@ -247,45 +306,44 @@
 
         let currentStudentId = null;
         let dbRef = null;
+        let loggedInStudentObj = null;
 
-        // Initialize Anonymous Auth to securely read the database
-        firebase.auth().onAuthStateChanged((user) => {
-            if (!user) {
-                firebase.auth().signInAnonymously().catch((error) => {
-                    console.warn("Silent Authentication Failed. Ensure Anonymous Auth is enabled in Firebase.", error);
-                });
-            }
-        });
+        // Ensure Anonymous Auth is ready
+        function ensureAuth() {
+            if (firebase.auth().currentUser) return Promise.resolve(firebase.auth().currentUser);
+            return firebase.auth().signInAnonymously();
+        }
 
-        // ==========================================
-        // 1. SECURE FIREBASE LOGIN LOGIC
-        // ==========================================
-        function attemptLogin() {
+        ensureAuth().catch(err => console.warn("Auth init warning:", err));
+
+        async function attemptLogin() {
             const studentIdInput = document.getElementById('student-id').value.trim().toUpperCase();
             const btnText = document.getElementById('btn-text');
+            const btnArrow = document.getElementById('btn-arrow');
             const spinner = document.getElementById('login-spinner');
             const errorMsg = document.getElementById('login-error');
 
             if (!studentIdInput) {
-                errorMsg.innerHTML = "<i class='fa-solid fa-circle-exclamation'></i> Please enter your ID or Phone.";
+                errorMsg.innerHTML = "<i class='fa-solid fa-circle-exclamation'></i> Please enter your Student ID or Registered Phone Number.";
                 errorMsg.style.display = "block";
                 return;
             }
 
-            btnText.innerText = "Verifying...";
+            btnText.innerText = "Verifying Profile...";
+            if (btnArrow) btnArrow.style.display = "none";
             spinner.style.display = "block";
             errorMsg.style.display = "none";
             document.getElementById('login-btn').disabled = true;
 
-            // Fetch student profile AND check exam_results to see if Main Exam is already completed
-            const db = firebase.database();
-            Promise.all([
-                db.ref('students').once('value'),
-                db.ref('exam_results').once('value')
-            ])
-            .then(([studentsSnap, resultsSnap]) => {
+            try {
+                await ensureAuth();
+                const db = firebase.database();
+                const [studentsSnap, resultsSnap] = await Promise.all([
+                    db.ref('students').once('value'),
+                    db.ref('exam_results').once('value')
+                ]);
+
                 let studentData = null;
-                
                 studentsSnap.forEach(childSnapshot => {
                     const st = childSnapshot.val();
                     if (st) {
@@ -298,10 +356,9 @@
                 });
 
                 if (!studentData) {
-                    throw new Error("Student not found in the database.");
+                    throw new Error("Student ID or Phone not found in institute records.");
                 }
 
-                // Check if this specific student has completed the Main Exam in exam_results
                 let mainExamRecord = null;
                 const targetId = String(studentData.id || "").trim().toUpperCase();
                 resultsSnap.forEach(rChild => {
@@ -312,15 +369,15 @@
                 });
 
                 processSuccessfulLogin(studentData, mainExamRecord);
-            })
-            .catch(err => {
+            } catch (err) {
                 console.error("Login Error:", err);
-                btnText.innerText = "Authenticate & Enter";
+                btnText.innerText = "Verify Profile & Continue";
+                if (btnArrow) btnArrow.style.display = "inline-block";
                 spinner.style.display = "none";
                 document.getElementById('login-btn').disabled = false;
-                errorMsg.innerHTML = `<i class='fa-solid fa-circle-exclamation'></i> ${err.message || "Network Error."}`;
+                errorMsg.innerHTML = `<i class='fa-solid fa-circle-exclamation'></i> ${err.message || "Network Error. Please try again."}`;
                 errorMsg.style.display = "block";
-            });
+            }
         }
 
         function formatDriveLink(url) {
@@ -328,20 +385,11 @@
             if (url.startsWith('data:image')) return url; 
             if (url.startsWith('http') && !url.includes('drive.google.com')) return url; 
             
-            const driveRegex1 = /drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/;
-            const driveRegex2 = /drive\.google\.com\/open\?id=([a-zA-Z0-9_-]+)/;
-            const driveRegex3 = /drive\.google\.com\/uc\?.*id=([a-zA-Z0-9_-]+)/;
-
-            let id = null;
-            if (url.match(driveRegex1)) id = url.match(driveRegex1)[1];
-            else if (url.match(driveRegex2)) id = url.match(driveRegex2)[1];
-            else if (url.match(driveRegex3)) id = url.match(driveRegex3)[1];
-
-            if (id) return `https://drive.google.com/uc?export=view&id=${id}`;
+            const driveRegex = /drive\.google\.com\/(?:file\/d\/|open\?id=|uc\?.*id=)([a-zA-Z0-9_-]+)/;
+            const match = url.match(driveRegex);
+            if (match) return `https://drive.google.com/uc?export=view&id=${match[1]}`;
             return url; 
         }
-
-        let loggedInStudentObj = null;
 
         function processSuccessfulLogin(studentData, mainExamRecord) {
             const detectedKey = typeof detectCourseKey === 'function' ? detectCourseKey(studentData) : (studentData.course || 'CCA_6M');
@@ -355,13 +403,11 @@
             localStorage.setItem('examStudent', JSON.stringify(studentData));
             currentStudentId = studentData.id;
 
-            // Update UI text with Course & Duration
             document.getElementById('display-name').innerText = studentData.name;
             document.getElementById('display-id-badge').innerText = studentData.id || 'N/A';
             document.getElementById('display-course').innerText = studentData.detectedCourseName;
-            document.getElementById('display-duration').innerHTML = `<i class="fa-regular fa-calendar-check"></i> Duration: ${studentData.duration ? studentData.duration + ' Months' : (catalogInfo ? catalogInfo.duration : 'Standard')} • Paper: <strong>${detectedKey}</strong>`;
+            document.getElementById('display-duration').innerHTML = `<i class="fa-regular fa-calendar-check"></i> Duration: ${studentData.duration ? studentData.duration + ' Months' : (catalogInfo ? catalogInfo.duration : 'Standard')} • Paper Code: <strong>${detectedKey}</strong>`;
             
-            // Render Profile Photo
             const avatarDiv = document.getElementById('avatar-initial');
             const picUrl = formatDriveLink(studentData.image || studentData.photo || studentData.profilepic || null);
             if (picUrl) {
@@ -370,14 +416,12 @@
                 avatarDiv.innerHTML = studentData.name.charAt(0).toUpperCase();
             }
 
-            // Configure Stage 1 (Main Exam) & Stage 2 (Practical) Lock State
             const practicalCard = document.getElementById('card-practical-exam');
             const practicalBadge = document.getElementById('badge-practical-status');
             const practicalBtn = document.getElementById('btn-choose-practical');
             const mainBadge = document.getElementById('badge-main-status');
 
             if (mainExamRecord) {
-                // Main Exam IS completed -> Unlock Practical!
                 mainBadge.innerHTML = `<i class="fa-solid fa-check"></i> Completed (${mainExamRecord.marks}/400)`;
                 mainBadge.style.background = "#d1fae5";
                 mainBadge.style.color = "#059669";
@@ -389,10 +433,13 @@
                 practicalBadge.style.color = "#059669";
 
                 practicalBtn.disabled = false;
-                practicalBtn.style.background = "#10b981";
-                practicalBtn.innerHTML = `<i class="fa-solid fa-laptop-code"></i> Enter Stage 2: Practical & Viva Exam`;
+                practicalBtn.style.background = "linear-gradient(135deg, #10b981 0%, #059669 100%)";
+                practicalBtn.innerHTML = `<i class="fa-solid fa-laptop-code"></i> Start Stage 2: Practical & Viva Exam`;
             } else {
-                // Main Exam NOT completed -> Keep Practical strictly locked
+                mainBadge.innerHTML = `400 Marks`;
+                mainBadge.style.background = "#eff6ff";
+                mainBadge.style.color = "#2563eb";
+
                 practicalCard.style.borderColor = "#e2e8f0";
                 practicalCard.style.background = "#f8fafc";
                 practicalBadge.innerHTML = `<i class="fa-solid fa-lock"></i> Locked`;
@@ -404,14 +451,16 @@
                 practicalBtn.innerHTML = `<i class="fa-solid fa-lock"></i> Complete Main Exam First to Unlock`;
             }
 
-            // Switch Screens
+            document.getElementById('stage-selection-box').style.display = 'block';
+            document.getElementById('portal-stage-heading').innerText = 'Select Examination Stage';
+            document.getElementById('approval-badge').style.display = 'none';
+            document.getElementById('exam-rules-box').style.display = 'none';
+            document.getElementById('start-btn-container').innerHTML = '';
+
             document.getElementById('login-section').classList.remove('active');
             document.getElementById('waiting-section').classList.add('active');
         }
 
-        // ==========================================
-        // 2. STAGE SELECTION & WAITING ROOM LOGIC
-        // ==========================================
         function selectExamStage(stageType) {
             if (!loggedInStudentObj) return;
 
@@ -420,7 +469,6 @@
                     alert("Practical Exam is locked! You must complete the Main Exam first.");
                     return;
                 }
-                // Register student in exam_live for Stage 2 Practical & Viva and redirect to practical.html
                 firebase.database().ref('exam_live/' + currentStudentId).set({
                     id: loggedInStudentObj.id,
                     name: loggedInStudentObj.name,
@@ -434,7 +482,6 @@
                 return;
             }
 
-            // Stage 1: Main Exam selected -> Enter Waiting Room for Admin Approval
             document.getElementById('stage-selection-box').style.display = 'none';
             document.getElementById('portal-stage-heading').innerText = 'Waiting Room (Main Exam)';
             document.getElementById('approval-badge').style.display = 'inline-flex';
@@ -466,12 +513,9 @@
             });
         }
 
-        // ==========================================
-        // 3. LAUNCH EXAM LOGIC
-        // ==========================================
         function launchExam() {
             const badge = document.getElementById('approval-badge');
-            badge.innerHTML = "<i class='fa-solid fa-check-circle'></i> Approved! Ready to Start.";
+            badge.innerHTML = "<i class='fa-solid fa-check-circle'></i> Approved by Examiner! Ready to Begin.";
             badge.style.background = "#d1fae5";
             badge.style.color = "#059669";
             badge.style.animation = "none";
@@ -479,12 +523,12 @@
             const btnContainer = document.getElementById('start-btn-container');
             if (btnContainer.innerHTML === "") {
                 const startBtn = document.createElement('button');
-                startBtn.innerHTML = "Start Theory Exam (Stage 1) <i class='fa-solid fa-arrow-right'></i>";
-                startBtn.style.cssText = "background:#10b981; margin-top:25px; padding:16px; font-size:17px; color:white; border:none; border-radius:10px; cursor:pointer; font-weight:600; width:100%; display:flex; justify-content:center; align-items:center; gap:10px;";
+                startBtn.innerHTML = "Launch Main Exam Now <i class='fa-solid fa-arrow-right'></i>";
+                startBtn.style.cssText = "background:linear-gradient(135deg, #10b981 0%, #059669 100%); margin-top:22px; padding:16px; font-size:17px; color:white; border:none; border-radius:12px; cursor:pointer; font-weight:600; width:100%; display:flex; justify-content:center; align-items:center; gap:10px;";
                 
                 startBtn.onclick = () => {
                     startBtn.disabled = true;
-                    startBtn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin'></i> Launching Exam Environment...";
+                    startBtn.innerHTML = "<i class='fa-solid fa-circle-notch fa-spin'></i> Entering Exam Hall...";
                     firebase.database().ref('exam_live/' + currentStudentId).update({ status: 'Entering Exam' })
                     .finally(() => {
                         window.location.href = `exam.html?id=${currentStudentId}`;
@@ -493,6 +537,19 @@
                 
                 btnContainer.appendChild(startBtn);
             }
+        }
+
+        function resetToLogin() {
+            if (dbRef) {
+                dbRef.off();
+                dbRef.remove().catch(() => {});
+            }
+            document.getElementById('waiting-section').classList.remove('active');
+            document.getElementById('login-section').classList.add('active');
+            document.getElementById('login-btn').disabled = false;
+            document.getElementById('btn-text').innerText = "Verify Profile & Continue";
+            document.getElementById('btn-arrow').style.display = "inline-block";
+            document.getElementById('login-spinner').style.display = "none";
         }
     </script>
 </body>
