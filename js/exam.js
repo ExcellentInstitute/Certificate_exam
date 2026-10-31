@@ -51,33 +51,30 @@ function unlockExam() {
     unlockBtn.disabled = true;
     if (errorMsg) errorMsg.style.display = "none";
 
-    // SECURE FIX: Authenticate Admin via Firebase, NO HARDCODED PASSWORD
+    // Request full-screen immediately while button click gesture is active
+    const docEl = document.documentElement;
+    const requestFS = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+    if (requestFS && !document.fullscreenElement) {
+        try { requestFS.call(docEl).catch(() => {}); } catch (e) {}
+    }
+
     firebase.auth().signInWithEmailAndPassword('admin@ei.com', pass)
     .then(() => {
-        // Successfully authenticated as Admin, unlock the exam
-        document.documentElement.requestFullscreen().then(() => {
-            document.getElementById("lock-screen").style.display = "none";
-            document.getElementById("exam-content").style.display = "block";
-            isExamPaused = false;
-            document.getElementById("admin-unlock-pass").value = "";
-            
-            // Restore student status back to Active on the Admin Dashboard
-            if (typeof studentData !== 'undefined' && studentData !== null) {
-                firebase.database().ref('exam_live/' + studentData.id).update({ 
-                    status: 'Active (Testing)' 
-                }).catch(e => console.warn(e));
-            }
-            
-            unlockBtn.innerHTML = originalText;
-            unlockBtn.disabled = false;
-        }).catch(err => {
-            alert("Browser blocked full screen. Please click Resume again.");
-            unlockBtn.innerHTML = originalText;
-            unlockBtn.disabled = false;
-        });
+        document.getElementById("lock-screen").style.display = "none";
+        document.getElementById("exam-content").style.display = "block";
+        isExamPaused = false;
+        document.getElementById("admin-unlock-pass").value = "";
+        
+        if (typeof studentData !== 'undefined' && studentData !== null) {
+            firebase.database().ref('exam_live/' + studentData.id).update({ 
+                status: 'Active (Testing)' 
+            }).catch(e => console.warn(e));
+        }
+        
+        unlockBtn.innerHTML = originalText;
+        unlockBtn.disabled = false;
     })
-    .catch((error) => {
-        // Invalid Admin password
+    .catch(() => {
         if (errorMsg) {
             errorMsg.innerHTML = '<i class="fa-solid fa-xmark"></i> Incorrect Admin Password';
             errorMsg.style.display = "block";
@@ -232,7 +229,13 @@ function calculateMCQ() {
 }
 
 function submitExam() {
-    if (!confirm("Are you sure you want to submit your exam? You cannot undo this action.")) return;
+    const prevPaused = isExamPaused;
+    isExamPaused = true;
+    const confirmed = confirm("Are you sure you want to submit your exam? You cannot undo this action.");
+    if (!confirmed) {
+        isExamPaused = prevPaused;
+        return;
+    }
 
     const submitBtn = document.querySelector('.submit-btn');
     let originalSubmitText = "Submit Final Exam";
@@ -386,7 +389,7 @@ function finishSubmissionUI(totalMarks, typingResults, mcqData) {
             reportText += `Q${i+1}: NOT ATTEMPTED / UNANSWERED (Correct: ${correctAnsText})\n`;
         }
 
-        const safeText = (str) => String(str || "").replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">");
+        const safeText = (str) => String(str || "").replace(/&/g, "\x26amp;").replace(/</g, "\x26lt;").replace(/>/g, "\x26gt;");
         reviewHTML += `<div class="review-item" style="background: #f9f9f9; border: 1px solid #ddd; padding: 20px; margin-bottom: 20px; border-radius: 5px;">`;
         reviewHTML += `<div class="review-q" style="font-weight: bold; font-size: 18px; margin-bottom: 15px;">Q${i+1}. ${safeText(q.q || q.question)}</div>`;
         
