@@ -146,18 +146,19 @@
         // ==========================================
         // AUTO-RESET PRE-ZOOM & LOCK ZOOM LEVEL
         // ==========================================
+        // Safely escapes <, >, &, ", ' so HTML/C tags like <table>, <ul>, <stdio.h> never break the page layout
+        function escapeHTML(str) {
+            return String(str || "")
+                .replace(/&/g, "&")
+                .replace(/</g, "<")
+                .replace(/>/g, ">")
+                .replace(/"/g, """)
+                .replace(/'/g, "'");
+        }
+
         function enforceDefaultZoom() {
-            // Reset any CSS zoom first
             document.documentElement.style.zoom = "100%";
             document.body.style.zoom = "100%";
-
-            // If browser was pre-zoomed before exam started, counter-scale to 100% default visual size
-            if (window.outerWidth && window.innerWidth) {
-                const zoomRatio = window.outerWidth / window.innerWidth;
-                if (zoomRatio > 1.03 || zoomRatio < 0.97) {
-                    document.body.style.zoom = (1 / zoomRatio).toFixed(3);
-                }
-            }
         }
 
         // Prevent Ctrl + Wheel Zoom
@@ -284,12 +285,13 @@
                 pillsBar.innerHTML += `<button onclick="filterQuestionsBySubject('${escapedSub}', this)" style="background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; padding:4px 12px; border-radius:15px; font-size:12px; cursor:pointer; white-space:nowrap;">${sub}</button>`;
             });
 
-            // 3. Distribute exactly 175 MCQs (350 Marks) evenly across the Admin's Active Subjects
+            // 3. Distribute up to 175 Unique MCQs (No duplicate questions on the same paper)
             const totalTargetMCQs = 175;
             const basePerSubject = Math.floor(totalTargetMCQs / activeSubjects.length);
             let remainder = totalTargetMCQs % activeSubjects.length;
 
             let finalExamQuestions = [];
+            const usedQuestionTexts = new Set();
 
             activeSubjects.forEach(sub => {
                 const quota = basePerSubject + (remainder > 0 ? 1 : 0);
@@ -299,30 +301,52 @@
                     ? getQuestionsForSubject(courseKey, sub)
                     : questionBank["CCA"].mcqs;
 
-                let shuffled = [...subPool].sort(() => Math.random() - 0.5);
-                // If a subject pool is smaller than quota, cycle safely so total always hits 175
-                let selected = [];
-                while (selected.length < quota && shuffled.length > 0) {
-                    selected.push(...shuffled.slice(0, quota - selected.length));
-                }
-                finalExamQuestions.push(...selected);
+                // Filter out any question already placed on this exam paper
+                let uniqueSubPool = subPool.filter(q => {
+                    const key = String(q.question || "").trim();
+                    if (usedQuestionTexts.has(key)) return false;
+                    return true;
+                });
+
+                uniqueSubPool.sort(() => Math.random() - 0.5);
+                let picked = uniqueSubPool.slice(0, quota);
+                picked.forEach(q => usedQuestionTexts.add(String(q.question || "").trim()));
+                finalExamQuestions.push(...picked);
             });
+
+            // If any new subject had fewer unique questions than its quota, top up from remaining unused questions
+            if (finalExamQuestions.length < totalTargetMCQs && typeof questionBatches !== 'undefined') {
+                const backupPool = questionBatches.flat().filter(q => !usedQuestionTexts.has(String(q.question || "").trim()));
+                backupPool.sort(() => Math.random() - 0.5);
+                for (let bq of backupPool) {
+                    if (finalExamQuestions.length >= totalTargetMCQs) break;
+                    const qKey = String(bq.question || "").trim();
+                    if (!usedQuestionTexts.has(qKey)) {
+                        usedQuestionTexts.add(qKey);
+                        const randomActiveSub = activeSubjects[finalExamQuestions.length % activeSubjects.length];
+                        finalExamQuestions.push({ ...bq, subject: randomActiveSub });
+                    }
+                }
+            }
 
             // Shuffle final paper
             finalExamQuestions.sort(() => Math.random() - 0.5);
             document.getElementById('total-q-count').innerText = finalExamQuestions.length;
 
-            // 4. Render Questions into HTML
+            // 4. Render Questions into HTML (with escapeHTML so <table>, <ul>, <div> render as text!)
             const mcqContainer = document.getElementById('mcq-container');
             let allCardsHtml = "";
             finalExamQuestions.forEach((q, index) => {
                 allCardsHtml += `
-                <div class="question-card" data-subject="${q.subject}">
-                    <h4>${index + 1}. ${q.question} <span style="background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:10px; font-size:11px; float:right; font-weight:600;">${q.subject}</span></h4>
+                <div class="question-card" data-subject="${escapeHTML(q.subject)}">
+                    <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px; margin-bottom:14px;">
+                        <h4 style="margin:0; flex:1;">${index + 1}. ${escapeHTML(q.question)}</h4>
+                        <span style="background:#eff6ff; color:#2563eb; padding:3px 10px; border-radius:10px; font-size:11px; font-weight:600; white-space:nowrap;">${escapeHTML(q.subject)}</span>
+                    </div>
                     <div class="options">`;
                 
                 q.options.forEach((opt, optIdx) => {
-                    allCardsHtml += `<label><input type="radio" name="q${index}" value="${optIdx}" onchange="updateAnsweredProgress()"> ${opt}</label>`;
+                    allCardsHtml += `<label><input type="radio" name="q${index}" value="${optIdx}" onchange="updateAnsweredProgress()"> <span>${escapeHTML(opt)}</span></label>`;
                 });
                 
                 allCardsHtml += `</div></div>`;
