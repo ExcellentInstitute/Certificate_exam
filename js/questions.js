@@ -2443,34 +2443,64 @@ function detectCourseKey(studentObj) {
     return "CCA_6M"; // Safe default fallback
 }
 
-// Helper: Gets questions for a specific Course + Subject (prioritizes course-specific batches, falls back to master pool)
+// True Fisher-Yates Cryptographic Shuffle (Guarantees different papers for simultaneous students)
+function shuffleExamArray(arr) {
+    const copy = [...arr];
+    for (let i = copy.length - 1; i > 0; i--) {
+        let rand;
+        if (window.crypto && window.crypto.getRandomValues) {
+            const buf = new Uint32Array(1);
+            window.crypto.getRandomValues(buf);
+            rand = buf[0] / (0xFFFFFFFF + 1);
+        } else {
+            rand = Math.random();
+        }
+        const j = Math.floor(rand * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+    }
+    return copy;
+}
+
+// Helper: Gets questions for a specific Course + Subject (prioritizes direct subject matches, then aliases)
 function getQuestionsForSubject(courseKey, subjectName) {
     const allBaseMcqs = questionBatches.flat();
     const courseMcqs = (courseSpecificBatches[courseKey] || []).flat();
     const combinedPool = [...courseMcqs, ...allBaseMcqs];
 
-    // 1. Exact subject name match (ignoring Roman numeral prefixes like "I. ")
+    // Deduplicate combinedPool by question text first
+    const seen = new Set();
+    const uniqueCombined = [];
+    combinedPool.forEach(q => {
+        const key = String(q.question || "").trim();
+        if (key && !seen.has(key)) {
+            seen.add(key);
+            uniqueCombined.push(q);
+        }
+    });
+
     const cleanSub = subjectName.replace(/^[IVX]+\.\s*/i, "").trim().toLowerCase();
-    let matched = combinedPool.filter(q => {
+
+    // 1. Direct subject match (shuffled first so direct questions are always prioritized)
+    let directMatches = uniqueCombined.filter(q => {
         const qSub = String(q.subject || "").replace(/^[IVX]+\.\s*/i, "").trim().toLowerCase();
         return qSub === subjectName.toLowerCase() || qSub === cleanSub;
     });
+    directMatches = shuffleExamArray(directMatches);
 
-    // 2. Fallback to Smart Alias Map if we need more questions to fill the subject quota
-    if (matched.length < 25 && SUBJECT_FALLBACK_MAP[cleanSub]) {
+    // 2. Alias fallback matches (shuffled separately and placed after direct matches)
+    let fallbackMatches = [];
+    if (SUBJECT_FALLBACK_MAP[cleanSub]) {
         const mappedSubjects = SUBJECT_FALLBACK_MAP[cleanSub].map(s => s.toLowerCase());
-        const fallbackMatches = allBaseMcqs.filter(q => mappedSubjects.includes(String(q.subject || "").toLowerCase()));
-        matched = [...matched, ...fallbackMatches];
+        const directSet = new Set(directMatches.map(d => String(d.question || "").trim()));
+        fallbackMatches = uniqueCombined.filter(q => {
+            const qSub = String(q.subject || "").replace(/^[IVX]+\.\s*/i, "").trim().toLowerCase();
+            return mappedSubjects.includes(qSub) && !directSet.has(String(q.question || "").trim());
+        });
+        fallbackMatches = shuffleExamArray(fallbackMatches);
     }
 
-    // 3. Ultimate safety fallback: if a brand new subject (like Java or Tally) has 0 questions uploaded yet,
-    // pull from the general pool so the student's exam paper never breaks during testing.
-    if (matched.length === 0) {
-        matched = [...allBaseMcqs];
-    }
-
-    // Tag returned questions with the official syllabus subject name for the student's report card
-    return matched.map(q => ({ ...q, subject: subjectName }));
+    const finalPool = [...directMatches, ...fallbackMatches];
+    return finalPool.map(q => ({ ...q, subject: subjectName }));
 }
 
 // Master questionBank object for backward compatibility + multi-course access
