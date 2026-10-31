@@ -835,10 +835,10 @@
         }
 
         // ==========================================
-        // DOWNLOAD QUESTION BANK PDF
+        // DOWNLOAD QUESTION BANK PDF (ALL BOOKS)
         // ==========================================
         function downloadQuestionBank() {
-            if (typeof questionBank === 'undefined') {
+            if (typeof questionBatches === 'undefined') {
                 alert("Question bank not found. Make sure js/questions.js is linked properly.");
                 return;
             }
@@ -850,9 +850,9 @@
             doc.text("EXCELLENT INSTITUTE", 105, 15, null, null, "center");
             
             doc.setFontSize(12); doc.setTextColor(100, 116, 139);
-            doc.text("Master Question & Answer Bank", 105, 22, null, null, "center");
+            doc.text("Complete Multi-Course Question & Answer Bank", 105, 22, null, null, "center");
             
-            const mcqs = questionBank["CCA"].mcqs;
+            const mcqs = questionBatches.flat();
             let tableData = [];
             
             mcqs.forEach((q, index) => {
@@ -864,11 +864,11 @@
             doc.autoTable({
                 startY: 30, head: [['#', 'Subject', 'Question', 'Options', 'Answer']], body: tableData,
                 theme: 'grid', headStyles: { fillColor: [37, 99, 235], textColor: 255 },
-                styles: { fontSize: 9, cellPadding: 3, valign: 'middle' },
-                columnStyles: { 0: { cellWidth: 10, halign: 'center' }, 1: { cellWidth: 25 }, 2: { cellWidth: 60 }, 3: { cellWidth: 70 }, 4: { cellWidth: 25, fontStyle: 'bold', textColor: [16, 185, 129] } }
+                styles: { fontSize: 8.5, cellPadding: 3, valign: 'middle' },
+                columnStyles: { 0: { cellWidth: 10, halign: 'center' }, 1: { cellWidth: 30 }, 2: { cellWidth: 55 }, 3: { cellWidth: 70 }, 4: { cellWidth: 25, fontStyle: 'bold', textColor: [16, 185, 129] } }
             });
 
-            doc.save("Master_Question_Bank.pdf");
+            doc.save("Excellent_Institute_Master_Question_Bank.pdf");
         }
     </script>
 </body>
