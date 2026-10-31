@@ -2380,12 +2380,12 @@ const COURSE_CATALOG = {
 // Smart Subject Alias Mapper: Maps new syllabus subject titles to existing foundation questions
 // whenever a subject doesn't have its own dedicated book questions yet.
 const SUBJECT_FALLBACK_MAP = {
-    "computer fundamentals": ["Computer Fundamentals", "Computer Components", "Typing Theory"],
-    "basics of computer": ["Computer Fundamentals", "Computer Components", "Typing Theory"],
-    "computer fundamentals & operating systems": ["Computer Fundamentals", "Operating System Basics", "Computer Components"],
-    "operating system": ["Operating System Basics"],
-    "windows operating system": ["Operating System Basics"],
-    "operating system basics (windows/linux)": ["Operating System Basics"],
+    "computer fundamentals": ["Computer Fundamentals", "Basics of Computer", "Computer Components", "Typing Theory"],
+    "basics of computer": ["Basics of Computer", "Computer Fundamentals", "Computer Components", "Typing Theory"],
+    "computer fundamentals & operating systems": ["Basics of Computer", "Computer Fundamentals", "Windows Operating System", "Operating System Basics", "Computer Components"],
+    "operating system": ["Windows Operating System", "Operating System Basics"],
+    "windows operating system": ["Windows Operating System", "Operating System Basics"],
+    "operating system basics (windows/linux)": ["Windows Operating System", "Operating System Basics"],
     "ms word": ["MS Word", "Typing Theory"],
     "ms word – basics": ["MS Word", "Typing Theory"],
     "ms word – advanced": ["MS Word"],
@@ -2397,15 +2397,30 @@ const SUBJECT_FALLBACK_MAP = {
     "ms office (word, excel, powerpoint)": ["MS Word", "MS Excel", "MS PowerPoint"],
     "cyber safety & security basics": ["Cyber Security"],
     "cyber security & digital safety": ["Cyber Security"],
-    "internet & email": ["Cyber Security", "Computer Networking Basics"],
-    "internet basics & email usage": ["Cyber Security", "Computer Networking Basics"],
-    "internet & email usage": ["Cyber Security", "Computer Networking Basics"],
-    "internet": ["Cyber Security", "Computer Networking Basics"],
-    "email": ["Cyber Security"],
-    "computer networking basics": ["Computer Networking Basics", "Computer Components"],
-    "introduction to multimedia": ["Computer Fundamentals", "Computer Components"],
-    "notepad": ["Typing Theory", "Operating System Basics"],
-    "paint": ["MS PowerPoint", "Operating System Basics"]
+    "internet & email": ["Internet & Email Usage", "Cyber Security", "Computer Networking Basics"],
+    "internet basics & email usage": ["Internet & Email Usage", "Cyber Security", "Computer Networking Basics"],
+    "internet & email usage": ["Internet & Email Usage", "Cyber Security", "Computer Networking Basics"],
+    "internet": ["Internet & Email Usage", "Computer Networking Basics"],
+    "email": ["Internet & Email Usage"],
+    "digital services": ["Digital Services"],
+    "photoshop & image editing": ["Photoshop & Image Editing"],
+    "graphics designing": ["Graphics Designing", "Photoshop & Image Editing"],
+    "programming in c & data structures": ["Programming in C & Data Structures"],
+    "web designing using html, css & javascript": ["Web Designing using HTML, CSS & JavaScript"],
+    "tally with gst": [
+        "Introduction to Accounting", "Basics of Tally", "Company Creation & Ledger Management",
+        "Voucher Entry in Tally", "Inventory Management", "Taxation in Tally (GST, TDS, TCS)",
+        "Payroll & Employee Records", "Banking Features in Tally"
+    ],
+    "tally erp with gst": [
+        "Introduction to Accounting", "Basics of Tally", "Company Creation & Ledger Management",
+        "Voucher Entry in Tally", "Inventory Management", "Taxation in Tally (GST, TDS, TCS)",
+        "Payroll & Employee Records", "Banking Features in Tally"
+    ],
+    "computer networking basics": ["Computer Networking Basics", "Internet & Email Usage", "Computer Components"],
+    "introduction to multimedia": ["Introduction to Multimedia", "Computer Fundamentals", "Computer Components"],
+    "notepad": ["Typing Theory", "Windows Operating System", "Operating System Basics"],
+    "paint": ["Graphics Designing", "MS PowerPoint", "Operating System Basics"]
 };
 
 // Helper: Automatically detects the exact Course Key from a student's database profile
