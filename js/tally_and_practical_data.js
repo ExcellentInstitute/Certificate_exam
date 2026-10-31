@@ -1,84 +1,208 @@
+// ============================================================================
+// EXCELLENT INSTITUTE - MASTER COURSE BOOKS, PRACTICALS & 50 VIVA BANK
+// ============================================================================
+
 // ==========================================
-// 1. TALLY PRIME 7.0 (6 MONTHS) MCQ BANK (FROM BOOK)
+// 1. TALLY PRIME 7.0 & ACCOUNTING BOOK MCQs
 // ==========================================
 const tallyBookMCQs = [
     // I. Introduction to Accounting (Modules 1, 2, 3)
-    { subject: "I. Introduction to Accounting", question: "According to the Business Entity Concept, when the owner invests personal money into the business, what is it called?", options: ["Drawings", "Capital", "Liability Loan", "Net Profit"], correctAnswer: 1 },
-    { subject: "I. Introduction to Accounting", question: "If the owner takes ₹500 from the shop's cash box for personal use, how is it recorded in accounting?", options: ["Capital", "Direct Expense", "Drawings", "Sundry Debtors"], correctAnswer: 2 },
-    { subject: "I. Introduction to Accounting", question: "Customers who buy goods from your business on credit (udhaar) and owe you money are called:", options: ["Sundry Creditors", "Sundry Debtors", "Liabilities", "Capital Providers"], correctAnswer: 1 },
-    { subject: "I. Introduction to Accounting", question: "Suppliers from whom your business buys goods on credit are classified as:", options: ["Sundry Debtors (Assets)", "Fixed Assets", "Sundry Creditors (Liabilities)", "Nominal Accounts"], correctAnswer: 2 },
-    { subject: "I. Introduction to Accounting", question: "What is the Golden Rule for a Real Account (Assets & Properties)?", options: ["Debit the Receiver, Credit the Giver", "Debit what comes in, Credit what goes out", "Debit all Expenses, Credit all Incomes", "Debit all Gains, Credit all Losses"], correctAnswer: 1 },
-    { subject: "I. Introduction to Accounting", question: "What is the Golden Rule for a Personal Account (People, Banks & Companies)?", options: ["Debit what comes in, Credit what goes out", "Debit the Receiver, Credit the Giver", "Debit all Expenses & Losses, Credit all Incomes & Gains", "Debit Assets, Credit Liabilities"], correctAnswer: 1 },
-    { subject: "I. Introduction to Accounting", question: "What is the Golden Rule for a Nominal Account (Incomes & Expenses)?", options: ["Debit all Expenses and Losses, Credit all Incomes and Gains", "Debit what comes in, Credit what goes out", "Debit the Giver, Credit the Receiver", "Debit Cash, Credit Bank"], correctAnswer: 0 },
-    { subject: "I. Introduction to Accounting", question: "Under which type of account does an 'SBI Bank Account' fall?", options: ["Real Account", "Nominal Account", "Personal Account", "Suspense Account"], correctAnswer: 2 },
-    { subject: "I. Introduction to Accounting", question: "In the Accounting Cycle, which statement lists all ledger balances to verify that total Debits equal total Credits?", options: ["Journal Diary", "Trial Balance", "Cash Memo", "Stock Summary"], correctAnswer: 1 },
-    { subject: "I. Introduction to Accounting", question: "Which account calculates Gross Profit by comparing Sales against Purchase cost?", options: ["Balance Sheet", "Trading Account", "Trial Balance", "Bank Reconciliation"], correctAnswer: 1 },
+    { subject: "Introduction to Accounting", question: "According to the Business Entity Concept, the business and the owner are treated as:", options: ["The exact same person", "Two completely separate entities", "Partners sharing salary", "Government bodies"], correctAnswer: 1 },
+    { subject: "Introduction to Accounting", question: "When the owner puts personal money into the business cash box, what is this investment called?", options: ["Drawings", "Capital", "Direct Income", "Creditor Loan"], correctAnswer: 1 },
+    { subject: "Introduction to Accounting", question: "If the owner takes ₹500 from the shop's cash box to buy a birthday gift for his son, it is recorded as:", options: ["Capital", "Office Expense", "Drawings", "Sundry Debtors"], correctAnswer: 2 },
+    { subject: "Introduction to Accounting", question: "If a mobile shop buys Samsung phones to resell for profit, they are called 'Goods'. If it buys an AC for the office wall, what is the AC called?", options: ["Stock", "Liability", "Asset", "Debtor"], correctAnswer: 2 },
+    { subject: "Introduction to Accounting", question: "Customers who buy goods from you on credit (udhaar) and owe you money are called:", options: ["Sundry Creditors (Liabilities)", "Sundry Debtors (Assets)", "Nominal Accounts", "Promoters"], correctAnswer: 1 },
+    { subject: "Introduction to Accounting", question: "Suppliers from whom you buy goods on credit (udhaar) and whom you must pay later are called:", options: ["Sundry Debtors", "Fixed Assets", "Sundry Creditors", "Drawings"], correctAnswer: 2 },
+    { subject: "Introduction to Accounting", question: "What is the Golden Rule for a Real Account (Assets & Properties)?", options: ["Debit the Receiver, Credit the Giver", "Debit what comes in, Credit what goes out", "Debit all Expenses, Credit all Incomes", "Debit Liabilities, Credit Assets"], correctAnswer: 1 },
+    { subject: "Introduction to Accounting", question: "What is the Golden Rule for a Personal Account (People, Banks & Companies)?", options: ["Debit what comes in, Credit what goes out", "Debit the Receiver, Credit the Giver", "Debit all Expenses & Losses, Credit all Incomes & Gains", "Debit Incomes, Credit Expenses"], correctAnswer: 1 },
+    { subject: "Introduction to Accounting", question: "What is the Golden Rule for a Nominal Account (Incomes & Expenses)?", options: ["Debit all Expenses and Losses, Credit all Incomes and Gains", "Debit what comes in, Credit what goes out", "Debit the Receiver, Credit the Giver", "Debit Assets, Credit Capital"], correctAnswer: 0 },
+    { subject: "Introduction to Accounting", question: "Why is a Bank Account (e.g., SBI Bank A/c) classified as a Personal Account?", options: ["Because cash is tangible", "Because a Bank is an artificial legal person receiving or giving money", "Because it is an expense", "Because it is a non-cash adjustment"], correctAnswer: 1 },
+    { subject: "Introduction to Accounting", question: "In a Journal entry, what is the short sentence written at the bottom to explain the transaction called?", options: ["Ledger", "Trial Balance", "Narration", "Folio"], correctAnswer: 2 },
+    { subject: "Introduction to Accounting", question: "Which statement lists the final balances of every ledger to verify that total Debits equal total Credits?", options: ["Trial Balance", "Cash Memo", "Day Book", "Contra Note"], correctAnswer: 0 },
+    { subject: "Introduction to Accounting", question: "In Final Accounts, which account calculates Gross Profit (Sales minus Purchase cost)?", options: ["Profit & Loss A/c", "Trading A/c", "Balance Sheet", "Trial Balance"], correctAnswer: 1 },
 
     // II. Basics of Tally (Module 4)
-    { subject: "II. Basics of Tally", question: "In Tally Prime Educational Mode, on which dates of any month are you allowed to record transactions?", options: ["Every day of the month", "Only the 1st, 2nd, and 31st of any month", "Only Sundays", "Only the 15th and 30th"], correctAnswer: 1 },
-    { subject: "II. Basics of Tally", question: "Which universal shortcut opens the 'Go To' magic search bar from anywhere in Tally Prime?", options: ["Alt + K", "Alt + G", "Ctrl + A", "Alt + Y"], correctAnswer: 1 },
-    { subject: "II. Basics of Tally", question: "What does the shortcut 'Ctrl + A' do inside Tally Prime?", options: ["Deletes a ledger", "Selects all text", "Quick Save / Instantly accepts and saves the current screen", "Opens the Company menu"], correctAnswer: 2 },
-    { subject: "II. Basics of Tally", question: "In Tally Prime's top menu bar, what does a single underline under a letter (like K in Company) indicate?", options: ["Press Shift + Letter", "Press Alt + Letter", "Press Ctrl + Letter", "Press Function Key"], correctAnswer: 1 },
-    { subject: "II. Basics of Tally", question: "Which top menu shortcut opens the 'Data' menu for backup and restore in Tally Prime?", options: ["Alt + K", "Alt + Y", "Alt + Z", "Alt + P"], correctAnswer: 1 },
-    { subject: "II. Basics of Tally", question: "How should you safely close Tally Prime from the Gateway of Tally without risking data corruption?", options: ["Click the red X button forcefully", "Unplug the computer", "Press Escape (Esc) and press 'Y' to quit safely", "Press Ctrl + Alt + Delete"], correctAnswer: 2 },
+    { subject: "Basics of Tally", question: "In Tally Prime's free Educational Mode, on which dates of any month can you record transactions?", options: ["Every date of the month", "Only the 1st, 2nd, and 31st of any month", "Only the 1st and 15th", "Only Sundays"], correctAnswer: 1 },
+    { subject: "Basics of Tally", question: "Which shortcut opens the 'Go To' search bar from anywhere in Tally Prime?", options: ["Alt + K", "Alt + G", "Ctrl + A", "Alt + Y"], correctAnswer: 1 },
+    { subject: "Basics of Tally", question: "What does the shortcut 'Ctrl + A' do inside Tally Prime?", options: ["Selects all text", "Quick Save (instantly accepts and saves the current screen)", "Cancels a voucher", "Opens Company Features"], correctAnswer: 1 },
+    { subject: "Basics of Tally", question: "In Tally Prime's top menu bar, what do a single underline (e.g., K) and a double underline indicate?", options: ["Single = Shift, Double = Alt", "Single = Alt, Double = Ctrl", "Single = Ctrl, Double = Alt", "Single = Tab, Double = Enter"], correctAnswer: 1 },
+    { subject: "Basics of Tally", question: "Which top menu shortcut opens the 'Company' menu vs. the 'Data' menu in Tally Prime?", options: ["Alt + K (Company) and Alt + Y (Data)", "Alt + G (Company) and Alt + Z (Data)", "Ctrl + C and Ctrl + D", "F1 and F2"], correctAnswer: 0 },
+    { subject: "Basics of Tally", question: "What is the safe way to close Tally Prime without corrupting data?", options: ["Click the top-right X button", "Go to Gateway of Tally, press Escape (Esc), and press 'Y'", "Turn off the UPS directly", "Press Alt + F4 during voucher entry"], correctAnswer: 1 },
 
     // III. Company Creation & Ledger Management (Module 5)
-    { subject: "III. Company Creation & Ledger Management", question: "Which Function Key opens the 'Company Features' screen to enable/disable Accounting, Inventory, GST, and Payroll?", options: ["F1", "F11", "F12", "Alt + K"], correctAnswer: 1 },
-    { subject: "III. Company Creation & Ledger Management", question: "How many Pre-defined Accounting Groups exist by default in Tally Prime?", options: ["15 Groups", "28 Groups (15 Primary, 13 Sub-groups)", "50 Groups", "10 Groups"], correctAnswer: 1 },
-    { subject: "III. Company Creation & Ledger Management", question: "Which two default ledgers are already created automatically when you create a new company in Tally?", options: ["Sales and Purchase", "Cash and Profit & Loss A/c", "Bank and Capital", "CGST and SGST"], correctAnswer: 1 },
-    { subject: "III. Company Creation & Ledger Management", question: "Under which Tally group should 'Office Rent' and 'Staff Salary' ledgers be placed?", options: ["Direct Expenses", "Fixed Assets", "Indirect Expenses", "Current Assets"], correctAnswer: 2 },
-    { subject: "III. Company Creation & Ledger Management", question: "Under which Tally group should 'Computers' and 'Office Furniture' be placed?", options: ["Current Assets", "Fixed Assets", "Indirect Expenses", "Investments"], correctAnswer: 1 },
-    { subject: "III. Company Creation & Ledger Management", question: "In Chart of Accounts > Ledgers, which shortcut opens 'Multi Masters' to alter multiple opening balances rapidly?", options: ["Alt + H", "Alt + G", "Ctrl + F", "Alt + X"], correctAnswer: 0 },
+    { subject: "Company Creation & Ledger Management", question: "Which Function key opens 'Company Features' to enable or disable Inventory, GST, and Payroll?", options: ["F1", "F11", "F12", "Alt + H"], correctAnswer: 1 },
+    { subject: "Company Creation & Ledger Management", question: "How many Pre-defined Accounting Groups exist in Tally Prime?", options: ["15 Groups", "28 Groups (15 Primary, 13 Sub-groups)", "42 Groups", "13 Groups"], correctAnswer: 1 },
+    { subject: "Company Creation & Ledger Management", question: "Which two default ledgers are pre-created automatically in a new Tally company?", options: ["Sales and Purchase", "Cash and Profit & Loss A/c", "Capital and Drawings", "CGST and SGST"], correctAnswer: 1 },
+    { subject: "Company Creation & Ledger Management", question: "Under which Tally group must 'Office Rent', 'Staff Salary', and 'Electricity Bill' be placed?", options: ["Direct Expenses", "Fixed Assets", "Indirect Expenses", "Current Liabilities"], correctAnswer: 2 },
+    { subject: "Company Creation & Ledger Management", question: "In Chart of Accounts > Ledgers, which shortcut opens 'Multi Masters' to alter multiple opening balances rapidly?", options: ["Alt + H", "Ctrl + H", "Alt + X", "Ctrl + F"], correctAnswer: 0 },
 
     // IV. Voucher Entry in Tally (Module 6)
-    { subject: "IV. Voucher Entry in Tally", question: "Which shortcut key activates the 'Contra Voucher' for internal Cash and Bank transfers?", options: ["F4", "F5", "F6", "F7"], correctAnswer: 0 },
-    { subject: "IV. Voucher Entry in Tally", question: "If you deposit ₹25,000 Cash into your SBI Bank account, which voucher must you use in Tally?", options: ["Payment (F5)", "Receipt (F6)", "Contra (F4)", "Journal (F7)"], correctAnswer: 2 },
-    { subject: "IV. Voucher Entry in Tally", question: "Which voucher is used strictly when money goes OUT of the business (e.g., paying rent or paying a supplier)?", options: ["Contra (F4)", "Payment (F5)", "Receipt (F6)", "Sales (F8)"], correctAnswer: 1 },
-    { subject: "IV. Voucher Entry in Tally", question: "Which voucher is used when money comes INTO the business (e.g., owner brings Capital or customer pays a bill)?", options: ["Receipt (F6)", "Payment (F5)", "Journal (F7)", "Purchase (F9)"], correctAnswer: 0 },
-    { subject: "IV. Voucher Entry in Tally", question: "Which voucher (F7) is used for non-cash adjustments like Depreciation or buying Fixed Assets on credit?", options: ["Contra Voucher", "Journal Voucher", "Sales Voucher", "Receipt Voucher"], correctAnswer: 1 },
-    { subject: "IV. Voucher Entry in Tally", question: "What are the shortcut keys for Sales and Purchase vouchers in Tally Prime?", options: ["F5 for Sales, F6 for Purchase", "F8 for Sales, F9 for Purchase", "F4 for Sales, F7 for Purchase", "Alt+F5 for Sales, Alt+F6 for Purchase"], correctAnswer: 1 },
-    { subject: "IV. Voucher Entry in Tally", question: "In Sales (F8) or Purchase (F9), which shortcut lets you 'Change Mode' between Item Invoice and Accounting Voucher?", options: ["Ctrl + H", "Ctrl + A", "Alt + G", "Alt + X"], correctAnswer: 0 },
-    { subject: "IV. Voucher Entry in Tally", question: "Which voucher is used for a 'Purchase Return' when you return damaged goods back to your supplier?", options: ["Credit Note (Alt + F6)", "Debit Note (Alt + F5)", "Contra (F4)", "Receipt (F6)"], correctAnswer: 1 },
-    { subject: "IV. Voucher Entry in Tally", question: "In the Day Book, which shortcut safely cancels a voucher without deleting its voucher number trace?", options: ["Alt + D", "Alt + X", "Ctrl + A", "Alt + F2"], correctAnswer: 1 },
+    { subject: "Voucher Entry in Tally", question: "Which voucher (F4) is used ONLY for internal money movement between Cash and Bank accounts?", options: ["Payment Voucher", "Receipt Voucher", "Contra Voucher", "Journal Voucher"], correctAnswer: 2 },
+    { subject: "Voucher Entry in Tally", question: "If you withdraw cash from the bank ATM for office use, which voucher do you pass in Tally?", options: ["Payment (F5)", "Contra (F4)", "Receipt (F6)", "Journal (F7)"], correctAnswer: 1 },
+    { subject: "Voucher Entry in Tally", question: "Which voucher is used strictly when money goes OUT of the business (e.g., paying a supplier or rent)?", options: ["Contra (F4)", "Payment (F5)", "Receipt (F6)", "Journal (F7)"], correctAnswer: 1 },
+    { subject: "Voucher Entry in Tally", question: "Which voucher is used strictly when money comes INTO the business (e.g., customer pays a bill or owner brings Capital)?", options: ["Payment (F5)", "Receipt (F6)", "Sales (F8)", "Contra (F4)"], correctAnswer: 1 },
+    { subject: "Voucher Entry in Tally", question: "Which voucher (F7) is used for non-cash adjustments like Depreciation or buying Fixed Assets on credit?", options: ["Journal Voucher", "Contra Voucher", "Purchase Voucher", "Receipt Voucher"], correctAnswer: 0 },
+    { subject: "Voucher Entry in Tally", question: "What are the shortcut keys for Sales and Purchase vouchers in Tally Prime?", options: ["F5 and F6", "F8 (Sales) and F9 (Purchase)", "F7 and F8", "Alt+F5 and Alt+F6"], correctAnswer: 1 },
+    { subject: "Voucher Entry in Tally", question: "In Sales (F8) or Purchase (F9), which shortcut lets you 'Change Mode' between Item Invoice and Accounting Voucher?", options: ["Ctrl + H", "Alt + H", "Ctrl + A", "Alt + G"], correctAnswer: 0 },
+    { subject: "Voucher Entry in Tally", question: "Which voucher is used for a Purchase Return (returning damaged goods to a supplier) vs. Sales Return?", options: ["Debit Note (Alt+F5) for Purchase Return; Credit Note (Alt+F6) for Sales Return", "Credit Note for Purchase Return; Debit Note for Sales Return", "F8 and F9", "F4 and F7"], correctAnswer: 0 },
+    { subject: "Voucher Entry in Tally", question: "In the Day Book, which shortcut safely cancels a voucher?", options: ["Alt + X", "Ctrl + Z", "Alt + C", "Ctrl + F"], correctAnswer: 0 },
 
     // V. Inventory Management (Module 7)
-    { subject: "V. Inventory Management", question: "When creating a Simple Unit of Measure (like PCS), what must be mapped for official GST e-Way bill compliance?", options: ["HSN Number", "UQC (Unique Quantity Code)", "Godown Address", "PAN Number"], correctAnswer: 1 },
-    { subject: "V. Inventory Management", question: "A unit defined as '1 Box of 10 PCS' in Tally is called a:", options: ["Simple Unit", "Compound Unit", "Nominal Unit", "Category Unit"], correctAnswer: 1 },
-    { subject: "V. Inventory Management", question: "What is the default storage location/godown name present in Tally Prime before creating new godowns?", options: ["Main Location", "Head Office", "Default Store", "Central Warehouse"], correctAnswer: 0 },
-    { subject: "V. Inventory Management", question: "Which voucher (Alt + F7) is used to transfer physical stock from 'Warehouse A' to 'Main Shop'?", options: ["Contra Voucher", "Stock Journal", "Physical Stock", "Delivery Note"], correctAnswer: 1 },
-    { subject: "V. Inventory Management", question: "In the Stock Summary report, which shortcut expands the view into a 'Detailed' breakdown?", options: ["Alt + F5", "Ctrl + H", "Alt + G", "F11"], correctAnswer: 0 },
+    { subject: "Inventory Management", question: "When creating a Simple Unit of Measure (like PCS), what code must be selected for GST e-Way bill compliance?", options: ["IFSC Code", "UQC (Unique Quantity Code)", "MICR Code", "PIN Code"], correctAnswer: 1 },
+    { subject: "Inventory Management", question: "A unit defined as 'Box of 10 PCS' in Tally Prime is known as a:", options: ["Simple Unit", "Compound Unit", "Primary Group", "Cost Centre"], correctAnswer: 1 },
+    { subject: "Inventory Management", question: "What is the name of the default Godown present in Tally Prime?", options: ["Main Location", "Central Store", "Godown 1", "Shop Floor"], correctAnswer: 0 },
+    { subject: "Inventory Management", question: "Which voucher (Alt + F7) is used to physically transfer stock from 'Warehouse A' to 'Main Shop'?", options: ["Contra Voucher", "Stock Journal", "Journal Voucher", "Delivery Note"], correctAnswer: 1 },
+    { subject: "Inventory Management", question: "In the Stock Summary report, which shortcut switches to the 'Detailed' view?", options: ["Alt + F5", "Ctrl + H", "F11", "Alt + X"], correctAnswer: 0 },
 
     // VI. Taxation in Tally (GST, TDS, TCS) (Module 8)
-    { subject: "VI. Taxation in Tally (GST, TDS, TCS)", question: "How many digits are there in an official Indian GSTIN (Goods and Services Tax Identification Number)?", options: ["10 digits", "12 digits", "15 digits", "16 digits"], correctAnswer: 2 },
-    { subject: "VI. Taxation in Tally (GST, TDS, TCS)", question: "Under which primary group must CGST, SGST, and IGST ledgers be created in Tally?", options: ["Indirect Expenses", "Current Assets", "Duties & Taxes", "Provisions"], correctAnswer: 2 },
-    { subject: "VI. Taxation in Tally (GST, TDS, TCS)", question: "When selling goods to a customer located in a DIFFERENT state (Interstate Sale), which tax ledger is applied?", options: ["CGST and SGST", "Only IGST (Integrated GST)", "Only SGST", "VAT"], correctAnswer: 1 },
-    { subject: "VI. Taxation in Tally (GST, TDS, TCS)", question: "Which GST report in Tally shows all Outward Supplies (B2B and B2C sales invoices)?", options: ["GSTR-1", "GSTR-2A", "GSTR-3B", "GSTR-9"], correctAnswer: 0 },
-    { subject: "VI. Taxation in Tally (GST, TDS, TCS)", question: "In GSTR-1, where does Tally group invoices that have missing or invalid 15-digit GSTINs?", options: ["B2B Invoices", "Uncertain Transactions (Corrections needed)", "Exempted Supplies", "HSN Summary"], correctAnswer: 1 },
-    { subject: "VI. Taxation in Tally (GST, TDS, TCS)", question: "When deducting TDS on an Audit Fee bill before paying the party, which voucher is used first to record the deduction?", options: ["Contra (F4)", "Journal Voucher (F7)", "Receipt (F6)", "Sales (F8)"], correctAnswer: 1 },
+    { subject: "Taxation in Tally (GST, TDS, TCS)", question: "How many digits are in an official Indian GSTIN?", options: ["10 digits", "12 digits", "15 digits", "14 digits"], correctAnswer: 2 },
+    { subject: "Taxation in Tally (GST, TDS, TCS)", question: "Under which primary group must CGST, SGST, and IGST ledgers be placed?", options: ["Indirect Expenses", "Duties & Taxes", "Current Assets", "Provisions"], correctAnswer: 1 },
+    { subject: "Taxation in Tally (GST, TDS, TCS)", question: "Which GST ledgers are applied for a local (inside-state) sale vs. an interstate (outside-state) sale?", options: ["CGST & SGST for local; IGST for interstate", "IGST for local; CGST & SGST for interstate", "Only CGST for both", "TDS for interstate"], correctAnswer: 0 },
+    { subject: "Taxation in Tally (GST, TDS, TCS)", question: "Which GST report in Tally shows Outward Supplies (sales invoices) vs. the monthly Summary Return?", options: ["GSTR-1 (Outward Supplies) and GSTR-3B (Summary Return)", "GSTR-2A and GSTR-9", "BRS and Trial Balance", "TDS Form 26Q"], correctAnswer: 0 },
+    { subject: "Taxation in Tally (GST, TDS, TCS)", question: "In GSTR-1, where are invoices with missing or invalid GSTINs placed until corrected?", options: ["B2B Invoices", "Uncertain Transactions", "HSN Summary", "Nil Rated"], correctAnswer: 1 },
+    { subject: "Taxation in Tally (GST, TDS, TCS)", question: "Which voucher is typically used first to record an Audit Expense and deduct TDS before making payment?", options: ["Contra (F4)", "Journal Voucher (F7)", "Receipt (F6)", "Sales (F8)"], correctAnswer: 1 },
 
     // VII. Payroll & Employee Records (Module 9)
-    { subject: "VII. Payroll & Employee Records", question: "In Tally Payroll, how are Basic Pay and HRA classified when creating Pay Heads?", options: ["Employees Statutory Deduction", "Earnings for Employees", "Loans and Advances", "Reimbursements"], correctAnswer: 1 },
-    { subject: "VII. Payroll & Employee Records", question: "How is Provident Fund (PF) deduction classified when creating a Pay Head?", options: ["Earnings for Employees", "Employees Statutory Deduction", "Bonus", "Direct Income"], correctAnswer: 1 },
-    { subject: "VII. Payroll & Employee Records", question: "While entering a Payroll Voucher, which shortcut triggers 'Payroll Autofill' to calculate salaries for all employees at once?", options: ["Ctrl + F", "Alt + A", "Ctrl + H", "Alt + G"], correctAnswer: 0 },
+    { subject: "Payroll & Employee Records", question: "In Tally Payroll, how are 'Basic Pay' and 'PF Deduction' classified under Pay Head types?", options: ["Basic Pay = Earnings for Employees; PF = Employees Statutory Deduction", "Both are Indirect Incomes", "Basic Pay = Deduction; PF = Earning", "Both are Current Assets"], correctAnswer: 0 },
+    { subject: "Payroll & Employee Records", question: "When creating 'Present' and 'Absent' Attendance types, how are they configured?", options: ["Present = Leave with Pay; Absent = Leave without Pay", "Present = Leave without Pay; Absent = Leave with Pay", "Both are Production types", "Both are Overtime"], correctAnswer: 0 },
+    { subject: "Payroll & Employee Records", question: "In a Payroll Voucher, which shortcut triggers 'Payroll Autofill' to process salaries for a whole department at once?", options: ["Ctrl + F", "Alt + G", "Ctrl + A", "Alt + X"], correctAnswer: 0 },
 
     // VIII. Banking Features in Tally (Module 10)
-    { subject: "VIII. Banking Features in Tally", question: "Which feature in Tally aligns your software bank ledger balance with your physical bank passbook by entering clearance dates?", options: ["Trial Balance", "Bank Reconciliation Statement (BRS)", "Stock Summary", "Cash Flow Projection"], correctAnswer: 1 },
-    { subject: "VIII. Banking Features in Tally", question: "In the Bank Reconciliation screen, what date must you enter next to each transaction to clear it?", options: ["The Voucher Date", "The actual Bank Date (when the cheque cleared in the bank)", "The Company Creation Date", "The Year-End Date"], correctAnswer: 1 },
-    { subject: "VIII. Banking Features in Tally", question: "Before printing on a real physical bank cheque from Tally, what should you always check first?", options: ["GSTR-3B", "Print Preview (to verify Name and Amount alignment)", "Stock Summary", "Day Book Cancel"], correctAnswer: 1 }
+    { subject: "Banking Features in Tally", question: "Which Tally feature aligns your software bank balance with your physical bank passbook by entering clearance dates?", options: ["Trial Balance", "Bank Reconciliation Statement (BRS)", "Stock Summary", "Ratio Analysis"], correctAnswer: 1 },
+    { subject: "Banking Features in Tally", question: "In the Bank Reconciliation screen, what date do you type to clear a transaction?", options: ["Voucher Date", "Bank Date (actual clearance date on the bank statement)", "Financial Year Date", "Invoice Date"], correctAnswer: 1 },
+    { subject: "Banking Features in Tally", question: "Before printing on a real physical cheque leaf in Tally, what should you always check first?", options: ["Print Preview", "Day Book Cancel", "Stock Journal", "GSTR-1"], correctAnswer: 0 }
 ];
 
-// Inject Tally questions into TALLY, DCA, and PGDCA course pools automatically
+// ==========================================
+// 2. PHOTOSHOP & GRAPHICS DESIGNING MCQs (FROM data.js)
+// ==========================================
+const photoshopAndGraphicsMCQs = [
+    // VI. Photoshop & Image Editing (Chapters 1 - 4)
+    { subject: "Photoshop & Image Editing", question: "In Adobe Photoshop 7.0, where are the 'Toolbox' and 'Layers' panel located on the screen?", options: ["Toolbox on the right, Layers on the left", "Toolbox on the left, Layers on the right", "Both at the bottom", "Both at the top"], correctAnswer: 1 },
+    { subject: "Photoshop & Image Editing", question: "Which keyboard key instantly hides or shows all tool menus in Photoshop 7.0?", options: ["Esc", "Tab", "Spacebar", "Caps Lock"], correctAnswer: 1 },
+    { subject: "Photoshop & Image Editing", question: "If you have not finished editing a design in Photoshop and want to edit its layers tomorrow, which format should you save it as?", options: [".JPG", ".PNG", ".PSD", ".PDF"], correctAnswer: 2 },
+    { subject: "Photoshop & Image Editing", question: "What is the keyboard shortcut for 'Save As' in Photoshop?", options: ["Ctrl + O", "Ctrl + Shift + S", "Ctrl + P", "Alt + I"], correctAnswer: 1 },
+    { subject: "Photoshop & Image Editing", question: "Which single-letter shortcut selects the Crop Tool in Photoshop?", options: ["V", "W", "C", "T"], correctAnswer: 2 },
+    { subject: "Photoshop & Image Editing", question: "When resizing a photo for an online government form (e.g., 200x200 pixels), which shortcut opens the 'Image Size' menu?", options: ["Alt + I, I", "Ctrl + L", "Ctrl + M", "Ctrl + B"], correctAnswer: 0 },
+    { subject: "Photoshop & Image Editing", question: "Which option in the File menu helps compress a resized photo's file size under 50KB for online forms?", options: ["File > Print", "File > Save for Web", "File > Revert", "Edit > Stroke"], correctAnswer: 1 },
+    { subject: "Photoshop & Image Editing", question: "How do you draw a neat black border/frame around an entire photo in Photoshop?", options: ["Select all (Ctrl+A), then go to Edit > Stroke", "Press Ctrl+T", "Use the Magic Wand Tool", "Go to Filter > Blur"], correctAnswer: 0 },
+    { subject: "Photoshop & Image Editing", question: "What are the standard dimensions and resolution typed in the top bar for a Passport Size Photo?", options: ["Width: 10 cm, Height: 10 cm, Resolution: 72", "Width: 3.5 cm, Height: 4.5 cm, Resolution: 300", "Width: 4 inches, Height: 6 inches, Resolution: 100", "Width: 200 px, Height: 200 px, Resolution: 50"], correctAnswer: 1 },
+    { subject: "Photoshop & Image Editing", question: "Which tool (shortcut 'V') is used to drag a passport photo onto a new 4x6 inch paper?", options: ["Crop Tool", "Move Tool", "Magic Wand Tool", "Clone Stamp Tool"], correctAnswer: 1 },
+    { subject: "Photoshop & Image Editing", question: "While using the Move Tool in Photoshop, which key do you hold while dragging a photo to duplicate it instantly?", options: ["Shift", "Ctrl", "Alt", "Tab"], correctAnswer: 2 },
+    { subject: "Photoshop & Image Editing", question: "Which keyboard shortcuts open 'Curves' and 'Levels' to clean up grey scanned certificates?", options: ["Ctrl + M (Curves) and Ctrl + L (Levels)", "Ctrl + C and Ctrl + V", "Ctrl + T and Ctrl + B", "Alt + F4"], correctAnswer: 0 },
+    { subject: "Photoshop & Image Editing", question: "Which tool (shortcut 'W') selects the white background around a signature so you can delete it and make it transparent?", options: ["Text Tool", "Magic Wand Tool", "Crop Tool", "Eraser Tool"], correctAnswer: 1 },
+    { subject: "Photoshop & Image Editing", question: "What must you do to the 'Background' layer before pressing Delete to make a signature's background transparent?", options: ["Double-click the 'Background' layer to unlock it", "Flatten the image", "Convert it to CMYK", "Press Ctrl + P"], correctAnswer: 0 },
+    { subject: "Photoshop & Image Editing", question: "Which filter makes a blurry photo crisp and sharp in Photoshop?", options: ["Filter > Blur > Gaussian Blur", "Filter > Sharpen > Unsharp Mask", "Edit > Stroke", "Image > Mode"], correctAnswer: 1 },
+    { subject: "Photoshop & Image Editing", question: "Which tool copies clean skin to paint over pimples or marks on a face?", options: ["Magic Wand Tool", "Clone Stamp Tool", "Crop Tool", "Hand Tool"], correctAnswer: 1 },
+    { subject: "Photoshop & Image Editing", question: "Which shortcut opens 'Color Balance' to fix yellow or blue skin tones?", options: ["Ctrl + B", "Ctrl + L", "Ctrl + T", "Ctrl + O"], correctAnswer: 0 },
+    { subject: "Photoshop & Image Editing", question: "Which file format should you use ONLY for Signatures and Logos because it saves the transparent background?", options: ["JPG", "PNG", "BMP", "TXT"], correctAnswer: 1 },
+
+    // VII. Graphics Designing (Chapters 5 - 6)
+    { subject: "Graphics Designing", question: "For readable banner design, which color combination follows the rule of strong contrast?", options: ["Dark blue text on a black background", "Yellow text on a Blue background", "Light grey text on a white background", "Black text on a dark brown background"], correctAnswer: 1 },
+    { subject: "Graphics Designing", question: "Which shortcut in Photoshop allows you to transform, resize, and freely rotate text?", options: ["Ctrl + T", "Ctrl + L", "Ctrl + B", "Ctrl + M"], correctAnswer: 0 },
+    { subject: "Graphics Designing", question: "What are the ideal New Document settings for a square Facebook or Instagram social media post?", options: ["1080 x 1080 Pixels, Resolution 72", "3.5 x 4.5 cm, Resolution 300", "72 x 36 Inches, Resolution 300", "200 x 200 Pixels, Resolution 10"], correctAnswer: 0 },
+    { subject: "Graphics Designing", question: "When designing a 6-foot by 3-foot shop flex board in Photoshop, what Width and Height in inches should you enter (since 1 Foot = 12 Inches)?", options: ["Width: 6 inches, Height: 3 inches", "Width: 72 inches, Height: 36 inches", "Width: 60 inches, Height: 30 inches", "Width: 1080 inches, Height: 1080 inches"], correctAnswer: 1 },
+    { subject: "Graphics Designing", question: "Which color mode must you use (Image > Mode) when designing a Marriage Card for a physical printing press?", options: ["RGB Color", "CMYK Color (Cyan, Magenta, Yellow, Black)", "Lab Color", "Bitmap"], correctAnswer: 1 },
+    { subject: "Graphics Designing", question: "What are the standard dimensions and resolution for a crisp A4 size print document?", options: ["210 x 297 mm with 300 Resolution", "100 x 100 mm with 72 Resolution", "1080 x 1080 px with 72 Resolution", "4 x 6 inches with 50 Resolution"], correctAnswer: 0 },
+    { subject: "Graphics Designing", question: "How much blank 'bleed' margin should you leave on the edges of a marriage card so the printer doesn't cut your text off?", options: ["0.5-inch blank margin", "5-inch blank margin", "Zero margin", "10-inch margin"], correctAnswer: 0 },
+    { subject: "Graphics Designing", question: "Which free website and mobile app offers thousands of ready-made drag-and-drop templates to create urgent posters in 5 minutes?", options: ["MS Paint", "Canva", "Notepad", "VLC Player"], correctAnswer: 1 }
+];
+
+// ==========================================
+// 3. DIGITAL SERVICES & INTERNET BOOKS MCQs
+// ==========================================
+const digitalAndInternetMCQs = [
+    // Digital Services (from digital-data.js)
+    { subject: "Digital Services", question: "Which official government portal is used to download an e-Aadhaar card?", options: ["myaadhaar.uidai.gov.in", "irctc.co.in", "pmkisan.gov.in", "osrtc.in"], correctAnswer: 0 },
+    { subject: "Digital Services", question: "What is the password format required to open a downloaded e-Aadhaar PDF file?", options: ["Your 10-digit mobile number", "First 4 letters of your name in CAPITAL letters followed by your birth year (e.g., RAHU2005)", "Full Date of Birth in DDMMYYYY format", "Your PIN code"], correctAnswer: 1 },
+    { subject: "Digital Services", question: "What is the password format required to open a downloaded e-PAN Card PDF from the NSDL portal?", options: ["First 4 letters of name + birth year", "Full Date of Birth in DDMMYYYY format (e.g., 15081999)", "Your 10-digit PAN number", "123456"], correctAnswer: 1 },
+    { subject: "Digital Services", question: "What is the digital version of the Voter ID card downloaded from voters.eci.gov.in called?", options: ["e-PAN", "e-EPIC", "e-Patta", "e-Ticket"], correctAnswer: 1 },
+    { subject: "Digital Services", question: "Under which law are documents stored in the Government of India's DigiLocker legally equal to original paper documents?", options: ["IT Act, 2000", "GST Act, 2017", "Motor Vehicles Act, 1950", "Banking Act, 1995"], correctAnswer: 0 },
+    { subject: "Digital Services", question: "When paying an electricity bill online (e.g., on the TPCODL portal), what number from the old paper bill is needed?", options: ["EPIC Number", "Consumer Number (or Account Number)", "PNR Number", "Vehicle RC Number"], correctAnswer: 1 },
+    { subject: "Digital Services", question: "Which official portal is used to book Indian Railways train tickets, and what 10-digit number is generated on a confirmed ticket?", options: ["IRCTC portal (generates a 10-digit PNR number)", "OSRTC portal (generates a 12-digit EPIC)", "UIDAI portal", "NSDL portal"], correctAnswer: 0 },
+    { subject: "Digital Services", question: "Which official portal is used to book State Transport bus tickets across Odisha?", options: ["irctc.co.in", "osrtc.in", "pmkisan.gov.in", "voters.eci.gov.in"], correctAnswer: 1 },
+    { subject: "Digital Services", question: "When registering a farmer on the PM-Kisan portal, which document containing Khata and Plot numbers must be uploaded as a scanned PDF?", options: ["Driving License", "Land Patta", "Electricity Bill", "Train Ticket"], correctAnswer: 1 },
+    { subject: "Digital Services", question: "What does CSC stand for, and which exam must you pass to legally open a CSC center?", options: ["Common Service Centre (requires passing the TEC exam)", "Central Software Company (requires DCA)", "Computer System Center (requires PGDCA)", "Cyber Safety Club"], correctAnswer: 0 },
+    { subject: "Digital Services", question: "If a person loses money to an online cyber scam, which National Cyber Crime Helpline number should they call immediately?", options: ["100", "1930", "108", "1800"], correctAnswer: 1 },
+    { subject: "Digital Services", question: "How long is an OTP (One Time Password) typically valid before you must click 'Resend OTP'?", options: ["5 to 10 minutes", "24 hours", "7 days", "30 days"], correctAnswer: 0 },
+    { subject: "Digital Services", question: "When saving an online application's final Acknowledgement Slip without a print button, how do you save a digital proof copy?", options: ["Press Ctrl + P and change Destination to 'Save as PDF'", "Press Alt + F4", "Press Ctrl + Z", "Close the browser"], correctAnswer: 0 },
+
+    // Internet & Email Usage (from internet-data.js)
+    { subject: "Internet & Email Usage", question: "What is the difference between Google Chrome and Google?", options: ["Google Chrome is the web browser app; Google is the search engine librarian", "They are hardware parts", "Google is an antivirus", "Chrome is an email address"], correctAnswer: 0 },
+    { subject: "Internet & Email Usage", question: "In Gmail, which button do you click to start writing a new email, and which icon attaches a photo or PDF?", options: ["Click 'Compose' to write; click the 'Paperclip' icon to attach files", "Click 'Inbox' to write; click the 'Trash' icon to attach", "Click 'Spam'; click 'Star'", "Click 'Refresh'"], correctAnswer: 0 },
+    { subject: "Internet & Email Usage", question: "Official Indian Government websites usually end with which domain extensions?", options: [".com or .net", ".gov.in or .nic.in", ".org or .edu", ".uk or .us"], correctAnswer: 1 },
+    { subject: "Internet & Email Usage", question: "Which smartphone setting must be turned on for Google Maps to find your current location using satellites?", options: ["Bluetooth", "Location / GPS", "Airplane Mode", "Flashlight"], correctAnswer: 1 },
+    { subject: "Internet & Email Usage", question: "Which Google tool instantly translates English text or spoken voice into Odia or Hindi?", options: ["Google Maps", "Google Translate", "Google Drive", "Google Sheets"], correctAnswer: 1 }
+];
+
+// ==========================================
+// 4. PGDCA: C & DATA STRUCTURES + WEB DESIGN MCQs
+// ==========================================
+const pgdcaProgrammingAndWebMCQs = [
+    // II. Programming in C & Data Structures (from c-data.js)
+    { subject: "Programming in C & Data Structures", question: "Who created the C programming language in 1972?", options: ["Charles Babbage", "Dennis Ritchie", "Bill Gates", "Tim Berners-Lee"], correctAnswer: 1 },
+    { subject: "Programming in C & Data Structures", question: "In C syntax, what punctuation mark must end almost every statement?", options: ["Full stop (.)", "Semicolon (;)", "Colon (:)", "Comma (,)"], correctAnswer: 1 },
+    { subject: "Programming in C & Data Structures", question: "Which function is the starting entry point of every C program, and which header file provides 'printf'?", options: ["int main() and #include <stdio.h>", "void start() and #include <math.h>", "main.c and #include <html.h>", "system() and #include <dos.h>"], correctAnswer: 0 },
+    { subject: "Programming in C & Data Structures", question: "Which C data types store whole numbers, decimal numbers, and single characters respectively?", options: ["int, float, char", "number, decimal, letter", "var, let, const", "str, num, bool"], correctAnswer: 0 },
+    { subject: "Programming in C & Data Structures", question: "What are the correct Format Specifiers in C for printing an int, a float, and a char?", options: ["%d (int), %f (float), %c (char)", "%i, %d, %s", "%a, %b, %c", "#d, #f, #c"], correctAnswer: 0 },
+    { subject: "Programming in C & Data Structures", question: "What does the Modulo operator (%) calculate in C (e.g., 10 % 3)?", options: ["Percentage", "The remainder of a division (1)", "Multiplication", "Memory address"], correctAnswer: 1 },
+    { subject: "Programming in C & Data Structures", question: "In C logical operators, what do '&&' and '||' mean?", options: ["&& means AND (both true); || means OR (at least one true)", "&& means OR; || means AND", "Both mean equals", "Bitwise shift"], correctAnswer: 0 },
+    { subject: "Programming in C & Data Structures", question: "Which loop in C executes its code block ONCE first before checking the condition?", options: ["for loop", "while loop", "do-while loop", "switch case"], correctAnswer: 2 },
+    { subject: "Programming in C & Data Structures", question: "In C, at what index number does an Array always start counting, and what character marks the end of a String?", options: ["Starts at index 0; ends with the Null Terminator ('\\0')", "Starts at index 1; ends with '.'", "Starts at -1; ends with '#'", "Starts at 0; ends with ';'"], correctAnswer: 0 },
+    { subject: "Programming in C & Data Structures", question: "What is the role of '&' and '*' when working with Pointers in C?", options: ["'&' gets the Memory Address of a variable; '*' (Pointer) accesses the value at that address", "'&' adds numbers; '*' multiplies strings", "Both delete variables", "'&' creates an array"], correctAnswer: 0 },
+    { subject: "Programming in C & Data Structures", question: "Which C keyword bundles different data types (e.g., name, roll, marks) together into one custom record?", options: ["array", "struct", "switch", "float"], correctAnswer: 1 },
+    { subject: "Programming in C & Data Structures", question: "Which C function allocates Dynamic Memory while the program is running?", options: ["printf()", "malloc()", "scanf()", "main()"], correctAnswer: 1 },
+    { subject: "Programming in C & Data Structures", question: "What is the difference between a Stack and a Queue data structure?", options: ["Stack follows LIFO (Last In, First Out); Queue follows FIFO (First In, First Out)", "Stack follows FIFO; Queue follows LIFO", "Both are trees", "Stack is only for strings"], correctAnswer: 0 },
+    { subject: "Programming in C & Data Structures", question: "In a Binary Search Tree (BST), where are smaller values placed compared to the parent node?", options: ["Smaller values go to the Left Child; larger values go to the Right Child", "Smaller values go to the Right Child", "All values stay in the Root", "Placed randomly"], correctAnswer: 0 },
+
+    // IV. Web Designing using HTML, CSS & JavaScript (from pgdca-web-data.js)
+    { subject: "Web Designing using HTML, CSS & JavaScript", question: "In the robot analogy of Web Design, what do HTML, CSS, and JavaScript represent?", options: ["HTML = Skeleton, CSS = Skin/Clothes (Styling), JavaScript = Brain/Muscles (Interactivity)", "HTML = Brain, CSS = Skeleton, JS = Paint", "All three are databases", "HTML is only for servers"], correctAnswer: 0 },
+    { subject: "Web Designing using HTML, CSS & JavaScript", question: "Which HTML tag creates a bulleted list vs. a numbered list?", options: ["<ul> for bulleted (Unordered); <ol> for numbered (Ordered)", "<ol> for bullets; <ul> for numbers", "<table> and <tr>", "<h1> and <p>"], correctAnswer: 0 },
+    { subject: "Web Designing using HTML, CSS & JavaScript", question: "In an HTML <table>, what do <tr>, <th>, and <td> represent?", options: ["<tr> = Table Row, <th> = bold Table Header, <td> = Table Data cell", "<tr> = Text Right, <th> = Theme, <td> = Title", "All create columns", "They are CSS properties"], correctAnswer: 0 },
+    { subject: "Web Designing using HTML, CSS & JavaScript", question: "What are the 3 ways to include CSS, and which one uses a separate .css file to style 100 pages at once?", options: ["Inline, Internal, and External CSS (External uses a separate file)", "Top, Middle, Bottom CSS", "Local, Global, Cloud CSS", "HTML, XML, JSON"], correctAnswer: 0 },
+    { subject: "Web Designing using HTML, CSS & JavaScript", question: "Which CSS property turns a square <div> (width 80px, height 80px) into a perfect circle?", options: ["border-radius: 50%;", "text-align: center;", "display: flex;", "font-size: 50px;"], correctAnswer: 0 },
+    { subject: "Web Designing using HTML, CSS & JavaScript", question: "What is the difference between CSS Flexbox (display: flex) and CSS Grid (display: grid)?", options: ["Flexbox is for 1-Dimensional layouts (row or column); Grid is for 2-Dimensional layouts (rows AND columns)", "Flexbox is for colors; Grid is for fonts", "Grid is JavaScript", "They are identical"], correctAnswer: 0 },
+    { subject: "Web Designing using HTML, CSS & JavaScript", question: "In JavaScript, which DOM method grabs an HTML element by its id attribute to change its text or style live?", options: ["document.getElementById()", "window.print()", "console.log()", "Math.random()"], correctAnswer: 0 },
+    { subject: "Web Designing using HTML, CSS & JavaScript", question: "Which CSS rule detects mobile screen sizes for Responsive Design, and which free service hosts static HTML/CSS/JS folders via drag-and-drop?", options: ["CSS Media Queries (@media) and Netlify Drop", "CSS Tables and MS Word", "C Compiler and Tally", "Bootstrap and Paint"], correctAnswer: 0 }
+];
+
+// ==========================================
+// 5. DCA ADVANCED BASICS, OS, HARDWARE & MULTIMEDIA MCQs
+// ==========================================
+const dcaAdvancedFoundationMCQs = [
+    { subject: "Basics of Computer", question: "Match the 5 Computer Generations with their core technology in order (1st to 5th):", options: ["1st: Vacuum Tubes, 2nd: Transistors, 3rd: Integrated Circuits (IC), 4th: Microprocessors, 5th: AI", "1st: AI, 2nd: IC, 3rd: Vacuum Tubes, 4th: Transistors, 5th: Microprocessors", "All used Microprocessors", "1st: Transistors, 2nd: Vacuum Tubes"], correctAnswer: 0 },
+    { subject: "Basics of Computer", question: "What was the name of India's first indigenous Supercomputer, and who invented the world's first Supercomputer (CDC-1604)?", options: ["PARAM (India) and Seymour Cray (CDC-1604)", "ENIAC and Charles Babbage", "IBM 650 and Blaise Pascal", "EDVAC and John von Neumann"], correctAnswer: 0 },
+    { subject: "Basics of Computer", question: "What is the difference between Cold Booting and Warm Booting?", options: ["Cold Booting = turning on a PC from a completely off state; Warm Booting = restarting an already running PC", "Cold Booting = restarting in winter; Warm Booting = turning on in summer", "Warm Booting formats the hard disk", "There is no difference"], correctAnswer: 0 },
+    { subject: "Basics of Computer", question: "How many Bits make up 1 Nibble, and what is the difference between Soft Copy and Hard Copy?", options: ["4 Bits = 1 Nibble; Monitor shows Soft Copy, Printer prints Hard Copy on paper", "8 Bits = 1 Nibble; Printer shows Soft Copy", "1024 Bits = 1 Nibble", "2 Bits = 1 Nibble"], correctAnswer: 0 },
+    { subject: "Basics of Computer", question: "Inside the CPU, what are Registers, System Buses (Data, Address, Control), and the VRM?", options: ["Registers = fastest CPU memory; Buses = microscopic data pathways; VRM = steps 12V down to ~1.2V for the CPU", "They are external printers", "They are antivirus programs", "They are optical discs"], correctAnswer: 0 },
+    { subject: "Windows Operating System", question: "What is the Windows keyboard shortcut to open the Snipping Tool / Snip & Sketch crosshair to screenshot a specific box?", options: ["Windows Key + Shift + S", "Ctrl + Alt + Delete", "Alt + F4", "Ctrl + P"], correctAnswer: 0 },
+    { subject: "Windows Operating System", question: "What is the shortcut to create a new folder in Windows, and which key renames a selected file or folder?", options: ["Ctrl + Shift + N (New Folder) and F2 (Rename)", "Ctrl + N and F5", "Ctrl + C and F1", "Alt + Tab and Esc"], correctAnswer: 0 },
+    { subject: "Windows Operating System", question: "Before pulling a USB Pendrive out of the computer, what safety rule must you follow? And what mode do you select on a mobile phone to transfer photos via USB?", options: ["Right-click the USB icon and click 'Eject'; select 'File Transfer (MTP)' on the mobile phone", "Pull the USB out immediately; select 'Charging Only'", "Format the pendrive first", "Turn off the monitor"], correctAnswer: 0 },
+    { subject: "Introduction to Multimedia", question: "What is Multimedia, and which three components are highlighted in the Multimedia module?", options: ["Combining pictures, animation, graphics, and audio; uses Sound Card, Speaker, and CD-ROM", "Only typing text in Notepad", "A type of network cable", "A tax calculation"], correctAnswer: 0 }
+];
+
+// Inject all new book batches into questionBatches & courseSpecificBatches
+if (typeof questionBatches !== 'undefined') {
+    questionBatches.push(
+        tallyBookMCQs,
+        photoshopAndGraphicsMCQs,
+        digitalAndInternetMCQs,
+        pgdcaProgrammingAndWebMCQs,
+        dcaAdvancedFoundationMCQs
+    );
+}
+
 if (typeof courseSpecificBatches !== 'undefined') {
-    courseSpecificBatches["TALLY"] = [tallyBookMCQs];
-    // Map Tally questions into DCA and PGDCA Tally subjects too
-    const dcaTally = tallyBookMCQs.map(q => ({ ...q, subject: "VIII. Tally with GST" }));
-    const pgdcaTally = tallyBookMCQs.map(q => ({ ...q, subject: "VIII. Tally ERP with GST" }));
-    courseSpecificBatches["DCA"] = [dcaTally];
-    courseSpecificBatches["PGDCA"] = [pgdcaTally];
+    courseSpecificBatches["TALLY"].push(tallyBookMCQs);
+    courseSpecificBatches["DCA"].push(photoshopAndGraphicsMCQs, digitalAndInternetMCQs, dcaAdvancedFoundationMCQs, tallyBookMCQs);
+    courseSpecificBatches["PGDCA"].push(pgdcaProgrammingAndWebMCQs, tallyBookMCQs);
+    courseSpecificBatches["CCA_6M"].push(digitalAndInternetMCQs);
+    courseSpecificBatches["CCA_3M"].push(digitalAndInternetMCQs);
+    courseSpecificBatches["BCC"].push(digitalAndInternetMCQs, dcaAdvancedFoundationMCQs);
 }
 
 // ==========================================
-// 2. COURSE-WISE PRACTICAL EXAM QUESTIONS (STUDENT SELECTS 1)
+// 6. COURSE-WISE PRACTICAL EXAM QUESTIONS (STUDENT SELECTS 1)
 // ==========================================
 const PRACTICAL_EXAM_BANK = {
     "TALLY": [
@@ -122,6 +246,75 @@ const PRACTICAL_EXAM_BANK = {
             ]
         }
     ],
+    "DCA": [
+        {
+            id: "DCA_P1",
+            app: "Adobe Photoshop 7.0",
+            title: "Option 1: Studio Passport Photo Sheet & Transparent Signature",
+            marks: 50,
+            steps: [
+                "Open a portrait photo in Photoshop 7.0, select the Crop Tool (C), and set Width: 3.5 cm, Height: 4.5 cm, Resolution: 300.",
+                "Crop the photo, press Ctrl + A, and apply a 5 px black border using Edit > Stroke.",
+                "Open a new 4x6 inch canvas (Ctrl + N) and use the Move Tool (V) while holding Alt to arrange 6 passport photos in a neat row.",
+                "Open a scanned signature, unlock the Background layer, use the Magic Wand Tool (W) to delete the white background, and export as PNG."
+            ]
+        },
+        {
+            id: "DCA_P2",
+            app: "Tally Prime 7.0",
+            title: "Option 2: GST Trading Invoice & Ledger Setup in Tally Prime",
+            marks: 50,
+            steps: [
+                "Create a company in Tally Prime, press F11 to enable GST, and create CGST, SGST, and IGST ledgers under Duties & Taxes.",
+                "Create 5 Stock Items with HSN codes and 18% GST rate under PCS unit (mapped to NOS UQC).",
+                "Record a Purchase (F9) and a Local Sales Invoice (F8) with automatic CGST/SGST calculation and verify GSTR-1."
+            ]
+        },
+        {
+            id: "DCA_P3",
+            app: "MS Word / MS Excel",
+            title: "Option 3: Automated Excel Mark Sheet OR Official Word Notice",
+            marks: 50,
+            steps: [
+                "In MS Excel: Create a 5-student Mark Sheet with Total (=SUM), Average (=AVERAGE), Conditional Formatting (<35 in Red), and a Bar Chart.",
+                "OR in MS Word: Create an A4 Holiday Notice with a 'EXCELLENT' Watermark, 1.5 line spacing, and a 3-course SmartArt diagram."
+            ]
+        }
+    ],
+    "PGDCA": [
+        {
+            id: "PGDCA_P1",
+            app: "HTML, CSS & JavaScript (VS Code / Notepad)",
+            title: "Option 1: Interactive Student Login Card & DOM Status Switcher",
+            marks: 50,
+            steps: [
+                "Create an HTML page with a Flexbox navigation bar and a centered Student Login Form (Username, Password input, Course dropdown).",
+                "Style the button using CSS with rounded corners (border-radius) and a :hover elevation effect.",
+                "Write a JavaScript function triggered by onclick that uses document.getElementById() to change a status box to 'System Activated! Access Granted' in green."
+            ]
+        },
+        {
+            id: "PGDCA_P2",
+            app: "C Compiler IDE",
+            title: "Option 2: C Program Using Structures, Arrays & Loops",
+            marks: 50,
+            steps: [
+                "Write a C program defining a 'struct Student' containing name (char array), roll (int), and marks (float).",
+                "Use a 'for' loop to input details for 3 students and display their grade using 'if / else if / else' conditions.",
+                "Compile and execute the program with zero syntax errors."
+            ]
+        },
+        {
+            id: "PGDCA_P3",
+            app: "Tally Prime 7.0",
+            title: "Option 3: Complete GST, TDS & Payroll Automation in Tally Prime",
+            marks: 50,
+            steps: [
+                "Create a company in Tally Prime and record ₹10,00,000 Capital Receipt (F6), a GST Purchase (F9), and a GST Sale (F8).",
+                "Record an Audit Fee Journal entry (F7) deducting 10% TDS, or process automated employee salary using Payroll Autofill (Ctrl+F)."
+            ]
+        }
+    ],
     "DEFAULT": [
         {
             id: "GEN_P1",
@@ -143,7 +336,7 @@ const PRACTICAL_EXAM_BANK = {
             marks: 50,
             steps: [
                 "Open MS Excel, Merge & Center cells A1:F1 for the title 'Automated Exam Result Sheet'.",
-                "Create columns in Row 2: Student Name, Word, Excel, Tally, Total Marks, Average. Apply 'All Borders'.",
+                "Create columns in Row 2: Student Name, Word, Excel, PowerPoint, Total Marks, Average. Apply 'All Borders'.",
                 "Enter data for 5 students and calculate Total Marks using =SUM() and Average using =AVERAGE().",
                 "Apply Conditional Formatting to highlight any subject score below 35 in Red.",
                 "Insert a 2D Column/Bar Chart comparing the 5 students' Total Marks."
@@ -151,69 +344,70 @@ const PRACTICAL_EXAM_BANK = {
         },
         {
             id: "GEN_P3",
-            app: "Tally Prime / PowerPoint",
-            title: "Option 3: Presentation Design or Basic Tally Voucher Entry",
+            app: "MS PowerPoint",
+            title: "Option 3: MS PowerPoint — 4-Slide Presentation with Transitions & Animations",
             marks: 50,
             steps: [
-                "In MS PowerPoint: Create a 4-slide presentation on 'Cyber Security Rules' using a consistent Design Theme, Slide Transitions, and Custom Animations.",
-                "OR in Tally Prime: Create a company, enter 5 Ledgers with Opening Balances, and record 5 daily Vouchers (Contra, Payment, Receipt, Sales, Purchase)."
+                "Open MS PowerPoint and apply a professional Design Theme across 4 slides on 'Cyber Safety & Digital Services'.",
+                "Apply Slide Transitions (Fade/Push) between slides and Custom Animations (Entrance/Emphasis) on key headings.",
+                "Demonstrate the presentation in Full Screen (F5) using the Ctrl + Left-Click Laser Pointer."
             ]
         }
     ]
 };
 
 // ==========================================
-// 3. 50 ADMIN-ONLY VIVA QUESTIONS & ANSWERS
+// 7. 50 ADMIN-ONLY VIVA QUESTIONS & ANSWERS
 // ==========================================
 const VIVA_MASTER_BANK = [
     { topic: "Accounting", q: "What is the Business Entity Concept in accounting?", a: "The business and its owner are treated as two completely separate legal entities." },
-    { topic: "Accounting", q: "What is 'Capital' in a business?", a: "The money or assets invested by the owner into the business." },
-    { topic: "Accounting", q: "What is meant by 'Drawings'?", a: "Cash or goods withdrawn by the owner from the business for personal use." },
-    { topic: "Accounting", q: "Who is a Sundry Debtor?", a: "A customer who buys goods from us on credit and owes money to the business (Asset)." },
-    { topic: "Accounting", q: "Who is a Sundry Creditor?", a: "A supplier from whom we buy goods on credit and to whom the business owes money (Liability)." },
+    { topic: "Accounting", q: "What is 'Capital' vs. 'Drawings' in a business?", a: "Capital is money invested by the owner into the business; Drawings is cash/goods withdrawn by the owner for personal use." },
+    { topic: "Accounting", q: "Who is a Sundry Debtor vs. a Sundry Creditor?", a: "A Sundry Debtor is a customer who owes money to us (Asset); a Sundry Creditor is a supplier to whom we owe money (Liability)." },
     { topic: "Golden Rules", q: "State the Golden Rule for Real Accounts.", a: "Debit what comes in, Credit what goes out." },
     { topic: "Golden Rules", q: "State the Golden Rule for Personal Accounts.", a: "Debit the Receiver, Credit the Giver." },
     { topic: "Golden Rules", q: "State the Golden Rule for Nominal Accounts.", a: "Debit all Expenses and Losses, Credit all Incomes and Gains." },
-    { topic: "Golden Rules", q: "Why is a Bank Account treated as a Personal Account?", a: "Because a bank is an artificial legal institution that receives or gives money." },
-    { topic: "Accounting Cycle", q: "What is a narration in a Journal entry?", a: "A brief explanation written below a voucher/journal entry describing the transaction." },
-    { topic: "Accounting Cycle", q: "What is the purpose of a Trial Balance?", a: "To verify arithmetical accuracy by checking that total Debits equal total Credits." },
     { topic: "Tally Prime", q: "What is the only restriction in Tally Prime's free Educational Mode?", a: "You can only record transactions dated the 1st, 2nd, and 31st of any month." },
-    { topic: "Tally Shortcuts", q: "What is the shortcut key for the 'Go To' search bar in Tally Prime?", a: "Alt + G." },
-    { topic: "Tally Shortcuts", q: "What does Ctrl + A do in Tally Prime?", a: "It acts as Quick Save—instantly accepting and saving the current screen." },
-    { topic: "Tally Shortcuts", q: "What is the difference between a single underline and double underline on Tally menu buttons?", a: "Single underline means press Alt + key; Double underline means press Ctrl + key." },
-    { topic: "Company Setup", q: "Which key opens Company Features in Tally Prime?", a: "F11." },
-    { topic: "Groups & Ledgers", q: "How many pre-defined groups are available in Tally Prime?", a: "28 pre-defined groups (15 Primary groups and 13 Sub-groups)." },
-    { topic: "Groups & Ledgers", q: "Which two ledgers are created by default in a new Tally company?", a: "Cash and Profit & Loss A/c." },
-    { topic: "Groups & Ledgers", q: "Under which group do you place Office Rent and Electricity Bills?", a: "Indirect Expenses." },
-    { topic: "Groups & Ledgers", q: "Under which group do you place Computers and Furniture?", a: "Fixed Assets." },
-    { topic: "Vouchers", q: "When do you use a Contra Voucher (F4)?", a: "Only for internal cash and bank movements (Cash deposit, ATM withdrawal, or Bank-to-Bank transfer)." },
-    { topic: "Vouchers", q: "What are the shortcut keys for Payment and Receipt vouchers?", a: "F5 for Payment (money out) and F6 for Receipt (money in)." },
-    { topic: "Vouchers", q: "When do you use a Journal Voucher (F7)?", a: "For non-cash adjustments like depreciation, tax adjustments, or buying fixed assets on credit." },
-    { topic: "Vouchers", q: "What are the shortcut keys for Sales and Purchase vouchers?", a: "F8 for Sales and F9 for Purchase." },
-    { topic: "Vouchers", q: "How do you switch between Item Invoice mode and Accounting Voucher mode in F8/F9?", a: "By pressing Ctrl + H (Change Mode)." },
-    { topic: "Vouchers", q: "What is the difference between a Debit Note (Alt+F5) and a Credit Note (Alt+F6)?", a: "Debit Note is for Purchase Returns (to supplier); Credit Note is for Sales Returns (from customer)." },
-    { topic: "Day Book", q: "How do you cancel vs. delete a voucher in the Day Book?", a: "Alt + X cancels the voucher (keeping the number placeholder); Alt + D deletes it completely." },
-    { topic: "Inventory", q: "What is a Compound Unit in Tally?", a: "A combination of two simple units, such as '1 Box of 12 Pieces'." },
-    { topic: "Inventory", q: "Why must we select UQC (Unique Quantity Code) when creating a unit?", a: "It is mandatory for accurate GST Return filing and e-Way Bill generation." },
-    { topic: "Inventory", q: "Which voucher is used to transfer stock between two Godowns?", a: "Stock Journal (Alt + F7)." },
-    { topic: "GST Taxation", q: "How many characters are in a valid GSTIN?", a: "15 characters (first 2 digits represent the State Code, followed by 10-digit PAN)." },
-    { topic: "GST Taxation", q: "Under which group are CGST, SGST, and IGST ledgers created?", a: "Duties & Taxes." },
-    { topic: "GST Taxation", q: "When do we charge CGST+SGST versus IGST?", a: "CGST+SGST are charged on intrastate (within same state) sales; IGST is charged on interstate sales." },
-    { topic: "GST Taxation", q: "What is the difference between GSTR-1 and GSTR-3B?", a: "GSTR-1 details all outward sales invoices; GSTR-3B is the monthly summary return showing net tax payable after ITC." },
-    { topic: "TDS & TCS", q: "What is the difference between TDS and TCS?", a: "TDS (Tax Deducted at Source) is deducted when making specified payments; TCS (Tax Collected at Source) is collected by the seller on specified sales." },
-    { topic: "Payroll", q: "What shortcut processes salary automatically in a Payroll Voucher?", a: "Ctrl + F (Payroll Autofill)." },
-    { topic: "Banking", q: "What is a Bank Reconciliation Statement (BRS)?", a: "A statement that matches the Tally bank ledger balance with the real bank passbook by recording cheque clearance dates." },
-    { topic: "MS Word", q: "What is the use of the Format Painter in MS Word?", a: "It copies the formatting/design of selected text and applies it to another piece of text." },
-    { topic: "MS Word", q: "Why should we use Ctrl + Enter (Page Break) instead of pressing Enter repeatedly?", a: "Page Break cleanly starts a new page without shifting layout if text is edited above." },
-    { topic: "MS Word", q: "What is the difference between a Header/Footer and a Watermark?", a: "Headers/Footers appear at the top/bottom margins of every page; a Watermark appears faded behind the main document text." },
-    { topic: "MS Excel", q: "What symbol must every formula in MS Excel start with?", a: "The Equals sign (=)." },
-    { topic: "MS Excel", q: "What is the difference between =COUNT() and =SUM() in Excel?", a: "=SUM() adds the numerical values together; =COUNT() counts how many cells contain numbers." },
-    { topic: "MS Excel", q: "What does 'Freeze Panes' do in MS Excel?", a: "It locks specific rows or columns in place so headings stay visible while scrolling down a large sheet." },
-    { topic: "MS Excel", q: "What does Conditional Formatting do?", a: "It automatically formats/colors cells based on rules (e.g., turning marks below 30 red)." },
-    { topic: "MS PowerPoint", q: "What is the difference between Slide Transition and Custom Animation?", a: "Transitions animate the movement from one slide to the next; Animations move individual objects inside a slide." },
-    { topic: "MS PowerPoint", q: "What is the shortcut to start a slide show from the first slide vs. current slide?", a: "F5 starts from the first slide; Shift + F5 starts from the current slide." },
+    { topic: "Tally Shortcuts", q: "What do Alt + G and Ctrl + A do in Tally Prime?", a: "Alt + G opens the 'Go To' search bar; Ctrl + A is Quick Save (accepts the screen instantly)." },
+    { topic: "Tally Setup", q: "How many pre-defined groups and default ledgers exist in a new Tally company?", a: "28 pre-defined groups (15 Primary, 13 Sub-groups) and 2 default ledgers (Cash and Profit & Loss A/c)." },
+    { topic: "Tally Vouchers", q: "State the shortcut keys for Contra, Payment, Receipt, Journal, Sales, and Purchase vouchers.", a: "F4 (Contra), F5 (Payment), F6 (Receipt), F7 (Journal), F8 (Sales), and F9 (Purchase)." },
+    { topic: "Tally Vouchers", q: "When do you use a Contra Voucher (F4) vs. a Journal Voucher (F7)?", a: "Contra (F4) is strictly for Cash/Bank internal transfers; Journal (F7) is for non-cash adjustments like depreciation or TDS deduction." },
+    { topic: "Tally Inventory", q: "Which voucher (Alt + F7) transfers stock between Godowns, and why is UQC needed in Units?", a: "Stock Journal transfers stock between Godowns; UQC (Unique Quantity Code) is mandatory for GST filing." },
+    { topic: "Tally GST", q: "Under which group are CGST, SGST, and IGST created, and when is IGST used?", a: "Created under 'Duties & Taxes'; IGST is used for interstate (outside-state) sales." },
+    { topic: "Tally GST", q: "What is the difference between GSTR-1 and GSTR-3B?", a: "GSTR-1 shows all outward sales invoices; GSTR-3B is the monthly summary return showing net tax liability and ITC." },
+    { topic: "Tally Payroll & BRS", q: "What shortcut runs Payroll Autofill, and what is BRS in Tally?", a: "Ctrl + F runs Payroll Autofill; BRS (Bank Reconciliation Statement) matches Tally's bank ledger with the physical passbook using clearance dates." },
+    { topic: "Photoshop", q: "What is the difference between saving as .PSD, .JPG, and .PNG in Photoshop?", a: ".PSD preserves editable layers; .JPG is for flat photos; .PNG preserves transparent backgrounds for signatures/logos." },
+    { topic: "Photoshop", q: "What are the exact width, height, and resolution for a Passport Size Photo in Photoshop?", a: "Width: 3.5 cm, Height: 4.5 cm, and Resolution: 300." },
+    { topic: "Photoshop", q: "How do you remove the white background around a scanned signature in Photoshop?", a: "Double-click the Background layer to unlock it, click the white area with the Magic Wand Tool (W), and press Delete." },
+    { topic: "Photoshop", q: "Which shortcuts open Levels, Curves, and Free Transform in Photoshop?", a: "Ctrl + L (Levels), Ctrl + M (Curves), and Ctrl + T (Free Transform)." },
+    { topic: "Graphics Design", q: "Why must we use CMYK mode instead of RGB when designing a Marriage Card for printing?", a: "RGB is light for digital screens, whereas physical printing presses use CMYK (Cyan, Magenta, Yellow, Black) ink." },
+    { topic: "Graphics Design", q: "How do you calculate the canvas dimensions in inches for a 6-foot by 3-foot shop flex banner?", a: "Multiply feet by 12 (1 Foot = 12 Inches): Width = 72 inches, Height = 36 inches, at 72 Resolution." },
+    { topic: "Digital Services", q: "What is the password format to open a downloaded e-Aadhaar PDF vs. an e-PAN PDF?", a: "e-Aadhaar password is the first 4 letters of the name in CAPITALS + birth year (e.g., RAHU2005); e-PAN password is full Date of Birth (DDMMYYYY)." },
+    { topic: "Digital Services", q: "What is DigiLocker, and is a Driving License shown inside DigiLocker legally valid?", a: "DigiLocker is the Government of India's digital document wallet; documents inside it are legally equal to originals under the IT Act, 2000." },
+    { topic: "Digital Services", q: "What is a CSC portal, and what helpline number should you dial immediately in case of an online financial scam?", a: "CSC is Common Service Centre (Digital Seva); dial 1930 for the National Cyber Crime Helpline." },
+    { topic: "Internet & Email", q: "When sending an email in Gmail, which icon attaches a file, and what do .gov.in websites represent?", a: "The Paperclip icon attaches files; .gov.in / .nic.in are official Indian Government websites." },
+    { topic: "C Programming", q: "Who invented C, and what is the role of the Compiler?", a: "Dennis Ritchie invented C in 1972; the Compiler checks syntax and translates C code into Machine Code (0s and 1s)." },
+    { topic: "C Programming", q: "What are the Format Specifiers for int, float, and char in C?", a: "%d for int, %f for float, and %c for char." },
+    { topic: "C Programming", q: "What is the difference between a 'while' loop and a 'do-while' loop in C?", a: "A while loop checks the condition first; a do-while loop runs the code once first before checking the condition." },
+    { topic: "C Programming", q: "What is a Pointer (*ptr) and what does the '&' operator do in C?", a: "'&' returns the RAM memory address of a variable; a Pointer stores that memory address." },
+    { topic: "Data Structures", q: "Explain the difference between a Stack and a Queue with a real-life example.", a: "A Stack is LIFO (Last In, First Out, like a stack of plates or Ctrl+Z Undo); a Queue is FIFO (First In, First Out, like a printer queue)." },
+    { topic: "Web Designing", q: "What are the roles of HTML, CSS, and JavaScript in building a website?", a: "HTML builds the structure/skeleton, CSS styles the layout/colors, and JavaScript adds logic and interactivity." },
+    { topic: "Web Designing", q: "What is the difference between CSS Flexbox and CSS Grid?", a: "Flexbox handles 1-Dimensional layouts (single row or column); CSS Grid handles 2-Dimensional layouts (rows and columns simultaneously)." },
+    { topic: "Web Designing", q: "How does JavaScript change an HTML element live on the page?", a: "By selecting the element via the DOM using document.getElementById('id') and updating its .innerText or .style." },
+    { topic: "MS Word", q: "What is the use of the Format Painter brush in MS Word?", a: "It copies the font/color formatting from selected text and applies it to another piece of text." },
+    { topic: "MS Word", q: "Why should you use a Page Break instead of pressing Enter repeatedly?", a: "Page Break cleanly starts at the top of the next page without shifting layout if text is edited above." },
+    { topic: "MS Excel", q: "What symbol starts every Excel formula, and what is the shortcut for AutoSum?", a: "The Equals sign (=) starts every formula; Alt + = is the shortcut for AutoSum." },
+    { topic: "MS Excel", q: "What do Freeze Panes and Conditional Formatting do in MS Excel?", a: "Freeze Panes locks top headings while scrolling; Conditional Formatting automatically colors cells based on rules (e.g., marks < 30 in red)." },
+    { topic: "MS PowerPoint", q: "What is the difference between Slide Transition and Custom Animation?", a: "A Slide Transition animates the change from one slide to the next; Custom Animation moves objects inside a single slide." },
+    { topic: "MS PowerPoint", q: "What is the shortcut to start a presentation from Slide 1 vs. the current slide?", a: "F5 starts from Slide 1; Shift + F5 starts from the current slide." },
+    { topic: "Typing Theory", q: "What are the Guide Keys on the Home Row, and which finger presses the Spacebar?", a: "F and J are the Guide Keys (with raised physical bumps); the Thumb presses the Spacebar." },
+    { topic: "Typing Theory", q: "What is the Golden Rule of the Shift key when typing a single capital letter?", a: "Hold down the Shift key using the pinky finger of the hand opposite to the letter being typed." },
+    { topic: "Typing Shortcuts", q: "What do Ctrl + Backspace and Ctrl + Shift + T do?", a: "Ctrl + Backspace deletes an entire word at once; Ctrl + Shift + T reopens the last closed browser tab." },
+    { topic: "Fundamentals", q: "State the core technology of the 1st, 2nd, 3rd, and 4th Computer Generations.", a: "1st: Vacuum Tubes, 2nd: Transistors, 3rd: Integrated Circuits (IC), 4th: Microprocessors." },
+    { topic: "Fundamentals", q: "What is the difference between Cold Booting and Warm Booting?", a: "Cold Booting is starting a PC from a powered-off state; Warm Booting is restarting a running PC." },
     { topic: "Fundamentals", q: "What is the difference between RAM and ROM?", a: "RAM is volatile temporary working memory; ROM is non-volatile permanent read-only startup memory." },
-    { topic: "Components", q: "Why is an SSD faster than a traditional HDD?", a: "An SSD uses flash memory chips with no moving parts, whereas an HDD relies on spinning magnetic platters." },
-    { topic: "OS Basics", q: "What is the shortcut to open the Windows Task Manager directly?", a: "Ctrl + Shift + Esc." },
-    { topic: "Cyber Security", q: "What are Phishing and Two-Factor Authentication (2FA)?", a: "Phishing is a fake message/link designed to steal passwords; 2FA adds a second security step like an OTP." }
+    { topic: "Hardware", q: "What is the function of the Power Supply Unit (PSU) and the VRM on the motherboard?", a: "The PSU converts wall AC into low-voltage DC; the VRM steps 12V down to ~1.2V for the CPU." },
+    { topic: "Hardware", q: "What is the difference between an HDD and an SSD?", a: "An HDD uses spinning magnetic platters; an SSD uses high-speed flash memory chips with no moving parts." },
+    { topic: "OS Basics", q: "What is the shortcut to take a custom area screenshot in Windows, and how do you open Task Manager?", a: "Windows Key + Shift + S opens Snip & Sketch; Ctrl + Shift + Esc opens Task Manager." },
+    { topic: "OS Basics", q: "Why should you never defragment an SSD, and how should you uninstall a Windows program?", a: "Defragmenting degrades an SSD's lifespan; always uninstall programs via Control Panel > Programs and Features." },
+    { topic: "Cyber Security", q: "What are Phishing, Ransomware, and Two-Factor Authentication (2FA)?", a: "Phishing is fake bait to steal passwords; Ransomware locks files for money; 2FA adds a second lock using a phone OTP." }
 ];
