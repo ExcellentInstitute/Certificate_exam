@@ -91,9 +91,7 @@
             document.getElementById('st-name').innerText = `${studentData.name} (${studentData.id})`;
             document.getElementById('st-course').innerText = `${studentData.course || courseKey}`;
 
-            const tasks = (courseKey === "TALLY" || courseKey === "DCA" || courseKey === "PGDCA")
-                ? [...PRACTICAL_EXAM_BANK["TALLY"], ...PRACTICAL_EXAM_BANK["DEFAULT"].slice(0, 2)]
-                : PRACTICAL_EXAM_BANK["DEFAULT"];
+            const tasks = PRACTICAL_EXAM_BANK[courseKey] || PRACTICAL_EXAM_BANK["DEFAULT"];
 
             renderTasks(tasks);
             listenForAdminCompletion();
