@@ -315,7 +315,13 @@
             // Listen to completed results
             db.ref('exam_results').on('value', snap => {
                 globalResults = [];
-                snap.forEach(child => { if(child.val()) globalResults.push(child.val()); });
+                snap.forEach(child => {
+                    if (child.val()) {
+                        let rObj = child.val();
+                        rObj._key = child.key;
+                        globalResults.push(rObj);
+                    }
+                });
                 document.getElementById('loading-indicator').style.display = 'none';
                 renderAllTables();
             });
@@ -470,14 +476,15 @@
             .catch(err => alert("Error removing session: " + err.message));
         }
 
-        function deleteResult(resultId) {
+        function deleteResult(resultKeyOrId) {
             if (!confirm("⚠️ WARNING: Are you sure you want to permanently delete this exam result? This cannot be undone.")) return;
             
-            firebase.database().ref('exam_results').orderByChild('id').equalTo(resultId).once('value', snap => {
-                snap.forEach(child => {
-                    child.ref.remove().catch(err => alert("Error deleting result: " + err.message));
-                });
-            });
+            // Check if resultKeyOrId is a direct Firebase key or student ID
+            const target = globalResults.find(r => r._key === resultKeyOrId || String(r.id).toUpperCase() === String(resultKeyOrId).toUpperCase());
+            const keyToDelete = target && target._key ? target._key : resultKeyOrId;
+
+            firebase.database().ref('exam_results/' + keyToDelete).remove()
+                .catch(err => alert("Error deleting result: " + err.message));
         }
 
         // ==========================================
@@ -720,23 +727,25 @@
             const vMarks = parseInt(document.getElementById('admin-viva-marks').value) || 0;
             const st = globalLiveExams.find(s => (s._key || s.id) === activeVivaStudentKey);
 
-            // Update student's latest exam_results record with Practical & Viva marks
-            firebase.database().ref('exam_results').orderByChild('id').equalTo(st.id).limitToLast(1).once('value', snap => {
-                snap.forEach(child => {
-                    const existing = child.val();
-                    let subjectsObj = {};
-                    try { subjectsObj = JSON.parse(existing.subjectDetails || "{}"); } catch(e) {}
-                    subjectsObj[`Practical (${st.selectedPractical || 'Lab Assessment'})`] = { scored: pMarks, total: 50 };
-                    subjectsObj[`Viva Voce (Oral Assessment - ${askedCount} Qs)`] = { scored: vMarks, total: 50 };
+            // Find student's latest exam_results record in globalResults by ID
+            const stIdUpper = String(st.id || "").trim().toUpperCase();
+            const matchingResults = globalResults.filter(r => String(r.id || "").trim().toUpperCase() === stIdUpper);
+            if (matchingResults.length > 0 && matchingResults[0]._key) {
+                const latestRes = matchingResults[0];
+                let subjectsObj = {};
+                try { subjectsObj = JSON.parse(latestRes.subjectDetails || "{}"); } catch(e) {}
+                subjectsObj[`Practical (${st.selectedPractical || 'Lab Assessment'})`] = { scored: pMarks, total: 50 };
+                subjectsObj[`Viva Voce (Oral Assessment - ${askedCount} Qs)`] = { scored: vMarks, total: 50 };
 
-                    child.ref.update({
-                        practicalMarks: pMarks,
-                        vivaMarks: vMarks,
-                        marks: (parseInt(existing.marks) || 0) + pMarks + vMarks,
-                        subjectDetails: JSON.stringify(subjectsObj)
-                    });
+                const baseTheoryMarks = parseInt(latestRes.theoryMarks || latestRes.marks) || 0;
+                firebase.database().ref('exam_results/' + latestRes._key).update({
+                    theoryMarks: baseTheoryMarks,
+                    practicalMarks: pMarks,
+                    vivaMarks: vMarks,
+                    marks: baseTheoryMarks + pMarks + vMarks,
+                    subjectDetails: JSON.stringify(subjectsObj)
                 });
-            });
+            }
 
             // Mark student completely finished in exam_live
             firebase.database().ref('exam_live/' + activeVivaStudentKey).update({
