@@ -156,9 +156,9 @@
     </div>
 
     <div id="waiting-section" class="container fade-in-up">
-        <h2>Waiting Room</h2>
+        <h2 id="portal-stage-heading">Select Examination Stage</h2>
         
-        <div class="status-badge" id="approval-badge">
+        <div class="status-badge" id="approval-badge" style="display: none;">
             <i class="fa-solid fa-clock"></i> Waiting for Admin Approval...
         </div>
 
@@ -173,8 +173,37 @@
                 <div id="display-duration" style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Duration</div>
             </div>
         </div>
+
+        <!-- NEW: STAGE SELECTION CARDS (Main Exam vs Practical) -->
+        <div id="stage-selection-box" style="text-align: left; margin-bottom: 20px;">
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px; font-weight: 500;">Choose which exam you are taking today:</p>
+            
+            <!-- Option 1: Main Exam -->
+            <div id="card-main-exam" style="border: 2px solid #cbd5e1; border-radius: 12px; padding: 16px; margin-bottom: 12px; background: #ffffff; transition: 0.2s;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <strong style="color: var(--text-dark); font-size: 15px;"><i class="fa-solid fa-file-pen" style="color: var(--primary);"></i> Stage 1: Main Exam (Theory & Typing)</strong>
+                    <span id="badge-main-status" style="font-size: 11px; padding: 3px 8px; border-radius: 10px; background: #eff6ff; color: var(--primary); font-weight: 600;">400 Marks</span>
+                </div>
+                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">175 Multiple Choice Questions (350M) + Live Paragraph Typing Test (50M).</p>
+                <button id="btn-choose-main" onclick="selectExamStage('MAIN')" style="padding: 10px; font-size: 14px;">
+                    <i class="fa-solid fa-paper-plane"></i> Enter Main Exam Waiting Room
+                </button>
+            </div>
+
+            <!-- Option 2: Practical & Viva Exam (Locked until Main Exam is done) -->
+            <div id="card-practical-exam" style="border: 2px solid #e2e8f0; border-radius: 12px; padding: 16px; background: #f8fafc; transition: 0.2s;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <strong style="color: var(--text-dark); font-size: 15px;"><i class="fa-solid fa-laptop-code" style="color: var(--success);"></i> Stage 2: Practical & Viva Exam</strong>
+                    <span id="badge-practical-status" style="font-size: 11px; padding: 3px 8px; border-radius: 10px; background: #fee2e2; color: var(--danger); font-weight: 600;"><i class="fa-solid fa-lock"></i> Locked</span>
+                </div>
+                <p id="practical-lock-msg" style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Hands-on Software Task (50M) + Admin Oral Viva Voce (50M). Unlocks automatically after completing the Main Exam.</p>
+                <button id="btn-choose-practical" onclick="selectExamStage('PRACTICAL')" disabled style="padding: 10px; font-size: 14px; background: #94a3b8;">
+                    <i class="fa-solid fa-lock"></i> Complete Main Exam First to Unlock
+                </button>
+            </div>
+        </div>
         
-        <div class="rules-box">
+        <div class="rules-box" id="exam-rules-box" style="display: none;">
             <h3><i class="fa-solid fa-triangle-exclamation"></i> Mandatory Exam Rules</h3>
             
             <div class="rule-item">
@@ -248,12 +277,16 @@
             errorMsg.style.display = "none";
             document.getElementById('login-btn').disabled = true;
 
-            // Fetch students list from Firebase
-            firebase.database().ref('students').once('value')
-            .then(snapshot => {
+            // Fetch student profile AND check exam_results to see if Main Exam is already completed
+            const db = firebase.database();
+            Promise.all([
+                db.ref('students').once('value'),
+                db.ref('exam_results').once('value')
+            ])
+            .then(([studentsSnap, resultsSnap]) => {
                 let studentData = null;
                 
-                snapshot.forEach(childSnapshot => {
+                studentsSnap.forEach(childSnapshot => {
                     const st = childSnapshot.val();
                     if (st) {
                         const sId = String(st.id || "").trim().toUpperCase();
@@ -264,11 +297,21 @@
                     }
                 });
 
-                if (studentData) {
-                    processSuccessfulLogin(studentData);
-                } else {
+                if (!studentData) {
                     throw new Error("Student not found in the database.");
                 }
+
+                // Check if this specific student has completed the Main Exam in exam_results
+                let mainExamRecord = null;
+                const targetId = String(studentData.id || "").trim().toUpperCase();
+                resultsSnap.forEach(rChild => {
+                    const rVal = rChild.val();
+                    if (rVal && String(rVal.id || "").trim().toUpperCase() === targetId) {
+                        mainExamRecord = rVal;
+                    }
+                });
+
+                processSuccessfulLogin(studentData, mainExamRecord);
             })
             .catch(err => {
                 console.error("Login Error:", err);
@@ -298,15 +341,17 @@
             return url; 
         }
 
-        function processSuccessfulLogin(studentData) {
-            // Detect exact course key based on course name + duration
+        let loggedInStudentObj = null;
+
+        function processSuccessfulLogin(studentData, mainExamRecord) {
             const detectedKey = typeof detectCourseKey === 'function' ? detectCourseKey(studentData) : (studentData.course || 'CCA_6M');
             const catalogInfo = (typeof COURSE_CATALOG !== 'undefined' && COURSE_CATALOG[detectedKey]) ? COURSE_CATALOG[detectedKey] : null;
 
             studentData.detectedCourseKey = detectedKey;
             studentData.detectedCourseName = catalogInfo ? catalogInfo.name : (studentData.course || 'N/A');
+            studentData.hasCompletedMainExam = Boolean(mainExamRecord);
 
-            // Save student to localStorage for exam.html
+            loggedInStudentObj = studentData;
             localStorage.setItem('examStudent', JSON.stringify(studentData));
             currentStudentId = studentData.id;
 
@@ -325,24 +370,83 @@
                 avatarDiv.innerHTML = studentData.name.charAt(0).toUpperCase();
             }
 
+            // Configure Stage 1 (Main Exam) & Stage 2 (Practical) Lock State
+            const practicalCard = document.getElementById('card-practical-exam');
+            const practicalBadge = document.getElementById('badge-practical-status');
+            const practicalBtn = document.getElementById('btn-choose-practical');
+            const mainBadge = document.getElementById('badge-main-status');
+
+            if (mainExamRecord) {
+                // Main Exam IS completed -> Unlock Practical!
+                mainBadge.innerHTML = `<i class="fa-solid fa-check"></i> Completed (${mainExamRecord.marks}/400)`;
+                mainBadge.style.background = "#d1fae5";
+                mainBadge.style.color = "#059669";
+
+                practicalCard.style.borderColor = "#10b981";
+                practicalCard.style.background = "#f0fdf4";
+                practicalBadge.innerHTML = `<i class="fa-solid fa-lock-open"></i> Unlocked`;
+                practicalBadge.style.background = "#d1fae5";
+                practicalBadge.style.color = "#059669";
+
+                practicalBtn.disabled = false;
+                practicalBtn.style.background = "#10b981";
+                practicalBtn.innerHTML = `<i class="fa-solid fa-laptop-code"></i> Enter Stage 2: Practical & Viva Exam`;
+            } else {
+                // Main Exam NOT completed -> Keep Practical strictly locked
+                practicalCard.style.borderColor = "#e2e8f0";
+                practicalCard.style.background = "#f8fafc";
+                practicalBadge.innerHTML = `<i class="fa-solid fa-lock"></i> Locked`;
+                practicalBadge.style.background = "#fee2e2";
+                practicalBadge.style.color = "#ef4444";
+
+                practicalBtn.disabled = true;
+                practicalBtn.style.background = "#94a3b8";
+                practicalBtn.innerHTML = `<i class="fa-solid fa-lock"></i> Complete Main Exam First to Unlock`;
+            }
+
             // Switch Screens
             document.getElementById('login-section').classList.remove('active');
             document.getElementById('waiting-section').classList.add('active');
-
-            // 🚀 Register student in Live Exam Pipeline and Start Listening
-            registerInLivePipeline(studentData);
         }
 
         // ==========================================
-        // 2. REAL-TIME WAITING ROOM LOGIC (ZERO WASTED BANDWIDTH)
+        // 2. STAGE SELECTION & WAITING ROOM LOGIC
         // ==========================================
+        function selectExamStage(stageType) {
+            if (!loggedInStudentObj) return;
+
+            if (stageType === 'PRACTICAL') {
+                if (!loggedInStudentObj.hasCompletedMainExam) {
+                    alert("Practical Exam is locked! You must complete the Main Exam first.");
+                    return;
+                }
+                // Register student in exam_live for Stage 2 Practical & Viva and redirect to practical.html
+                firebase.database().ref('exam_live/' + currentStudentId).set({
+                    id: loggedInStudentObj.id,
+                    name: loggedInStudentObj.name,
+                    course: `${loggedInStudentObj.course || 'N/A'} (${loggedInStudentObj.duration || '?'}M)`,
+                    courseKey: loggedInStudentObj.detectedCourseKey || 'CCA_6M',
+                    phase: 'Stage 2: Practical & Viva',
+                    status: 'Selecting Practical Task'
+                }).finally(() => {
+                    window.location.href = `practical.html?id=${currentStudentId}`;
+                });
+                return;
+            }
+
+            // Stage 1: Main Exam selected -> Enter Waiting Room for Admin Approval
+            document.getElementById('stage-selection-box').style.display = 'none';
+            document.getElementById('portal-stage-heading').innerText = 'Waiting Room (Main Exam)';
+            document.getElementById('approval-badge').style.display = 'inline-flex';
+            document.getElementById('exam-rules-box').style.display = 'block';
+
+            registerInLivePipeline(loggedInStudentObj);
+        }
+
         function registerInLivePipeline(studentData) {
             dbRef = firebase.database().ref('exam_live/' + currentStudentId);
-            
-            // Automatically remove from Waiting Room ONLY if they disconnect before approval
             dbRef.onDisconnect().remove();
 
-            // Push status & detected course key to Admin Dashboard
             dbRef.set({
                 id: studentData.id,
                 name: studentData.name,
@@ -352,11 +456,10 @@
                 status: 'Waiting'
             }).catch(err => console.error("Failed to sync with Admin Dashboard:", err));
 
-            // Listen for Admin Approval in Real-Time
             dbRef.on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data && data.status === 'Approved') {
-                    dbRef.onDisconnect().cancel(); // Keep session alive when moving to exam.html
+                    dbRef.onDisconnect().cancel();
                     dbRef.off(); 
                     launchExam();
                 }
