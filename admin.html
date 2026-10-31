@@ -663,20 +663,27 @@
         let activeVivaStudentKey = null;
         let vivaScoresMap = {};
 
-        function openVivaModal(sessionKey) {
-            const st = globalLiveExams.find(s => (s._key || s.id) === sessionKey);
+        function openVivaModal(sessionKeyOrId) {
+            let st = globalLiveExams.find(s => (s._key || s.id) === sessionKeyOrId);
+            if (!st) {
+                // Fallback: allow opening Viva console directly from Completed Results table
+                st = globalResults.find(r => (r._key || r.id) === sessionKeyOrId || String(r.id).toUpperCase() === String(sessionKeyOrId).toUpperCase());
+            }
             if (!st) return;
-            activeVivaStudentKey = sessionKey;
+            activeVivaStudentKey = st._key || st.id;
+            activeVivaStudentObj = st;
             vivaScoresMap = {};
 
             document.getElementById('viva-student-header').innerText = `${st.name} (${st.id}) • Course: ${st.course || 'N/A'}`;
-            document.getElementById('viva-practical-task').innerText = st.selectedPractical || "Student is still choosing a Practical question...";
-            document.getElementById('admin-viva-marks').value = 0;
+            document.getElementById('viva-practical-task').innerText = st.selectedPractical || "Lab Practical Assessment";
+            document.getElementById('admin-viva-marks').value = st.vivaMarks || 0;
+            document.getElementById('admin-practical-marks').value = st.practicalMarks !== undefined ? st.practicalMarks : 40;
             document.getElementById('viva-asked-count').innerText = "0";
 
             const listContainer = document.getElementById('viva-questions-list');
             listContainer.innerHTML = "";
 
+            const safeStr = (s) => String(s || "").replace(/&/g, "\x26amp;").replace(/</g, "\x26lt;").replace(/>/g, "\x26gt;");
             const vivaPool = (typeof VIVA_MASTER_BANK !== 'undefined') ? VIVA_MASTER_BANK : [];
             vivaPool.forEach((vq, idx) => {
                 const item = document.createElement('div');
@@ -684,8 +691,8 @@
                 item.style.cssText = "padding:12px 15px; border:1px solid #e2e8f0; border-radius:8px; background:#ffffff; display:flex; justify-content:space-between; align-items:center; gap:15px;";
                 item.innerHTML = `
                     <div style="flex:1;">
-                        <div style="font-weight:600; font-size:13px; color:#1e293b;">Q${idx + 1}. [${vq.topic}] ${vq.q}</div>
-                        <div style="font-size:12px; color:#059669; margin-top:4px;"><strong>Ans:</strong> ${vq.a}</div>
+                        <div style="font-weight:600; font-size:13px; color:#1e293b;">Q${idx + 1}. [${safeStr(vq.topic)}] ${safeStr(vq.q)}</div>
+                        <div style="font-size:12px; color:#059669; margin-top:4px;"><strong>Ans:</strong> ${safeStr(vq.a)}</div>
                     </div>
                     <div style="display:flex; gap:6px;">
                         <button onclick="markVivaQuestion(${idx}, true)" style="background:#10b981; color:white; border:none; padding:5px 10px; border-radius:6px; cursor:pointer; font-size:12px;"><i class="fa-solid fa-check"></i> Correct</button>
@@ -697,6 +704,8 @@
 
             document.getElementById('viva-modal').classList.remove('hidden');
         }
+
+        let activeVivaStudentObj = null;
 
         function markVivaQuestion(idx, isCorrect) {
             vivaScoresMap[idx] = isCorrect ? 5 : 0;
@@ -714,20 +723,20 @@
         function closeVivaModal() {
             document.getElementById('viva-modal').classList.add('hidden');
             activeVivaStudentKey = null;
+            activeVivaStudentObj = null;
         }
 
         function savePracticalAndVivaMarks() {
-            if (!activeVivaStudentKey) return;
+            if (!activeVivaStudentObj) return;
             const askedCount = Object.keys(vivaScoresMap).length;
-            if (askedCount < 10 && !confirm(`You have only marked ${askedCount} viva questions (minimum recommended is 10). Save anyway?`)) {
+            if (askedCount < 10 && !confirm(`You have marked ${askedCount} viva questions (minimum recommended is 10). Save anyway?`)) {
                 return;
             }
 
             const pMarks = parseInt(document.getElementById('admin-practical-marks').value) || 0;
             const vMarks = parseInt(document.getElementById('admin-viva-marks').value) || 0;
-            const st = globalLiveExams.find(s => (s._key || s.id) === activeVivaStudentKey);
+            const st = activeVivaStudentObj;
 
-            // Find student's latest exam_results record in globalResults by ID
             const stIdUpper = String(st.id || "").trim().toUpperCase();
             const matchingResults = globalResults.filter(r => String(r.id || "").trim().toUpperCase() === stIdUpper);
             if (matchingResults.length > 0 && matchingResults[0]._key) {
@@ -735,9 +744,9 @@
                 let subjectsObj = {};
                 try { subjectsObj = JSON.parse(latestRes.subjectDetails || "{}"); } catch(e) {}
                 subjectsObj[`Practical (${st.selectedPractical || 'Lab Assessment'})`] = { scored: pMarks, total: 50 };
-                subjectsObj[`Viva Voce (Oral Assessment - ${askedCount} Qs)`] = { scored: vMarks, total: 50 };
+                subjectsObj[`Viva Voce (Oral Assessment)`] = { scored: vMarks, total: 50 };
 
-                const baseTheoryMarks = parseInt(latestRes.theoryMarks || latestRes.marks) || 0;
+                const baseTheoryMarks = parseInt(latestRes.theoryMarks !== undefined ? latestRes.theoryMarks : latestRes.marks) || 0;
                 firebase.database().ref('exam_results/' + latestRes._key).update({
                     theoryMarks: baseTheoryMarks,
                     practicalMarks: pMarks,
@@ -747,8 +756,7 @@
                 });
             }
 
-            // Mark student completely finished in exam_live
-            firebase.database().ref('exam_live/' + activeVivaStudentKey).update({
+            firebase.database().ref('exam_live/' + st.id).update({
                 status: 'Finished',
                 practicalMarks: pMarks,
                 vivaMarks: vMarks
@@ -757,6 +765,7 @@
                 closeVivaModal();
             });
         }
+
         function renderResultsTable(results) {
             const resultsList = document.getElementById('results-list');
             resultsList.innerHTML = "";
@@ -765,24 +774,28 @@
                 return;
             }
 
-            // Sort by date descending
             results.sort((a, b) => new Date(b.date) - new Date(a.date));
 
             results.forEach(res => {
                 const tr = document.createElement('tr');
                 const encodedData = encodeURIComponent(JSON.stringify(res));
-                let dateDisplay = res.date.includes('T') ? res.date.split('T')[0] : res.date.split(' ')[0];
+                let dateDisplay = res.date && res.date.includes('T') ? res.date.split('T')[0] : (res.date || '').split(' ')[0];
+                const maxPossible = res.practicalMarks !== undefined ? 500 : 400;
+                const badgeExtra = res.practicalMarks !== undefined
+                    ? ` <span style="font-size:11px; color:#059669;">(P:${res.practicalMarks} V:${res.vivaMarks})</span>`
+                    : '';
 
                 tr.innerHTML = `
                     <td><span style="color: #64748b; font-size: 13px;">${dateDisplay}</span></td>
                     <td><strong>${res.id}</strong></td>
                     <td>${res.name}</td>
                     <td>${res.course}</td>
-                    <td><span class="highlight-marks">${res.marks} / 400</span></td>
+                    <td><span class="highlight-marks">${res.marks} / ${maxPossible}</span>${badgeExtra}</td>
                     <td><strong>${res.wpm}</strong> <span style="font-size: 11px; color: #64748b;">WPM</span></td>
                     <td>
-                        <button class="btn-download" onclick="downloadResultPDF('${encodedData}')"><i class="fa-solid fa-file-pdf"></i></button>
-                        <button class="btn-delete" title="Delete Result" onclick="deleteResult('${res.id}')"><i class="fa-solid fa-trash"></i></button>
+                        <button class="btn-download" onclick="downloadResultPDF('${encodedData}')" title="Download Result PDF"><i class="fa-solid fa-file-pdf"></i></button>
+                        <button class="btn-approve" style="padding: 6px 10px; margin-left: 4px;" onclick="openVivaModal('${res._key || res.id}')" title="Add/Edit Practical & Viva Marks"><i class="fa-solid fa-microphone"></i></button>
+                        <button class="btn-delete" title="Delete Result" onclick="deleteResult('${res._key || res.id}')"><i class="fa-solid fa-trash"></i></button>
                     </td>
                 `;
                 resultsList.appendChild(tr);
