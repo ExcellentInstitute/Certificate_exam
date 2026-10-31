@@ -294,15 +294,18 @@
                 pillsBar.innerHTML += `<button onclick="filterQuestionsBySubject('${escapedSub}', this)" style="background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; padding:5px 14px; border-radius:15px; font-size:12px; cursor:pointer; white-space:nowrap;">${escapeHTML(sub)}</button>`;
             });
 
-            // Distribute 175 Unique MCQs across Active Subjects
+            // 3. STRICT 175-MCQ (350 MARKS) EVEN SUBJECT DISTRIBUTOR (ZERO DUPLICATES)
             const totalTargetMCQs = 175;
-            const basePerSubject = Math.floor(totalTargetMCQs / activeSubjects.length);
-            let remainder = totalTargetMCQs % activeSubjects.length;
+            const shuffledSubjectsOrder = typeof shuffleExamArray === 'function' ? shuffleExamArray(activeSubjects) : [...activeSubjects];
+            const basePerSubject = Math.floor(totalTargetMCQs / shuffledSubjectsOrder.length);
+            let remainder = totalTargetMCQs % shuffledSubjectsOrder.length;
 
             let finalExamQuestions = [];
             const usedQuestionTexts = new Set();
+            const subjectDeficits = [];
 
-            activeSubjects.forEach(sub => {
+            // PASS 1: Pull unique questions from each subject's dedicated & alias pool
+            shuffledSubjectsOrder.forEach(sub => {
                 const quota = basePerSubject + (remainder > 0 ? 1 : 0);
                 if (remainder > 0) remainder--;
 
@@ -310,29 +313,50 @@
                     ? getQuestionsForSubject(courseKey, sub)
                     : questionBank["CCA"].mcqs;
 
-                let uniqueSubPool = subPool.filter(q => !usedQuestionTexts.has(String(q.question || "").trim()));
-                uniqueSubPool.sort(() => Math.random() - 0.5);
-
-                let picked = uniqueSubPool.slice(0, quota);
-                picked.forEach(q => usedQuestionTexts.add(String(q.question || "").trim()));
-                finalExamQuestions.push(...picked);
-            });
-
-            if (finalExamQuestions.length < totalTargetMCQs && typeof questionBatches !== 'undefined') {
-                const backupPool = questionBatches.flat().filter(q => !usedQuestionTexts.has(String(q.question || "").trim()));
-                backupPool.sort(() => Math.random() - 0.5);
-                for (let bq of backupPool) {
-                    if (finalExamQuestions.length >= totalTargetMCQs) break;
-                    const qKey = String(bq.question || "").trim();
-                    if (!usedQuestionTexts.has(qKey)) {
-                        usedQuestionTexts.add(qKey);
-                        const randomActiveSub = activeSubjects[finalExamQuestions.length % activeSubjects.length];
-                        finalExamQuestions.push({ ...bq, subject: randomActiveSub });
+                let picked = [];
+                for (let q of subPool) {
+                    if (picked.length >= quota) break;
+                    const key = String(q.question || "").trim();
+                    if (key && !usedQuestionTexts.has(key)) {
+                        usedQuestionTexts.add(key);
+                        picked.push({ ...q, subject: sub });
                     }
                 }
+
+                finalExamQuestions.push(...picked);
+                if (picked.length < quota) {
+                    subjectDeficits.push({ subject: sub, needed: quota - picked.length });
+                }
+            });
+
+            // PASS 2: If any subject was short of its quota, fill its exact deficit from remaining unused questions
+            if (subjectDeficits.length > 0 && typeof questionBatches !== 'undefined') {
+                const courseExtra = (typeof courseSpecificBatches !== 'undefined' && courseSpecificBatches[courseKey]) ? courseSpecificBatches[courseKey].flat() : [];
+                let masterBackup = [...courseExtra, ...questionBatches.flat()].filter(q => {
+                    const k = String(q.question || "").trim();
+                    return k && !usedQuestionTexts.has(k);
+                });
+                masterBackup = typeof shuffleExamArray === 'function' ? shuffleExamArray(masterBackup) : masterBackup.sort(() => Math.random() - 0.5);
+
+                let backupIdx = 0;
+                subjectDeficits.forEach(def => {
+                    let added = 0;
+                    while (added < def.needed && backupIdx < masterBackup.length) {
+                        const bq = masterBackup[backupIdx++];
+                        const qKey = String(bq.question || "").trim();
+                        if (qKey && !usedQuestionTexts.has(qKey)) {
+                            usedQuestionTexts.add(qKey);
+                            finalExamQuestions.push({ ...bq, subject: def.subject });
+                            added++;
+                        }
+                    }
+                });
             }
 
-            finalExamQuestions.sort(() => Math.random() - 0.5);
+            // Shuffle final 175 questions using cryptographic Fisher-Yates so every student gets a unique sequence
+            finalExamQuestions = typeof shuffleExamArray === 'function'
+                ? shuffleExamArray(finalExamQuestions)
+                : finalExamQuestions.sort(() => Math.random() - 0.5);
             document.getElementById('total-q-count').innerText = finalExamQuestions.length;
 
             const mcqContainer = document.getElementById('mcq-container');
