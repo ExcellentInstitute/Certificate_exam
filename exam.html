@@ -2,55 +2,65 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
     <title>Live Exam - Excellent Institute</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <!-- NEW: Firebase SDKs for Real-Time Status & Results Sync -->
+    <!-- Firebase SDKs for Real-Time Status & Results Sync -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
     <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #f4f7f6; margin: 0; padding: 0; }
+        html, body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f4f8;
+            margin: 0; padding: 0;
+            zoom: 100%;
+            -webkit-text-size-adjust: 100%;
+            user-select: none;
+        }
         
         #lock-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(220, 53, 69, 0.95); color: white;
+            background: rgba(185, 28, 28, 0.96); backdrop-filter: blur(6px); color: white;
             display: none; flex-direction: column; justify-content: center; align-items: center;
             z-index: 9999; text-align: center; padding: 20px;
         }
-        #lock-screen input { padding: 10px; margin: 15px 0; border-radius: 5px; border: none; width: 250px; text-align: center; font-family: monospace; letter-spacing: 2px;}
-        #lock-screen button { padding: 10px 20px; background: #343a40; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: 600;}
-        #lock-error { color: #ffcccc; font-size: 13px; font-weight: bold; margin-bottom: 15px; display: none; }
+        #lock-screen input { padding: 12px; margin: 15px 0; border-radius: 8px; border: none; width: 260px; text-align: center; font-family: monospace; letter-spacing: 2px; font-size: 15px; }
+        #lock-screen button { padding: 12px 24px; background: #0f172a; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; }
+        #lock-error { color: #fecaca; font-size: 13px; font-weight: bold; margin-bottom: 15px; display: none; }
 
-        /* NEW: Entry Gate Styles */
+        /* Entry Gate Styles */
         #entry-gate {
-            position: fixed; inset: 0; background: #0056b3; z-index: 100000;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; color: white;
+            position: fixed; inset: 0; background: linear-gradient(135deg, #1e3a8a 0%, #0f172a 100%); z-index: 100000;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; padding: 20px;
         }
-        #entry-gate h1 { font-size: 40px; margin-bottom: 20px; }
-        #entry-gate p { font-size: 18px; margin-bottom: 30px; text-align: center; max-width: 600px; line-height: 1.5; }
-        #entry-gate button { padding: 15px 40px; font-size: 20px; font-weight: bold; cursor: pointer; border-radius: 8px; border: none; background: #28a745; color: white; box-shadow: 0 4px 6px rgba(0,0,0,0.2); transition: 0.2s; }
-        #entry-gate button:hover { background: #218838; transform: translateY(-2px); }
+        #entry-gate h1 { font-size: 36px; margin-bottom: 15px; font-weight: 700; }
+        #entry-gate p { font-size: 16px; margin-bottom: 25px; text-align: center; max-width: 620px; line-height: 1.6; color: #e2e8f0; }
+        #entry-gate button { padding: 16px 42px; font-size: 18px; font-weight: 600; cursor: pointer; border-radius: 12px; border: none; background: #10b981; color: white; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.35); transition: 0.2s; }
+        #entry-gate button:hover { background: #059669; transform: translateY(-2px); }
 
-        .header { background: #0056b3; color: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; }
-        .student-info { display: flex; align-items: center; gap: 15px; }
-        .student-info img { width: 50px; height: 50px; border-radius: 50%; border: 2px solid white; object-fit: cover; background: #ccc; }
+        .header { background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: white; padding: 16px 35px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .student-info { display: flex; align-items: center; gap: 15px; background: rgba(255,255,255,0.08); padding: 6px 14px; border-radius: 50px; }
+        .student-info img { width: 44px; height: 44px; border-radius: 50%; border: 2px solid #38bdf8; object-fit: cover; background: #ccc; }
         
-        .container { max-width: 900px; margin: 30px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .question-card { margin-bottom: 25px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
-        .question-card h4 { margin-bottom: 10px; color: #333; }
-        .options label { display: block; margin-bottom: 8px; cursor: pointer; background: #f8fafc; padding: 10px; border-radius: 5px; border: 1px solid #e2e8f0; }
-        .options input { margin-right: 10px; }
+        .container { max-width: 940px; margin: 25px auto; background: white; padding: 35px; border-radius: 16px; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06); }
+        .question-card { margin-bottom: 22px; padding: 20px; border-radius: 12px; background: #ffffff; border: 1px solid #e2e8f0; transition: all 0.2s ease; }
+        .question-card:hover { border-color: #cbd5e1; box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
+        .question-card h4 { margin: 0 0 14px 0; color: #1e293b; font-size: 15px; line-height: 1.5; }
+        .options label { display: flex; align-items: center; margin-bottom: 10px; cursor: pointer; background: #f8fafc; padding: 12px 15px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 14px; color: #334155; transition: all 0.15s ease; }
+        .options label:hover { background: #eff6ff; border-color: #93c5fd; }
+        .options input[type="radio"] { margin-right: 12px; accent-color: #2563eb; transform: scale(1.15); }
         
-        .typing-section { background: #eef2f5; padding: 20px; border-radius: 8px; margin-top: 30px; }
-        #typing-area { width: 100%; height: 150px; padding: 10px; margin-top: 10px; border: 1px solid #ccc; border-radius: 5px; font-family: monospace; font-size: 16px; resize: none; }
+        .typing-section { background: #f8fafc; padding: 25px; border-radius: 12px; margin-top: 35px; border: 2px solid #e2e8f0; }
+        #typing-area { width: 100%; height: 160px; padding: 14px; margin-top: 10px; border: 2px solid #cbd5e1; border-radius: 8px; font-family: monospace; font-size: 16px; resize: none; box-sizing: border-box; outline: none; transition: border-color 0.2s; }
+        #typing-area:focus { border-color: #2563eb; background: #ffffff; }
         
-        .submit-btn { width: 100%; background: #28a745; color: white; border: none; padding: 15px; font-size: 18px; border-radius: 8px; margin-top: 30px; cursor: pointer; }
-        .submit-btn:hover { background: #218838; }
+        .submit-btn { width: 100%; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; border: none; padding: 16px; font-size: 18px; font-weight: 600; border-radius: 10px; margin-top: 30px; cursor: pointer; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); }
+        .submit-btn:hover { opacity: 0.95; }
     </style>
 </head>
 <body>
@@ -129,9 +139,42 @@
 
     <!-- Ensure these load strictly in order -->
     <script src="js/questions.js"></script>
+    <script src="js/tally_and_practical_data.js"></script>
     <script src="js/exam.js"></script>
     
     <script>
+        // ==========================================
+        // AUTO-RESET PRE-ZOOM & LOCK ZOOM LEVEL
+        // ==========================================
+        function enforceDefaultZoom() {
+            // Reset any CSS zoom first
+            document.documentElement.style.zoom = "100%";
+            document.body.style.zoom = "100%";
+
+            // If browser was pre-zoomed before exam started, counter-scale to 100% default visual size
+            if (window.outerWidth && window.innerWidth) {
+                const zoomRatio = window.outerWidth / window.innerWidth;
+                if (zoomRatio > 1.03 || zoomRatio < 0.97) {
+                    document.body.style.zoom = (1 / zoomRatio).toFixed(3);
+                }
+            }
+        }
+
+        // Prevent Ctrl + Wheel Zoom
+        window.addEventListener('wheel', function(e) {
+            if (e.ctrlKey) e.preventDefault();
+        }, { passive: false });
+
+        // Prevent Ctrl + (+ / - / 0) Zoom keys
+        window.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '-' || e.key === '=' || e.key === '0')) {
+                e.preventDefault();
+                enforceDefaultZoom();
+            }
+        });
+
+        window.addEventListener('resize', enforceDefaultZoom);
+
         // ==========================================
         // FIREBASE CONFIGURATION (SECURE ANONYMOUS AUTH)
         // ==========================================
@@ -150,31 +193,36 @@
             firebase.initializeApp(firebaseConfig);
         }
 
-        // Initialize Anonymous Auth to securely push results
         firebase.auth().onAuthStateChanged((user) => {
             if (!user) {
                 firebase.auth().signInAnonymously().catch((error) => {
-                    console.warn("Silent Authentication Failed. Ensure Anonymous Auth is enabled in Firebase.", error);
+                    console.warn("Silent Authentication Failed.", error);
                 });
             }
         });
 
         let studentData = null;
-        let examActive = false; // Required by exam.js to arms the anti-cheat
-        let isTimed = true;     // Required by exam.js to arms the anti-cheat
+        let examActive = false;
+        let isTimed = true;
 
         // ==========================================
-        // LAUNCH ACTUAL EXAM (ENTER FULL SCREEN)
+        // LAUNCH ACTUAL EXAM (RESET ZOOM & ENTER FULL SCREEN)
         // ==========================================
         function startActualExam() {
+            enforceDefaultZoom();
             document.documentElement.requestFullscreen().then(() => {
+                setTimeout(enforceDefaultZoom, 150);
                 document.getElementById('entry-gate').style.display = 'none';
                 document.getElementById('exam-content').style.display = 'block';
                 examActive = true; 
                 
-                // Update Admin Dashboard in real-time
+                // Update Admin Dashboard in real-time with complete lightweight node
                 if (typeof firebase !== 'undefined' && studentData && studentData.id) {
                     firebase.database().ref('exam_live/' + studentData.id).update({
+                        id: studentData.id,
+                        name: studentData.name,
+                        course: `${studentData.course || 'N/A'} (${studentData.duration || '?'}M)`,
+                        phase: 'Stage 1: Theory & Typing',
                         status: 'Active (Testing)'
                     }).catch(e => console.warn(e));
                 }
