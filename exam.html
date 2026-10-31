@@ -207,29 +207,53 @@
         let isTimed = true;
 
         // ==========================================
-        // LAUNCH ACTUAL EXAM (RESET ZOOM & ENTER FULL SCREEN)
+        // LAUNCH ACTUAL EXAM (CROSS-BROWSER BULLETPROOF)
         // ==========================================
         function startActualExam() {
             enforceDefaultZoom();
-            document.documentElement.requestFullscreen().then(() => {
-                setTimeout(enforceDefaultZoom, 150);
-                document.getElementById('entry-gate').style.display = 'none';
-                document.getElementById('exam-content').style.display = 'block';
-                examActive = true; 
-                
-                // Update Admin Dashboard in real-time with complete lightweight node
-                if (typeof firebase !== 'undefined' && studentData && studentData.id) {
-                    firebase.database().ref('exam_live/' + studentData.id).update({
-                        id: studentData.id,
-                        name: studentData.name,
-                        course: `${studentData.course || 'N/A'} (${studentData.duration || '?'}M)`,
-                        phase: 'Stage 1: Theory & Typing',
-                        status: 'Active (Testing)'
-                    }).catch(e => console.warn(e));
+            
+            const docEl = document.documentElement;
+            // Support for all browsers (Chrome, Safari, Firefox, Edge)
+            const requestFS = docEl.requestFullscreen || docEl.webkitRequestFullscreen || docEl.mozRequestFullScreen || docEl.msRequestFullscreen;
+            
+            if (requestFS) {
+                try {
+                    const promise = requestFS.call(docEl);
+                    if (promise !== undefined) {
+                        // Modern Browsers
+                        promise.then(enterExamUI).catch(err => {
+                            alert("Your browser blocked full-screen, but you can still proceed.");
+                            enterExamUI(); // Let them in anyway if blocked
+                        });
+                    } else {
+                        // Older Browsers (like Safari) that don't use Promises
+                        enterExamUI();
+                    }
+                } catch (e) {
+                    enterExamUI(); // Ultimate safety fallback
                 }
-            }).catch(err => {
-                alert("Your browser blocked full-screen. Please click the button again.");
-            });
+            } else {
+                // If browser doesn't support full-screen at all
+                enterExamUI();
+            }
+        }
+
+        function enterExamUI() {
+            setTimeout(enforceDefaultZoom, 150);
+            document.getElementById('entry-gate').style.display = 'none';
+            document.getElementById('exam-content').style.display = 'block';
+            examActive = true; 
+            
+            // Update Admin Dashboard in real-time
+            if (typeof firebase !== 'undefined' && studentData && studentData.id) {
+                firebase.database().ref('exam_live/' + studentData.id).update({
+                    id: studentData.id,
+                    name: studentData.name,
+                    course: `${studentData.course || 'N/A'} (${studentData.duration || '?'}M)`,
+                    phase: 'Stage 1: Theory & Typing',
+                    status: 'Active (Testing)'
+                }).catch(e => console.warn(e));
+            }
         }
 
         async function initExam() {
