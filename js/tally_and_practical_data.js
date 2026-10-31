@@ -181,23 +181,94 @@ const dcaAdvancedFoundationMCQs = [
     { subject: "Introduction to Multimedia", question: "What is Multimedia, and which three components are highlighted in the Multimedia module?", options: ["Combining pictures, animation, graphics, and audio; uses Sound Card, Speaker, and CD-ROM", "Only typing text in Notepad", "A type of network cable", "A tax calculation"], correctAnswer: 0 }
 ];
 
-// Inject all new book batches into questionBatches & courseSpecificBatches
+// ==========================================
+// 5B. MS WORD ADVANCED & DCA EXCLUSIVE MCQs (FROM word-data.js)
+// ==========================================
+const wordAdvancedAndDcaMCQs = [
+    { subject: "MS Word – Advanced", question: "Where on the MS Word screen can you instantly check the exact number of pages and words typed so far?", options: ["Top right corner", "Very bottom left corner of the Word screen", "Inside the Print menu", "In the Draw tab"], correctAnswer: 1 },
+    { subject: "MS Word – Advanced", question: "In MS Word, which feature makes the very first letter of a story paragraph huge like a fairy-tale book?", options: ["WordArt", "Insert > Drop Cap", "Superscript", "Format Painter"], correctAnswer: 1 },
+    { subject: "MS Word – Advanced", question: "In the Home tab, what is the difference between the 'X₂' button and the 'X²' button?", options: ["X₂ is Subscript (drops text down); X² is Superscript (floats text up)", "X₂ is Bold; X² is Italic", "Both double the font size", "X₂ deletes text"], correctAnswer: 0 },
+    { subject: "MS Word – Advanced", question: "When you insert a picture and it ruins your paragraphs, which 'Layout Options' (Wrap Text) setting makes text flow neatly around the image?", options: ["Behind Text", "Square", "In Line with Text", "Drop Cap"], correctAnswer: 1 },
+    { subject: "MS Word – Advanced", question: "How do you build an automatic Table of Contents (Index page) in MS Word?", options: ["Apply 'Heading 1' to chapter titles, then go to References > Table of Contents", "Type page numbers manually", "Use Insert > Page Break", "Use Review > Track Changes"], correctAnswer: 0 },
+    { subject: "MS Word – Advanced", question: "Which tool in the 'Mailings' tab lets you link one single letter to an Excel list to print 50 personalized student letters automatically?", options: ["SmartArt", "Mail Merge", "Track Changes", "Drop Cap"], correctAnswer: 1 },
+    { subject: "MS Word – Advanced", question: "Which tool in the 'Review' tab crosses out deleted words in red and underlines new words when a teacher corrects an essay?", options: ["Word Count", "Track Changes", "Mail Merge", "Watermark"], correctAnswer: 1 },
+    { subject: "MS Word – Advanced", question: "How do you lock a private MS Word document with a password so unauthorized users cannot open it?", options: ["File > Info > Protect Document > Encrypt with Password", "Home > Font > Lock", "Insert > Cover Page", "View > Ruler"], correctAnswer: 0 },
+    { subject: "MS Word – Advanced", question: "Which tool in the Home tab (with a Microphone icon) types your spoken words onto the screen automatically?", options: ["Read Aloud", "Dictate (Voice Typing)", "Translate", "Smart Lookup"], correctAnswer: 1 },
+    { subject: "MS Word – Advanced", question: "In the 'References' tab, which tool places a tiny number next to a word and lets you explain it at the bottom of the same page?", options: ["Header", "Insert Footnote", "Bookmark", "Hyperlink"], correctAnswer: 1 },
+    { subject: "MS Word – Advanced", question: "If a friend edited your project file without telling you what changed, which tool in the 'Review' tab highlights every added or deleted word?", options: ["Compare", "Translate", "Dictate", "Word Count"], correctAnswer: 0 },
+    { subject: "MS Word – Advanced", question: "If your computer loses power before you save your Word file, where do you go to recover the backup copy?", options: ["File > Info > Manage Document > Recover Unsaved Documents", "Recycle Bin", "Insert > Symbol", "Layout > Margins"], correctAnswer: 0 },
+    { subject: "MS Office (Word, Excel, PowerPoint)", question: "When formatting an official Gram Panchayat letter or Resume in MS Word, what do Ctrl + J, Ctrl + L, and Ctrl + E do?", options: ["Ctrl+J = Justify text, Ctrl+L = Left align, Ctrl+E = Center align", "Ctrl+J = Jump, Ctrl+L = Lock, Ctrl+E = Exit", "All three change font size", "They print the page"], correctAnswer: 0 }
+];
+
+// ==========================================
+// 5C. MS EXCEL ADVANCED & DCA EXCLUSIVE MCQs (FROM excel-data.js)
+// ==========================================
+const excelAdvancedAndDcaMCQs = [
+    { subject: "Microsoft Excel (Data Handling & Analysis)", question: "If you make a spelling mistake inside an Excel cell, which key lets you jump inside the cell to edit without erasing the whole box?", options: ["F1", "F2", "F5", "Esc"], correctAnswer: 1 },
+    { subject: "Microsoft Excel (Data Handling & Analysis)", question: "What is the keyboard shortcut to change plain numbers into Currency (₹ / $) format, and what shortcut turns Filter arrows on/off?", options: ["Ctrl + Shift + $ (Currency) and Ctrl + Shift + L (Filter)", "Ctrl + C and Ctrl + V", "Alt + F4 and F2", "Shift + Space"], correctAnswer: 0 },
+    { subject: "Microsoft Excel (Data Handling & Analysis)", question: "What is the keyboard shortcut to insert a new blank Worksheet (Sheet) into an Excel workbook?", options: ["Shift + F11", "Ctrl + N", "Alt + F1", "Ctrl + T"], correctAnswer: 0 },
+    { subject: "Microsoft Excel (Data Handling & Analysis)", question: "What does the formula '=IF(A1>50, \"Pass\", \"Fail\")' do in MS Excel?", options: ["Displays 'Pass' if the value in A1 is greater than 50, otherwise displays 'Fail'", "Adds 50 to cell A1", "Colors cell A1 red", "Deletes cell A1"], correctAnswer: 0 },
+    { subject: "Microsoft Excel (Data Handling & Analysis)", question: "What is the exact difference between '=COUNT(A1:A50)' and '=COUNTA(A1:A50)' in MS Excel?", options: ["=COUNT counts only cells with Numbers; =COUNTA counts cells with Words/Text or Numbers (non-empty)", "=COUNT counts words; =COUNTA counts only blank cells", "They are identical", "=COUNTA adds numbers"], correctAnswer: 0 },
+    { subject: "Microsoft Excel (Data Handling & Analysis)", question: "Which Excel function searches for a student's Roll Number in the leftmost column of a big table and returns their Phone Number from a specified column?", options: ["=VLOOKUP()", "=SUM()", "=AVERAGE()", "=CONCAT()"], correctAnswer: 0 },
+    { subject: "Microsoft Excel (Data Handling & Analysis)", question: "Which Excel tool takes a messy list of 10,000 fee payments and summarizes it into a compact report by Class Name in seconds?", options: ["Text to Columns", "Pivot Table (Insert > PivotTable)", "Format Painter", "Wrap Text"], correctAnswer: 1 },
+    { subject: "Microsoft Excel (Data Handling & Analysis)", question: "If you copy a cell containing '=A1+B1' and want to paste ONLY the final numeric answer without the formula breaking, what should you use?", options: ["Paste Special > Paste as Values (123 icon)", "Normal Paste (Ctrl+V)", "Merge & Center", "Flash Fill"], correctAnswer: 0 },
+    { subject: "Microsoft Excel (Data Handling & Analysis)", question: "When dragging a formula down, which symbol locks a cell reference (like $A$1) so it never shifts, and which Function key adds it automatically?", options: ["The Dollar sign ($) added by pressing F4", "The Hash sign (#) added by pressing F2", "The Percent sign (%) added by pressing F5", "The @ symbol"], correctAnswer: 0 },
+    { subject: "Microsoft Excel (Data Handling & Analysis)", question: "What does 'Wrap Text' (Alt + H, W) do when a long sentence spills out of an Excel cell?", options: ["Deletes the extra words", "Makes the row taller and stacks the words neatly inside the same cell", "Merges 10 cells together", "Changes font to red"], correctAnswer: 1 },
+    { subject: "Microsoft Excel (Data Handling & Analysis)", question: "In a list of 5,000 students, which shortcuts teleport to the bottom edge of data, select a whole Row, and select a whole Column?", options: ["Ctrl + Down Arrow (Teleport), Shift + Space (Select Row), Ctrl + Space (Select Column)", "Alt + Tab, Ctrl + R, Ctrl + C", "Page Down, F2, F4", "Esc, Home, End"], correctAnswer: 0 },
+    { subject: "MS Office (Word, Excel, PowerPoint)", question: "Which shortcut turns a range of data into an official Excel 'Table' with banded rows and built-in filter arrows?", options: ["Ctrl + T", "Ctrl + P", "Ctrl + Z", "Alt + F1"], correctAnswer: 0 }
+];
+
+// ==========================================
+// 5D. MS POWERPOINT ADVANCED & DCA EXCLUSIVE MCQs (FROM ppt-data.js)
+// ==========================================
+const pptAdvancedAndDcaMCQs = [
+    { subject: "Microsoft PowerPoint (Presentation Skills)", question: "What is the keyboard shortcut to Group multiple selected shapes together into one unit, and to Ungroup them?", options: ["Ctrl + G (Group) and Ctrl + Shift + G (Ungroup)", "Ctrl + C and Ctrl + V", "Ctrl + M and Ctrl + N", "Alt + F4"], correctAnswer: 0 },
+    { subject: "Microsoft PowerPoint (Presentation Skills)", question: "Which advanced PowerPoint Transition smoothly animates an object growing or moving between Slide 1 and Slide 2?", options: ["Morph", "Cut", "Flash", "Wipe"], correctAnswer: 0 },
+    { subject: "Microsoft PowerPoint (Presentation Skills)", question: "While presenting a live slideshow, which keys instantly turn the projector screen pitch Black or White so the audience focuses on the speaker?", options: ["Press 'B' for Black screen; press 'W' for White screen", "Press 'F1' for Black; 'F2' for White", "Press Ctrl + X", "Press Delete"], correctAnswer: 0 },
+    { subject: "Microsoft PowerPoint (Presentation Skills)", question: "If you need to place the Excellent Institute logo in the corner of all 50 slides at once without pasting it 50 times, which view should you edit?", options: ["View > Slide Master (edit the top #1 Master slide)", "Reading View", "Animation Pane", "Design Ideas"], correctAnswer: 0 },
+    { subject: "Microsoft PowerPoint (Presentation Skills)", question: "When inserting an MP3 audio song into PowerPoint, which Playback option keeps the music playing smoothly when you move to the next slide?", options: ["Play across slides", "Hide During Show", "Rewind after Playing", "Mute"], correctAnswer: 0 },
+    { subject: "Microsoft PowerPoint (Presentation Skills)", question: "Which tool in the Animations tab copies all complex animations from one object and applies them to another object in one click?", options: ["Format Painter", "Animation Painter (Alt + A, P)", "Slide Master", "Morph"], correctAnswer: 1 },
+    { subject: "Microsoft PowerPoint (Presentation Skills)", question: "To save ink and give students space to write notes next to printed slides, which Print setting should you choose?", options: ["Full Page Slides", "3 Slides (Handouts)", "Outline View", "Slide Master"], correctAnswer: 1 },
+    { subject: "Microsoft PowerPoint (Presentation Skills)", question: "How can you turn a completed PowerPoint presentation (with animations and audio) into a playable movie file?", options: ["File > Export > Create a Video (saves as MP4)", "File > Print", "Home > New Slide", "Review > Spell Check"], correctAnswer: 0 },
+    { subject: "Microsoft PowerPoint (Presentation Skills)", question: "Which single shortcut instantly duplicates a selected shape or slide in PowerPoint without using Copy and Paste?", options: ["Ctrl + D", "Ctrl + S", "Ctrl + K", "Alt + F9"], correctAnswer: 0 }
+];
+
+// ==========================================
+// 5E. TALLY DCA & PGDCA EXCLUSIVE MCQs (FROM tally-data.js)
+// ==========================================
+const tallyDcaAndPgdcaExtraMCQs = [
+    { subject: "Tally ERP with GST", question: "Immediately after saving a Sales Voucher (F8), which keys let you bring the voucher back on screen and preview its printable Tax Invoice?", options: ["Press 'Page Up', then press Ctrl + P and 'I' (Preview)", "Press Esc and Quit", "Press F11", "Press Alt + X"], correctAnswer: 0 },
+    { subject: "Tally ERP with GST", question: "In Tally Prime, on what date does the Indian Financial Year always begin?", options: ["1st January", "1st April", "31st March", "1st July"], correctAnswer: 1 },
+    { subject: "Tally ERP with GST", question: "When transporting goods worth more than what amount is an e-Way Bill mandatory in Tally Prime's GST setup?", options: ["More than ₹5,000", "More than ₹50,000", "More than ₹10,00,000", "More than ₹100"], correctAnswer: 1 },
+    { subject: "Tally ERP with GST", question: "In the Tally Day Book, which shortcut lets you change the date period (e.g., from 1st April to 30th April) to view the whole month's entries?", options: ["Alt + F2", "Alt + F5", "Ctrl + A", "Ctrl + H"], correctAnswer: 0 },
+    { subject: "Tally ERP with GST", question: "How do you lock a company with an Administrator password in Tally Prime, and how do you take a `.tbk` Data Backup to a USB Pendrive?", options: ["Alt + K > Security (for password); Alt + Y > Backup (for data backup)", "F11 and F12", "Ctrl + P and Ctrl + S", "Alt + G and Alt + X"], correctAnswer: 0 }
+];
+
+// Inject all book batches into questionBatches & courseSpecificBatches
 if (typeof questionBatches !== 'undefined') {
     questionBatches.push(
         tallyBookMCQs,
+        tallyDcaAndPgdcaExtraMCQs,
         photoshopAndGraphicsMCQs,
         digitalAndInternetMCQs,
         pgdcaProgrammingAndWebMCQs,
-        dcaAdvancedFoundationMCQs
+        dcaAdvancedFoundationMCQs,
+        wordAdvancedAndDcaMCQs,
+        excelAdvancedAndDcaMCQs,
+        pptAdvancedAndDcaMCQs
     );
 }
 
 if (typeof courseSpecificBatches !== 'undefined') {
-    courseSpecificBatches["TALLY"].push(tallyBookMCQs);
-    courseSpecificBatches["DCA"].push(photoshopAndGraphicsMCQs, digitalAndInternetMCQs, dcaAdvancedFoundationMCQs, tallyBookMCQs);
-    courseSpecificBatches["PGDCA"].push(pgdcaProgrammingAndWebMCQs, tallyBookMCQs);
-    courseSpecificBatches["CCA_6M"].push(digitalAndInternetMCQs);
-    courseSpecificBatches["CCA_3M"].push(digitalAndInternetMCQs);
+    courseSpecificBatches["TALLY"].push(tallyBookMCQs, tallyDcaAndPgdcaExtraMCQs);
+    courseSpecificBatches["DCA"].push(
+        photoshopAndGraphicsMCQs, digitalAndInternetMCQs, dcaAdvancedFoundationMCQs,
+        wordAdvancedAndDcaMCQs, excelAdvancedAndDcaMCQs, pptAdvancedAndDcaMCQs,
+        tallyBookMCQs, tallyDcaAndPgdcaExtraMCQs
+    );
+    courseSpecificBatches["PGDCA"].push(pgdcaProgrammingAndWebMCQs, tallyBookMCQs, tallyDcaAndPgdcaExtraMCQs);
+    courseSpecificBatches["CCA_6M"].push(digitalAndInternetMCQs, wordAdvancedAndDcaMCQs, excelAdvancedAndDcaMCQs, pptAdvancedAndDcaMCQs);
+    courseSpecificBatches["CCA_3M"].push(digitalAndInternetMCQs, wordAdvancedAndDcaMCQs, excelAdvancedAndDcaMCQs, pptAdvancedAndDcaMCQs);
     courseSpecificBatches["BCC"].push(digitalAndInternetMCQs, dcaAdvancedFoundationMCQs);
 }
 
