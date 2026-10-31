@@ -164,9 +164,13 @@
 
         <div class="student-profile">
             <div class="student-avatar" id="avatar-initial">S</div>
-            <div>
-                <h3 id="display-name" style="font-size: 16px; color: var(--text-dark); margin: 0 0 2px 0;">Student Name</h3>
-                <span id="display-course" style="font-size: 13px; color: var(--primary); font-weight: 500;">Course</span>
+            <div style="flex: 1;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3 id="display-name" style="font-size: 16px; color: var(--text-dark); margin: 0;">Student Name</h3>
+                    <span id="display-id-badge" style="font-size: 11px; background: #e2e8f0; color: #334155; padding: 2px 8px; border-radius: 12px; font-weight: 600;">ID</span>
+                </div>
+                <div id="display-course" style="font-size: 13px; color: var(--primary); font-weight: 600; margin-top: 3px;">Course</div>
+                <div id="display-duration" style="font-size: 12px; color: var(--text-muted); margin-top: 2px;">Duration</div>
             </div>
         </div>
         
@@ -294,13 +298,22 @@
         }
 
         function processSuccessfulLogin(studentData) {
+            // Detect exact course key based on course name + duration
+            const detectedKey = typeof detectCourseKey === 'function' ? detectCourseKey(studentData) : (studentData.course || 'CCA_6M');
+            const catalogInfo = (typeof COURSE_CATALOG !== 'undefined' && COURSE_CATALOG[detectedKey]) ? COURSE_CATALOG[detectedKey] : null;
+
+            studentData.detectedCourseKey = detectedKey;
+            studentData.detectedCourseName = catalogInfo ? catalogInfo.name : (studentData.course || 'N/A');
+
             // Save student to localStorage for exam.html
             localStorage.setItem('examStudent', JSON.stringify(studentData));
             currentStudentId = studentData.id;
 
-            // Update UI text
+            // Update UI text with Course & Duration
             document.getElementById('display-name').innerText = studentData.name;
-            document.getElementById('display-course').innerText = "Course: " + (studentData.course || 'N/A');
+            document.getElementById('display-id-badge').innerText = studentData.id || 'N/A';
+            document.getElementById('display-course').innerText = studentData.detectedCourseName;
+            document.getElementById('display-duration').innerHTML = `<i class="fa-regular fa-calendar-check"></i> Duration: ${studentData.duration ? studentData.duration + ' Months' : (catalogInfo ? catalogInfo.duration : 'Standard')} • Paper: <strong>${detectedKey}</strong>`;
             
             // Render Profile Photo
             const avatarDiv = document.getElementById('avatar-initial');
@@ -325,11 +338,12 @@
         function registerInLivePipeline(studentData) {
             dbRef = firebase.database().ref('exam_live/' + currentStudentId);
             
-            // Push status to Admin Dashboard
+            // Push status & detected course key to Admin Dashboard
             dbRef.set({
                 id: studentData.id,
                 name: studentData.name,
-                course: studentData.course || 'N/A',
+                course: `${studentData.course || 'N/A'} (${studentData.duration || '?'}M)`,
+                courseKey: studentData.detectedCourseKey || 'CCA_6M',
                 status: 'Waiting'
             }).catch(err => console.error("Failed to sync with Admin Dashboard:", err));
 
