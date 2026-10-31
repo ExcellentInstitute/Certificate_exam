@@ -330,7 +330,7 @@ function finishSubmissionUI(totalMarks, typingResults, mcqData) {
                 <h3 style="color: #2c6eb5; border-bottom: 2px solid #ccc; padding-bottom: 5px;">Detailed Review</h3>
                 <div id="review-container"></div>
                 <br>
-                <button class="start-btn" style="width: 100%; background: #0056b3; color: white; padding: 15px; font-size: 18px; border-radius: 8px; margin-top: 30px; cursor: pointer; border: none; font-weight: bold;" onclick="window.location.href='certificate_exam_index.html'">Return to Setup Screen</button>
+                <button class="start-btn" style="width: 100%; background: #0056b3; color: white; padding: 15px; font-size: 18px; border-radius: 8px; margin-top: 30px; cursor: pointer; border: none; font-weight: bold;" onclick="window.location.href='index.html'">Return to Student Portal</button>
             </div>
         </div>`;
         resultScreen = document.getElementById('result-screen');
