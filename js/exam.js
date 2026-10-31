@@ -386,8 +386,9 @@ function finishSubmissionUI(totalMarks, typingResults, mcqData) {
             reportText += `Q${i+1}: NOT ATTEMPTED / UNANSWERED (Correct: ${correctAnsText})\n`;
         }
 
+        const safeText = (str) => String(str || "").replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">");
         reviewHTML += `<div class="review-item" style="background: #f9f9f9; border: 1px solid #ddd; padding: 20px; margin-bottom: 20px; border-radius: 5px;">`;
-        reviewHTML += `<div class="review-q" style="font-weight: bold; font-size: 18px; margin-bottom: 15px;">Q${i+1}. ${q.q || q.question}</div>`;
+        reviewHTML += `<div class="review-q" style="font-weight: bold; font-size: 18px; margin-bottom: 15px;">Q${i+1}. ${safeText(q.q || q.question)}</div>`;
         
         for(let j=0; j<4; j++) {
             let optClass = "review-opt";
@@ -398,7 +399,7 @@ function finishSubmissionUI(totalMarks, typingResults, mcqData) {
             if(j === correctIndex) {
                 optStyle = "padding: 8px; margin-bottom: 5px; border-radius: 4px; background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; font-weight: bold;";
             } 
-            reviewHTML += `<div class="${optClass}" style="${optStyle}">${String.fromCharCode(65+j)}. ${q.options[j]}</div>`;
+            reviewHTML += `<div class="${optClass}" style="${optStyle}">${String.fromCharCode(65+j)}. ${safeText(q.options[j])}</div>`;
         }
         
         if(q.exp || q.explanation) reviewHTML += `<div class="review-exp" style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #ccc; font-size: 15px; color: #444;"><strong>Explanation:</strong> ${q.exp || q.explanation}</div>`;
