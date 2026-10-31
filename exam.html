@@ -87,10 +87,26 @@
             </div>
         </div>
 
+        <!-- Sticky Progress & Subject Navigation Bar -->
+        <div style="position: sticky; top: 0; z-index: 900; background: #ffffff; border-bottom: 1px solid #cbd5e1; padding: 10px 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+            <div style="max-width: 900px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+                <div>
+                    <span id="exam-paper-title" style="font-weight: 700; color: #1e293b; font-size: 14px;">Loading Course Paper...</span>
+                    <span id="active-subjects-count" style="font-size: 12px; background: #eff6ff; color: #2563eb; padding: 3px 8px; border-radius: 12px; font-weight: 600; margin-left: 8px;"></span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 15px; font-size: 13px; font-weight: 600;">
+                    <span style="color: #059669;"><i class="fa-solid fa-circle-check"></i> Answered: <span id="answered-count">0</span> / <span id="total-q-count">175</span></span>
+                    <a href="#typing-section-anchor" style="background: #f59e0b; color: white; text-decoration: none; padding: 5px 12px; border-radius: 6px; font-size: 12px;"><i class="fa-solid fa-keyboard"></i> Jump to Typing (50M)</a>
+                </div>
+            </div>
+            <div id="subject-pills-bar" style="max-width: 900px; margin: 8px auto 0; display: flex; gap: 6px; overflow-x: auto; padding-bottom: 4px;"></div>
+        </div>
+
         <div class="container">
             <h3 style="color: #0056b3; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">Multiple Choice Questions (2 Marks Each)</h3>
             <div id="mcq-container">
             </div>
+            <div id="typing-section-anchor"></div>
 
             <div class="typing-section">
                 <h3 style="color: #0056b3; margin-top: 0;">Paragraph Writing Test (50 Marks)</h3>
@@ -167,17 +183,20 @@
             });
         }
 
-        function initExam() {
+        async function initExam() {
             const savedData = localStorage.getItem('examStudent');
             if (!savedData) {
                 alert("Unauthorized access. Please log in first.");
-                window.location.href = "certificate_exam_index.html";
+                window.location.href = "index.html";
                 return;
             }
             
             studentData = JSON.parse(savedData);
-            document.getElementById('header-name').innerText = studentData.name;
-            document.getElementById('header-course').innerText = studentData.course || 'N/A';
+            const courseKey = typeof detectCourseKey === 'function' ? detectCourseKey(studentData) : "CCA_6M";
+            const catalogEntry = (typeof COURSE_CATALOG !== 'undefined' && COURSE_CATALOG[courseKey]) ? COURSE_CATALOG[courseKey] : COURSE_CATALOG["CCA_6M"];
+
+            document.getElementById('header-name').innerText = `${studentData.name} (${studentData.id || ''})`;
+            document.getElementById('header-course').innerText = `${catalogEntry.name} • ${studentData.duration ? studentData.duration + ' Months' : catalogEntry.duration}`;
             
             // Format Drive Links for Photo
             let rawUrl = studentData.image || studentData.photo || studentData.profilepic || null;
@@ -187,47 +206,84 @@
                 if (match) rawUrl = `https://drive.google.com/uc?export=view&id=${match[1]}`;
             }
 
-            if(rawUrl && rawUrl.trim() !== "") {
+            if (rawUrl && rawUrl.trim() !== "") {
                 document.getElementById('header-photo').src = rawUrl;
             } else {
                 document.getElementById('header-photo').style.display = "none";
             }
 
-            // SMART EXAM DISTRIBUTER (Exactly 400 Marks)
-            const examData = questionBank["CCA"]; 
-            const mcqContainer = document.getElementById('mcq-container');
-            
-            const requiredSubjects = [
-                "MS Word", "MS Excel", "MS PowerPoint", 
-                "Computer Fundamentals", "Computer Components", 
-                "Cyber Security", "Operating System Basics"
-            ];
-            
-            let finalExamQuestions = [];
-            
-            requiredSubjects.forEach(sub => {
-                let subQuestions = examData.mcqs.filter(q => q.subject === sub);
-                subQuestions.sort(() => Math.random() - 0.5);
-                finalExamQuestions.push(...subQuestions.slice(0, 25));
+            // 1. Fetch Admin's Active Subjects for this Course from Firebase (or fallback to full course syllabus)
+            let activeSubjects = [...catalogEntry.subjects];
+            try {
+                if (typeof firebase !== 'undefined') {
+                    const snap = await firebase.database().ref('exam_config/courses/' + courseKey + '/activeSubjects').once('value');
+                    if (snap.exists() && Array.isArray(snap.val()) && snap.val().length > 0) {
+                        activeSubjects = snap.val();
+                    }
+                }
+            } catch (e) {
+                console.warn("Using default course syllabus subjects:", e);
+            }
+
+            document.getElementById('exam-paper-title').innerText = `${catalogEntry.name}`;
+            document.getElementById('active-subjects-count').innerText = `${activeSubjects.length} Active Subjects`;
+
+            // 2. Render Subject Filter Pills so students can filter or view all subjects easily
+            const pillsBar = document.getElementById('subject-pills-bar');
+            pillsBar.innerHTML = `<button onclick="filterQuestionsBySubject('ALL', this)" style="background:#2563eb; color:white; border:none; padding:4px 12px; border-radius:15px; font-size:12px; cursor:pointer; white-space:nowrap; font-weight:600;">All Subjects</button>`;
+            activeSubjects.forEach(sub => {
+                const escapedSub = sub.replace(/'/g, "\\'");
+                pillsBar.innerHTML += `<button onclick="filterQuestionsBySubject('${escapedSub}', this)" style="background:#f1f5f9; color:#475569; border:1px solid #cbd5e1; padding:4px 12px; border-radius:15px; font-size:12px; cursor:pointer; white-space:nowrap;">${sub}</button>`;
             });
-            
+
+            // 3. Distribute exactly 175 MCQs (350 Marks) evenly across the Admin's Active Subjects
+            const totalTargetMCQs = 175;
+            const basePerSubject = Math.floor(totalTargetMCQs / activeSubjects.length);
+            let remainder = totalTargetMCQs % activeSubjects.length;
+
+            let finalExamQuestions = [];
+
+            activeSubjects.forEach(sub => {
+                const quota = basePerSubject + (remainder > 0 ? 1 : 0);
+                if (remainder > 0) remainder--;
+
+                let subPool = typeof getQuestionsForSubject === 'function'
+                    ? getQuestionsForSubject(courseKey, sub)
+                    : questionBank["CCA"].mcqs;
+
+                let shuffled = [...subPool].sort(() => Math.random() - 0.5);
+                // If a subject pool is smaller than quota, cycle safely so total always hits 175
+                let selected = [];
+                while (selected.length < quota && shuffled.length > 0) {
+                    selected.push(...shuffled.slice(0, quota - selected.length));
+                }
+                finalExamQuestions.push(...selected);
+            });
+
+            // Shuffle final paper
             finalExamQuestions.sort(() => Math.random() - 0.5);
-            
+            document.getElementById('total-q-count').innerText = finalExamQuestions.length;
+
+            // 4. Render Questions into HTML
+            const mcqContainer = document.getElementById('mcq-container');
+            let allCardsHtml = "";
             finalExamQuestions.forEach((q, index) => {
-                let html = `
-                <div class="question-card">
-                    <h4>${index + 1}. ${q.question} <span style="color:#666; font-size:12px; float:right;">[${q.subject}]</span></h4>
+                allCardsHtml += `
+                <div class="question-card" data-subject="${q.subject}">
+                    <h4>${index + 1}. ${q.question} <span style="background:#eff6ff; color:#2563eb; padding:2px 8px; border-radius:10px; font-size:11px; float:right; font-weight:600;">${q.subject}</span></h4>
                     <div class="options">`;
                 
                 q.options.forEach((opt, optIdx) => {
-                    html += `<label><input type="radio" name="q${index}" value="${optIdx}"> ${opt}</label>`;
+                    allCardsHtml += `<label><input type="radio" name="q${index}" value="${optIdx}" onchange="updateAnsweredProgress()"> ${opt}</label>`;
                 });
                 
-                html += `</div></div>`;
-                mcqContainer.innerHTML += html;
+                allCardsHtml += `</div></div>`;
             });
+            mcqContainer.innerHTML = allCardsHtml;
 
-            const randomTest = examData.typingTests[Math.floor(Math.random() * examData.typingTests.length)];
+            // 5. Load 50-Mark Typing Test
+            const typingPool = (questionBank[courseKey] && questionBank[courseKey].typingTests) ? questionBank[courseKey].typingTests : typingTestsArray;
+            const randomTest = typingPool[Math.floor(Math.random() * typingPool.length)];
             document.getElementById('typing-source').innerText = randomTest.text;
             
             if (typeof initTypingTracker === "function") {
@@ -235,6 +291,29 @@
             }
             
             window.activeExamPaper = finalExamQuestions;
+        }
+
+        function updateAnsweredProgress() {
+            const total = window.activeExamPaper ? window.activeExamPaper.length : 175;
+            const answered = document.querySelectorAll('#mcq-container input[type="radio"]:checked').length;
+            document.getElementById('answered-count').innerText = answered;
+        }
+
+        function filterQuestionsBySubject(subject, btnEl) {
+            const buttons = document.querySelectorAll('#subject-pills-bar button');
+            buttons.forEach(b => { b.style.background = '#f1f5f9'; b.style.color = '#475569'; b.style.fontWeight = '400'; });
+            btnEl.style.background = '#2563eb';
+            btnEl.style.color = 'white';
+            btnEl.style.fontWeight = '600';
+
+            const cards = document.querySelectorAll('#mcq-container .question-card');
+            cards.forEach(card => {
+                if (subject === 'ALL' || card.getAttribute('data-subject') === subject) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
         }
 
         document.addEventListener('DOMContentLoaded', () => {
