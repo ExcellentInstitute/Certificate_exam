@@ -91,11 +91,34 @@
             document.getElementById('st-name').innerText = `${studentData.name} (${studentData.id})`;
             document.getElementById('st-course').innerText = `${studentData.course || courseKey}`;
 
-            const tasks = PRACTICAL_EXAM_BANK[courseKey] || PRACTICAL_EXAM_BANK["DEFAULT"];
-
-            renderTasks(tasks);
-            listenForAdminCompletion();
+            // Authenticate anonymously first, then verify Main Exam completion
+            firebase.auth().signInAnonymously().catch(e => console.warn(e)).finally(() => {
+                verifyMainExamAndLoadPractical(courseKey);
+            });
         });
+
+        function verifyMainExamAndLoadPractical(courseKey) {
+            const targetId = String(studentData.id || "").trim().toUpperCase();
+            firebase.database().ref('exam_results').once('value').then(snap => {
+                let completedMain = false;
+                snap.forEach(child => {
+                    const r = child.val();
+                    if (r && String(r.id || "").trim().toUpperCase() === targetId) {
+                        completedMain = true;
+                    }
+                });
+
+                if (!completedMain) {
+                    alert("Access Denied: Practical Exam is locked until you complete and submit the Main Exam!");
+                    window.location.href = "index.html";
+                    return;
+                }
+
+                const tasks = PRACTICAL_EXAM_BANK[courseKey] || PRACTICAL_EXAM_BANK["DEFAULT"];
+                renderTasks(tasks);
+                listenForAdminCompletion();
+            });
+        }
 
         function renderTasks(tasks) {
             const container = document.getElementById('practical-tasks-container');
