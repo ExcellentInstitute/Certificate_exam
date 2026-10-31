@@ -142,12 +142,24 @@
                 </table>
             </div>
 
-            <div class="card">
-                <h3><span><i class="fa-solid fa-tower-broadcast" style="color: #059669;"></i> Live Exam Status</span></h3>
-                <table>
-                    <thead><tr><th>Student ID</th><th>Name</th><th>Status</th></tr></thead>
-                    <tbody id="active-list"></tbody>
-                </table>
+            <!-- NEW: COURSE & VARIABLE SUBJECT CONTROL CENTER -->
+            <div class="card full-width" style="border-left: 4px solid var(--primary);">
+                <h3>
+                    <span><i class="fa-solid fa-sliders" style="color: var(--primary);"></i> Course & Active Subject Manager (Live Exam Config)</span>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <select id="admin-course-selector" onchange="renderSubjectToggles()" style="padding: 8px 12px; border-radius: 6px; border: 1px solid #cbd5e1; font-family: 'Poppins'; font-size: 13px; font-weight: 600; color: var(--text-dark); outline: none;"></select>
+                        <button class="btn-approve" onclick="saveCourseConfig()" style="padding: 8px 16px;"><i class="fa-solid fa-floppy-disk"></i> Save Active Subjects</button>
+                    </div>
+                </h3>
+                <p style="font-size: 12px; color: var(--text-muted); margin-top: -8px; margin-bottom: 12px;">
+                    Check or uncheck subjects below to control which subjects appear in the exam for the selected course. The 350 MCQ marks (175 questions) will automatically distribute across active subjects.
+                </p>
+                <div id="subject-toggles-container" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 10px; margin-bottom: 15px;"></div>
+                <div style="display: flex; gap: 10px; align-items: center; border-top: 1px solid #f1f5f9; padding-top: 12px;">
+                    <input type="text" id="new-subject-input" placeholder="Add a custom subject to this course..." style="padding: 7px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; flex: 1;">
+                    <button class="btn-download" onclick="addCustomSubject()"><i class="fa-solid fa-plus"></i> Add Subject</button>
+                    <button class="btn-approve-all" onclick="toggleAllSubjects(true)" style="background: #64748b;">Select All</button>
+                </div>
             </div>
 
             <div class="card full-width" style="border-left: 4px solid var(--success);">
@@ -261,6 +273,116 @@
                 document.getElementById('loading-indicator').style.display = 'none';
                 renderAllTables();
             });
+
+            // Listen to Course & Active Subject Configuration
+            db.ref('exam_config/courses').on('value', snap => {
+                const savedConfig = snap.val() || {};
+                initCourseManagerUI(savedConfig);
+            });
+        }
+
+        // ==========================================
+        // COURSE & VARIABLE SUBJECT MANAGER LOGIC
+        // ==========================================
+        let liveCourseConfig = {};
+
+        function initCourseManagerUI(savedConfig) {
+            liveCourseConfig = {};
+            const selector = document.getElementById('admin-course-selector');
+            const currentSelection = selector.value;
+            selector.innerHTML = "";
+
+            const catalog = typeof COURSE_CATALOG !== 'undefined' ? COURSE_CATALOG : {};
+            Object.keys(catalog).forEach(courseKey => {
+                const defaultSubs = catalog[courseKey].subjects;
+                if (savedConfig[courseKey] && savedConfig[courseKey].allSubjects) {
+                    liveCourseConfig[courseKey] = {
+                        name: catalog[courseKey].name,
+                        duration: catalog[courseKey].duration,
+                        allSubjects: savedConfig[courseKey].allSubjects,
+                        activeSubjects: savedConfig[courseKey].activeSubjects || savedConfig[courseKey].allSubjects
+                    };
+                } else {
+                    liveCourseConfig[courseKey] = {
+                        name: catalog[courseKey].name,
+                        duration: catalog[courseKey].duration,
+                        allSubjects: [...defaultSubs],
+                        activeSubjects: [...defaultSubs]
+                    };
+                }
+
+                const opt = document.createElement('option');
+                opt.value = courseKey;
+                opt.innerText = `${catalog[courseKey].name} [${ catalog[courseKey].duration }]`;
+                selector.appendChild(opt);
+            });
+
+            if (currentSelection && liveCourseConfig[currentSelection]) {
+                selector.value = currentSelection;
+            }
+            renderSubjectToggles();
+        }
+
+        function renderSubjectToggles() {
+            const courseKey = document.getElementById('admin-course-selector').value;
+            const container = document.getElementById('subject-toggles-container');
+            container.innerHTML = "";
+            if (!courseKey || !liveCourseConfig[courseKey]) return;
+
+            const cfg = liveCourseConfig[courseKey];
+            cfg.allSubjects.forEach((sub, idx) => {
+                const isChecked = cfg.activeSubjects.includes(sub);
+                const label = document.createElement('label');
+                label.style.cssText = `display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; border: 1px solid ${isChecked ? '#93c5fd' : '#e2e8f0'}; background: ${isChecked ? '#eff6ff' : '#f8fafc'}; cursor: pointer; font-size: 13px; font-weight: 500;`;
+                label.innerHTML = `
+                    <input type="checkbox" class="subject-checkbox" value="${sub}" ${isChecked ? 'checked' : ''} onchange="updateLocalSubjectCheck('${courseKey}')">
+                    <span style="flex: 1;">${sub}</span>
+                `;
+                container.appendChild(label);
+            });
+        }
+
+        function updateLocalSubjectCheck(courseKey) {
+            const checkboxes = document.querySelectorAll('#subject-toggles-container .subject-checkbox');
+            const active = [];
+            checkboxes.forEach(cb => { if (cb.checked) active.push(cb.value); });
+            liveCourseConfig[courseKey].activeSubjects = active;
+            renderSubjectToggles();
+        }
+
+        function toggleAllSubjects(selectAll) {
+            const courseKey = document.getElementById('admin-course-selector').value;
+            if (!courseKey || !liveCourseConfig[courseKey]) return;
+            liveCourseConfig[courseKey].activeSubjects = selectAll ? [...liveCourseConfig[courseKey].allSubjects] : [];
+            renderSubjectToggles();
+        }
+
+        function addCustomSubject() {
+            const courseKey = document.getElementById('admin-course-selector').value;
+            const input = document.getElementById('new-subject-input');
+            const newSub = input.value.trim();
+            if (!newSub || !courseKey) return;
+
+            if (!liveCourseConfig[courseKey].allSubjects.includes(newSub)) {
+                liveCourseConfig[courseKey].allSubjects.push(newSub);
+                liveCourseConfig[courseKey].activeSubjects.push(newSub);
+                input.value = "";
+                renderSubjectToggles();
+            }
+        }
+
+        function saveCourseConfig() {
+            const courseKey = document.getElementById('admin-course-selector').value;
+            if (!courseKey || !liveCourseConfig[courseKey]) return;
+
+            if (liveCourseConfig[courseKey].activeSubjects.length === 0) {
+                alert("Please keep at least 1 subject active for the exam!");
+                return;
+            }
+
+            firebase.database().ref('exam_config/courses/' + courseKey).set(liveCourseConfig[courseKey])
+            .then(() => alert(`Active subjects saved for ${liveCourseConfig[courseKey].name}!`))
+            .catch(err => alert("Error saving config: " + err.message));
         }
 
         function renderAllTables() {
